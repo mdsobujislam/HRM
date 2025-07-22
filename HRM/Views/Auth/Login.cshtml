@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LayoutWithoutNav.cshtml";
+}
+
+<div class="main-wrapper">
+    <div class="account-content">
+        <div class="login-wrapper">
+            <div class="login-content">
+                <div class="login-userset">
+                    <div class="login-logo">
+                        <img src="~/assets/img/logo.png" alt="img">
+                    </div>
+                    <div class="login-userheading">
+                        <h3>Sign In</h3>
+                        <h4>Please login to your account</h4>
+                    </div>
+                    <form method="post">
+                        <div class="form-login">
+                            <label for="Email" class="form-label">Email</label>
+                            <div class="form-addons">
+                                <input type="email" class="form-control" id="Email" name="Email" required />
+                                <img src="~/assets/img/icons/mail.svg" alt="img">
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <label for="Password" class="form-label">Password</label>
+                            <div class="pass-group">
+                                <input type="password" class="form-control" id="Password" name="Password" required />
+                                <span class="fas toggle-password fa-eye-slash" onclick="togglePassword()"></span>
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <div class="alreadyuser">
+                                <h4><a href="forgetpassword" class="hover-a">Forgot Password?</a></h4>
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            @* <a class="btn btn-login" asp-controller="Auth" asp-action="Login">Sign In</a> *@
+                            <button type="submit" class="btn btn-login">Login</button>
+                        </div>
+                        <div class="signinform text-center">
+                            <h4>Don’t have an account? <a asp-controller="Auth" asp-action="Register" class="hover-a">Sign Up</a></h4>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="login-img">
+                <img src="~/assets/img/login.jpg" alt="img">
+            </div>
+        </div>
+    </div>
+</div>
+

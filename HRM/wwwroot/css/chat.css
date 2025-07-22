@@ -1,0 +1,39 @@
+﻿.chat-container {
+    display: flex;
+    gap: 20px;
+}
+
+.user-list {
+    width: 30%;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.chat-box {
+    width: 70%;
+}
+
+.message-container {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.message-self {
+    text-align: right;
+    color: blue;
+}
+
+.message-other {
+    text-align: left;
+    color: black;
+}
+
+.message-input {
+    margin-top: 10px;
+}
+
+.message-input input {
+    width: 80%;
+}
