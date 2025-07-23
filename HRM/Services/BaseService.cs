@@ -1,4 +1,5 @@
 using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using System.Security.Claims;
 
@@ -16,6 +17,7 @@ public class BaseService
         _httpContextAccessor = httpContextAccessor;
     }
 
+
     public int GetSubscriptionId()
     {
         var subscriptionIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst("SubscriptionId")?.Value;
@@ -28,11 +30,6 @@ public class BaseService
         return int.TryParse(userId, out var id) ? id : 0;
     }
     
-    //public async Task<int> GetBranchId(int subscriptionId, int userId)
-    //{   
-    //    var userBranch = await _connectionString.Users.Where(u => u.Id == userId && u.SubscriptionId == subscriptionId).FirstOrDefaultAsync();
-    //    return userBranch?.BranchId ?? 0;
-    //}
     public async Task<int> GetBranchId(int subscriptionId, int userId)
     {
         const string query = @" SELECT BranchId FROM Users WHERE Id = @UserId AND SubscriptionId = @SubscriptionId";

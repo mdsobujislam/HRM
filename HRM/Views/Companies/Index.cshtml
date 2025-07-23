@@ -1,0 +1,94 @@
+﻿
+@model HRM.Models.Companies
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Add Company</div>
+            </div>
+            <div class="card-body">
+                <form asp-action="Company" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter Company Name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TagLine" class="control-label"></label>
+                                <input asp-for="TagLine" class="form-control" placeholder="Enter Tagline" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="VatRegistrationNo" class="control-label"></label>
+                                <input asp-for="VatRegistrationNo" class="form-control"
+                                       placeholder="Enter VAT Registration No" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Remarks" class="control-label"></label>
+                                <textarea asp-for="Remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+                                <span asp-validation-for="Remarks" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="TinNo" class="control-label"></label>
+                                <input asp-for="TinNo" class="form-control" placeholder="Enter TIN No" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="WebsiteLink" class="control-label"></label>
+                                <input asp-for="WebsiteLink" class="form-control" placeholder="Enter Website Link" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label"></label>
+                                <input asp-for="Email" type="email" class="form-control"
+                                       placeholder="Enter Email Address" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="ContactNumber" class="control-label"></label>
+                                <input asp-for="ContactNumber" class="form-control"
+                                       placeholder="Enter Contact Number" />
+                                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Address" class="control-label"></label>
+                                <textarea asp-for="Address" class="form-control" placeholder="Enter Address"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="LogoFile" class="control-label">Company Logo</label>
+                                <input asp-for="LogoFile" type="file" class="form-control-file" />
+
+                                @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
+                                {
+                                    <div class="mt-2">
+                                        <img src="@Model.ExistingLogoPath" alt="Current Logo" width="150" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm px-4">
+                            @(Model.Id == 0 ? "Create" : "Update")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

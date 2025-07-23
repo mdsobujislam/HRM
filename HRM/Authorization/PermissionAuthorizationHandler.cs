@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using HRM.Interfaces;
+﻿using HRM.Repository;
+using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace HRM.Authorization
@@ -8,7 +8,6 @@ namespace HRM.Authorization
     {
         private readonly IRoleService _roleService;
         private readonly IUserService _userService;
-        //private readonly IUserService _userService;
         public PermissionAuthorizationHandler(IRoleService roleService, IUserService studentService)
         {
             _roleService = roleService ??
@@ -27,7 +26,7 @@ namespace HRM.Authorization
                 var roleName = new List<string>();
                 foreach (var item in roleList.Result)
                 {
-                    Guid result = Guid.Parse(item);
+                    int result = int.Parse(item);
                     var name = _roleService.GetRoleByIdAsync(result);
                     roleName.Add(name.Result.Name);
                 }

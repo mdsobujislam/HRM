@@ -1,17 +1,22 @@
 using HRM.Authorization;
 using HRM.Interfaces;
+using HRM.Repository;
 using HRM.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ServiceManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+
+
 builder.Services.AddScoped<IRoleService,RoleService>();
 builder.Services.AddScoped<IUserService,UserService>();
-builder.Services.AddScoped<IUserTypeService,UserTypeService>();
-builder.Services.AddScoped<IUserVMService,UserVMService>();
+builder.Services.AddScoped<BaseService>();
+builder.Services.AddScoped<ICompaniesService,CompaniesService>();
 
 
 

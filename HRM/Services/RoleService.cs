@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using HRM.Models;
+using HRM.Repository;
 using Microsoft.Data.SqlClient;
-using HRM.Interfaces;
 using System.Data;
 
 namespace HRM.Services
@@ -9,7 +9,7 @@ namespace HRM.Services
     public class RoleService : IRoleService
     {
         private readonly string _connectionString;
-        public RoleService(IConfiguration configuration)
+        public RoleService(IConfiguration configuration, IWebHostEnvironment env)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new ArgumentNullException(nameof(_connectionString));
@@ -50,7 +50,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> DeleteRoleAsync(Guid roleId)
+        public async Task<bool> DeleteRoleAsync(int roleId)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<List<Menu>> GetAllMenusAsync(Guid roleId)
+        public async Task<List<Menu>> GetAllMenusAsync(int roleId)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace HRM.Services
                         queryString = "select MenuId from RolePermission where roleId='{0}'";
                         queryString += " and menuId={1}";
                         query = string.Format(queryString, roleId.ToString(), item.Id);
-                        var result = await connection.QueryFirstOrDefaultAsync<int>(query);
+                        var result= await connection.QueryFirstOrDefaultAsync<int>(query);
                         if (result > 0)
                             item.Status = true;
                         else
@@ -117,7 +117,7 @@ namespace HRM.Services
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var queryString = "select id,name,(case when status=1 then 'Active' else 'InActive' end) StatusName from Roles where name<>'Super Admin' and name<> 'Admin' order by name  ";
+                    var queryString = "select id,name,(case when status=1 then 'Active' else 'InActive' end) StatusName from Roles where name<>'Super Admin' order by name  ";
                     var query = string.Format(queryString);
                     var roleList = await connection.QueryAsync<Role>(query);
                     return roleList.ToList();
@@ -128,8 +128,7 @@ namespace HRM.Services
                 throw;
             }
         }
-
-        public async Task<Role> GetRoleByIdAsync(Guid roleId)
+        public async Task<Role> GetRoleByIdAsync(int roleId)
         {
             try
             {
@@ -137,7 +136,7 @@ namespace HRM.Services
                 {
                     connection.Open();
                     var queryString = "select * from Roles where id='{0}' order by name  ";
-                    var query = string.Format(queryString, roleId);
+                    var query = string.Format(queryString,roleId);
                     var role = await connection.QueryFirstOrDefaultAsync<Role>(query);
                     return role;
                 }
@@ -208,8 +207,8 @@ namespace HRM.Services
                 {
                     connection.Open();
                     var queryString = "select (select permissionname from menus where id=r.menuid) from RolePermission";
-                    queryString += " r where roleid='{0}'  ";
-                    var query = string.Format(queryString, roleId);
+                    queryString+=" r where roleid='{0}'  ";
+                    var query = string.Format(queryString,roleId);
                     var permissionList = await connection.QueryAsync<string>(query);
                     return permissionList.ToList();
                 }

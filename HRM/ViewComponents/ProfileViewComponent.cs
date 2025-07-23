@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using HRM.Interfaces;
+﻿using HRM.Repository;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace HRM.ViewComponents
@@ -15,7 +15,7 @@ namespace HRM.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userService.GetUserAsync(Guid.Parse(userId));
+            var user = await _userService.GetUserAsync(int.Parse(userId));
             return View("Profile", user);
         }
     }

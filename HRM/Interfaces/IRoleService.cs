@@ -1,16 +1,16 @@
 ﻿using HRM.Models;
 
-namespace HRM.Interfaces
+namespace HRM.Repository
 {
     public interface IRoleService
     {
         Task<List<Role>> GetAllRolesAsync();
-        Task<Role> GetRoleByIdAsync(Guid roleId);
+        Task<Role> GetRoleByIdAsync(int roleId);
         Task<Role> GetRoleByNameAsync(string roleName);
         Task<bool> InsertRoleAsync(Role role);
         Task<bool> UpdateRoleAsync(Role role);
-        Task<bool> DeleteRoleAsync(Guid roleId);
-        Task<List<Menu>> GetAllMenusAsync(Guid roleId);
+        Task<bool> DeleteRoleAsync(int roleId);
+        Task<List<Menu>> GetAllMenusAsync(int roleId);
         Task<bool> AddRolePermissionAsync(RolePermission role);
         Task<List<string>> RolePermissionAsync(string roleId);
     }

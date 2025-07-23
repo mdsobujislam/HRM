@@ -1,16 +1,16 @@
 ﻿using HRM.Models;
 
-namespace HRM.Interfaces
+namespace HRM.Repository
 {
     public interface IUserService
     {
-        Task<string> InsertUserAsync(User user);
+        Task<bool> InsertUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
-        Task<bool> DeleteUserAsync(Guid userId);
+        Task<bool> DeleteUserAsync(int userId);
         Task<List<User>> GetAllUserAsync();
-        Task<User> GetUserAsync(Guid userId);
+        Task<User> GetUserAsync(int userId);
+        Task<User> GetUserByEmailAsync(string email);
         Task<List<string>> GetUserRolesAsync(string userId);
-        Task<User> GetLoginUserAsync(string userName, string password);
-        Task<User> GetUserTypeCheckAsync(string userName);
+        Task<User> GetLoginUserAsync(string userName,string password);
     }
 }

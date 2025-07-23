@@ -1,6 +1,6 @@
 ﻿using HRM.Models;
+using HRM.Repository;
 using Microsoft.AspNetCore.Mvc;
-using HRM.Interfaces;
 using System.Security.Claims;
 
 namespace HRM.ViewComponents
@@ -24,7 +24,7 @@ namespace HRM.ViewComponents
             var roleName = new List<string>();
             foreach (var item in userRole)
             {
-                Guid result = Guid.Parse(item);
+                int result = int.Parse(item);
                 var name = await _roleService.GetRoleByIdAsync(result);
                 roleName.Add(name.Name);
             }
@@ -32,7 +32,7 @@ namespace HRM.ViewComponents
             foreach (var item in userRole)
             {
 
-                var permitedMenu = await _roleService.GetAllMenusAsync(Guid.Parse(item));
+                var permitedMenu = await _roleService.GetAllMenusAsync(int.Parse(item));
                 if (roleName.Contains("Super Admin"))
                 {
                     menuList.AddRange(permitedMenu);

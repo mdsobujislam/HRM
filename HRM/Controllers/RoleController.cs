@@ -1,8 +1,9 @@
-﻿using HRM.Interfaces;
+﻿using HRM.Authorization;
 using HRM.Models;
+using HRM.Repository;
 using Microsoft.AspNetCore.Mvc;
 
-namespace S_EDex365.Controllers
+namespace ServiceManagementSystem.Controllers
 {
     public class RoleController : Controller
     {
@@ -12,6 +13,7 @@ namespace S_EDex365.Controllers
             _roleService = service ??
                 throw new ArgumentNullException(nameof(service));
         }
+        [AuthorizePermission("Role")]
         public IActionResult Index()
         {
             return View();
@@ -43,7 +45,7 @@ namespace S_EDex365.Controllers
 
         }
 
-        public async Task<IActionResult> UpdateRole(Guid serviceId)
+        public async Task<IActionResult> UpdateRole(int serviceId)
         {
             var serviceAndPart = await _roleService.GetRoleByIdAsync(serviceId);
             return PartialView("_UpdateRole", serviceAndPart);
@@ -63,7 +65,7 @@ namespace S_EDex365.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> DeleteRole(Guid roleId)
+        public async Task<IActionResult> DeleteRole(int roleId)
         {
             try
             {
@@ -75,8 +77,8 @@ namespace S_EDex365.Controllers
                 throw;
             }
         }
-
-        public async Task<IActionResult> RolePermission(Guid roleId)
+        
+        public async Task<IActionResult> RolePermission(int roleId)
         {
             var role = await _roleService.GetRoleByIdAsync(roleId);
             PermissionDto permission = new PermissionDto();

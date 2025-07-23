@@ -1,6 +1,6 @@
-﻿@model HRM.Models.Login
+﻿@model HRM.Models.User
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_LayoutWithoutNav.cshtml";
 }
 
@@ -13,10 +13,24 @@
                         <img src="~/assets/img/logo.png" alt="img">
                     </div>
                     <div class="login-userheading">
-                        <h3>Sign In</h3>
-                        <h4>Please login to your account</h4>
+                        <h3>Create an Account</h3>
+                        <h4>Continue where you left off</h4>
                     </div>
-                    <form asp-action="Login" method="post">
+                    <form method="post">
+                        <div class="form-login">
+                            <label for="FullName" class="form-label">Full Name</label>
+                            <div class="form-addons">
+                                <input type="text" class="form-control" id="Name" name="Name" required />
+                                <img src="~/assets/img/icons/users1.svg" alt="img">
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <label asp-for="MobileNo" class="form-label">Mobile Phone Number</label>
+                            <div class="form-addons">
+                                <input asp-for="MobileNo" class="form-control" />
+                                <img src="~/assets/img/icons/mail.svg" alt="img">
+                            </div>
+                        </div>
                         <div class="form-login">
                             <label for="Email" class="form-label">Email</label>
                             <div class="form-addons">
@@ -28,24 +42,17 @@
                             <label for="Password" class="form-label">Password</label>
                             <div class="pass-group">
                                 <input type="password" class="form-control" id="Password" name="Password" required />
-                                <span class="fas toggle-password fa-eye-slash" onclick="togglePassword()"></span>
+                                <span class="fas toggle-password fa-eye-slash"></span>
                             </div>
                         </div>
                         <div class="form-login">
-                            <div class="alreadyuser">
-                                <h4><a href="forgetpassword" class="hover-a">Forgot Password?</a></h4>
-                            </div>
-                        </div>
-                        <div class="form-login">
-                            @* <a class="btn btn-login" asp-controller="Auth" asp-action="Login">Sign In</a> *@
-                            <button type="submit" class="btn btn-login">Login</button>
+                            <button type="submit" class="btn btn-login">REGISTER</button>
                         </div>
                         <div class="signinform text-center">
-                            <h4>Don’t have an account? <a asp-controller="Auth" asp-action="Register" class="hover-a">Sign Up</a></h4>
+                            <h4>Already a user? <a asp-controller="Auth" asp-action="Login" class="hover-a">Sign In</a></h4>
                         </div>
                     </form>
                 </div>
-
             </div>
             <div class="login-img">
                 <img src="~/assets/img/login.jpg" alt="img">
@@ -57,6 +64,8 @@
 
 <script>
     function submitData(){
+            document.getElementById("Name").value = "";
+            document.getElementById("MobileNo").value = "";
             document.getElementById("Email").value = "";
             document.getElementById("Password").value = "";
             document.getElementById("Submit").textContent = "Submit";
