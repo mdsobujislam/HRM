@@ -30,10 +30,11 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var queryString = "select Name,TagLine,VatRegistrationNo,TinNo,WebsiteLink,Email,ContactNumber,Address,Remarks,LogoPath,SubscriptionId from Companies where SubscriptionId='"+ subscriptionId + "'";
-                    var query = string.Format(queryString);
-                    var List = await connection.QueryAsync<Companies>(query);
-                    return List.ToList();
+                    var query = @"SELECT 
+                            Id, Name, TagLine, VatRegistrationNo, TinNo, WebsiteLink, Email, ContactNumber, Address, Remarks, LogoPath, SubscriptionId FROM Companies WHERE SubscriptionId = @subscriptionId";
+
+                    var result = await connection.QueryAsync<Companies>(query, new { subscriptionId });
+                    return result.ToList();
                 }
             }
             catch (Exception ex)
@@ -73,10 +74,10 @@ namespace HRM.Services
                     }
 
                     var Id = "select SubscriptionId from Companies where SubscriptionId='"+ subscriptionId + "'";
-                    int SubscriptionId = connection.ExecuteScalar<int>(Id);
+                    int SubscriptionsId = connection.ExecuteScalar<int>(Id);
 
 
-                    if (SubscriptionId ==null)
+                    if (SubscriptionsId == 0)
                     {
                         var queryString = "insert into Companies (Name,TagLine,VatRegistrationNo,TinNo,WebsiteLink,Email,ContactNumber,Address,Remarks,LogoPath,SubscriptionId,CreatedAt) values ";
                         queryString += "( @Name,@TagLine,@VatRegistrationNo,@TinNo,@WebsiteLink,@Email,@ContactNumber,@Address,@Remarks,@LogoPath,@SubscriptionId,@CreatedAt)";
@@ -102,7 +103,7 @@ namespace HRM.Services
                     }
                     else
                     {
-                        var queryString = "Update Companies set(Name=@Name,TagLine=@TagLine,VatRegistrationNo=@VatRegistrationNo,TinNo=@TinNo,WebsiteLink=@WebsiteLink,Email=@Email,ContactNumber=@ContactNumber,Address=@Address,Remarks=@Remarks,LogoPath=@LogoPath,SubscriptionId=@SubscriptionId,CreatedAt=@CreatedAt) values ";
+                        var queryString = "Update Companies set Name=@Name,TagLine=@TagLine,VatRegistrationNo=@VatRegistrationNo,TinNo=@TinNo,WebsiteLink=@WebsiteLink,Email=@Email,ContactNumber=@ContactNumber,Address=@Address,Remarks=@Remarks,LogoPath=@LogoPath,SubscriptionId=@SubscriptionId,UpdatedAt=@UpdatedAt where SubscriptionId='" + subscriptionId + "' ";
                         var parameters = new DynamicParameters();
                         parameters.Add("Name", companies.Name, DbType.String);
                         parameters.Add("TagLine", companies.TagLine, DbType.String);
@@ -115,7 +116,7 @@ namespace HRM.Services
                         parameters.Add("Remarks", companies.Remarks, DbType.String);
                         parameters.Add("LogoPath", logoPath);
                         parameters.Add("SubscriptionId", subscriptionId);
-                        parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
+                        parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                         var success = await connection.ExecuteAsync(queryString, parameters);
                         if (success > 0)
                         {

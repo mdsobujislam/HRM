@@ -43,4 +43,17 @@ public class BaseService
         return branchId ?? 0;
     }
 
+    public async Task<int> GetCompanyId(int subscriptionId)
+    {
+        const string query = @" SELECT Id FROM Companies WHERE SubscriptionId = @SubscriptionId";
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var companyId = await connection.QueryFirstOrDefaultAsync<int?>(
+            query, new { SubscriptionId = subscriptionId });
+
+        return companyId ?? 0;
+    }
+
 }

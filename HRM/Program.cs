@@ -17,6 +17,7 @@ builder.Services.AddScoped<IRoleService,RoleService>();
 builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<BaseService>();
 builder.Services.AddScoped<ICompaniesService,CompaniesService>();
+builder.Services.AddScoped<IBranchService,BranchService>();
 
 
 
