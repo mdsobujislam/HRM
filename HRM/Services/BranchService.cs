@@ -52,7 +52,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"Select Name,Address from Branch WHERE SubscriptionId = @subscriptionId";
+                    var query = @"Select Id,Name,Address from Branch WHERE SubscriptionId = @subscriptionId";
 
                     var result = await connection.QueryAsync<Branch>(query, new { subscriptionId });
                     return result.ToList();
@@ -131,7 +131,7 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update Branch set Name=@Name,Address=@Address,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where SubscriptionId='" + subscriptionId + "' and CompanyId='"+ companyId + "' ";
+                    var queryString = "Update Branch set Name=@Name,Address=@Address,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='"+branch.Id+"' ";
                         var parameters = new DynamicParameters();
                         parameters.Add("Name", branch.Name, DbType.String);
                         parameters.Add("Address", branch.Address, DbType.String);

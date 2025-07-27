@@ -18,6 +18,8 @@ builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<BaseService>();
 builder.Services.AddScoped<ICompaniesService,CompaniesService>();
 builder.Services.AddScoped<IBranchService,BranchService>();
+builder.Services.AddScoped<IDepartmentService,DepartmentService>();
+builder.Services.AddScoped<IAddUserService,AddUserService>();
 
 
 

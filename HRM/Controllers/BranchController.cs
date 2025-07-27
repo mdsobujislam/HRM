@@ -24,6 +24,7 @@ namespace HRM.Controllers
         {
             try
             {
+
                 if (branch.Id == 0)
                 {
                     bool isCreated = await _branchService.InsertBranch(branch);
@@ -32,17 +33,19 @@ namespace HRM.Controllers
                         TempData["ErrorMessage"] = "A Branch already exists for this SubscriptionId.";
                         return View(branch);
                     }
+                    TempData["SuccessMessage"] = "Branch Created Successfully";
                 }
                 else
                 {
-                    bool isUpdated = await _branchService.InsertBranch(branch);
+                    bool isUpdated = await _branchService.UpdateBranch(branch);
                     if (!isUpdated)
                     {
                         TempData["ErrorMessage"] = "Branch name already exists or update failed";
-                        return View(branch);
+                        return RedirectToAction("Index");
                     }
+                    TempData["SuccessMessage"] = "Branch Updated Successfully";
                 }
-                TempData["SuccessMessage"] = "Branch Created Successfully";
+
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -51,9 +54,13 @@ namespace HRM.Controllers
                 return View(branch);
             }
         }
-        public async Task<IActionResult> Update()
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteBranch(int id)
         {
-            return View();
+            var result = await _branchService.DeleteBranch(id);
+            TempData["SuccessMessage"] = "Branch deleted successfully.";
+            return RedirectToAction("Index");
         }
     }
 }

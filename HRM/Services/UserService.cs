@@ -168,8 +168,8 @@ namespace ServiceManagementSystem.Services
                     var sql = "SELECT ISNULL(MAX(SubscriptionId), 0) + 1 FROM Users";
                     int nextSubId = connection.ExecuteScalar<int>(sql);
 
-                    queryString = "insert into Users (name,mobileno,email,status,password,SubscriptionId) values ";
-                    queryString += "( @name,@mobileno,@email,@status,@password,@SubscriptionId);SELECT CAST(scope_identity() AS int)";
+                    queryString = "insert into Users (name,mobileno,email,status,password,SubscriptionId,CreatedAt) values ";
+                    queryString += "( @name,@mobileno,@email,@status,@password,@SubscriptionId,@CreatedAt);SELECT CAST(scope_identity() AS int)";
                     var parameters = new DynamicParameters();
                     parameters.Add("name", user.Name, DbType.String);
                     parameters.Add("mobileno", user.MobileNo, DbType.String);
@@ -177,6 +177,7 @@ namespace ServiceManagementSystem.Services
                     parameters.Add("status", 1, DbType.Boolean);
                     parameters.Add("password", user.Password, DbType.String);
                     parameters.Add("SubscriptionId", nextSubId);
+                    parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                     //var success = await connection.ExecuteAsync(queryString, parameters);
                     int insertedId = await connection.ExecuteScalarAsync<int>(queryString, parameters);
 

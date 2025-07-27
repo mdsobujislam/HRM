@@ -70,9 +70,8 @@
             </div>
             <div class="modal-body">
                 <form asp-action="InserBranch" method="post">
-                    <input type="hidden" id="Id" name="Id">
+                    <input type="hidden" id="Id" name="Id" readonly>
                     <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label for="Name" class="form-label">Branch Name</label>
                             <input type="text" class="form-control" id="Name" name="Name" required>
@@ -87,8 +86,11 @@
                         <button type="submit" class="btn btn-success btn-sm me-2">
                             <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
                         </button>
-                        <button type="reset" class="btn btn-secondary btn-sm">
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
                             <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
                         </button>
                     </div>
                 </form>
@@ -112,7 +114,8 @@
             resetBranch();
         });
 
-        function editBranch(id, name, address) {
+        function edit(id, name, address) {
+            console.log("ID:", id);
             document.getElementById("Id").value = id;
             document.getElementById("Name").value = name;
             document.getElementById("Address").value = address;
