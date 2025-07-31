@@ -1,0 +1,158 @@
+﻿@model IEnumerable<HRM.Models.Designation>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Designation List</h5>
+                <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                        data-bs-target="#addDepartmentModal">
+                    <i class="fas fa-solid fa-plus"></i> Add New
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Name</th>
+                                <th>Branch</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var department in Model)
+                            {
+                                index++;
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@department.DesignationName</td>
+                                    <td>@department.Branch</td>
+                                    <td class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="editBranch('@department.Id', '@department.BranchId','@department.DesignationName')"
+                                                data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <form asp-action="DeleteDepartment" method="post" class="deleteForm">
+                                            <input type="hidden" name="ID" value="@department.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : #f9f9fb;">
+                <h5 class="modal-title" id="addDepartmentModalLabel">Add Designation</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdate" method="post">
+                    <input type="hidden" id="DesignationId" name="Id">
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label for="DesignationName" class="form-label">Designation Name</label>
+                            <input type="text" class="form-control" id="DesignationName" name="DesignationName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="BranchId" class="form-label">Select Branch</label>
+                            <select id="BranchId" name="BranchId" class="form-control" required>
+                                <option value="">-- Select Branch --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-success btn-sm me-2">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function resetBranch(){
+        document.getElementById("DesignationId").value = "";
+            document.getElementById("DesignationName").value = "";
+            document.getElementById("BranchId").value ="";
+            document.getElementById("addDepartmentModalLabel").textContent = "Add Branch";
+            document.getElementById("modalSubmitText").textContent = "Submit";
+        }
+
+        document.getElementById("addNewData").addEventListener("click", function () {
+            resetBranch();
+        });
+
+                function editBranch(id, branchId, designationName) {
+            document.getElementById("DesignationId").value = id;
+            document.getElementById("DesignationName").value = designationName;
+            document.getElementById("BranchId").value = branchId;
+            document.getElementById("addDepartmentModalLabel").textContent = "Edit Branch";
+            document.getElementById("modalSubmitText").textContent = "Update";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var addDepartmentModal = document.getElementById("addDepartmentModal");
+            addDepartmentModal.addEventListener("hidden.bs.modal", function () {
+                resetBranch();
+            });
+        });
+
+        document.querySelectorAll('.deleteForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the branch.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

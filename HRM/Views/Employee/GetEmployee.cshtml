@@ -1,0 +1,104 @@
+﻿@model IEnumerable<HRM.Models.Employee>
+@{
+    ViewData["Title"] = "GetEmployee";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Employee List</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Photo</th>
+                                <th>Emp Name</th>
+                                <th>Father Name</th>
+                                <th>Mother Name</th>
+                                <th>Spouse Name</th>
+                                <th>DOB</th>
+                                <th>Blood Group</th>
+                                <th>Gender</th>
+                                <th>Marital Status</th>
+                                <th>Tin No</th>
+                                <th>National ID</th>
+                                <th>Telephone (Resi)</th>
+                                <th>Mobile No</th>
+                                <th>Mail ID</th>
+                                <th>Permanent Address</th>
+                                <th>Present Address</th>
+                                <th>Posting</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Date of Appointment</th>
+                                <th>Religion</th>
+                                <th>Nationality</th>
+                                <th>Shift</th>
+                                <th>Version</th>
+                                <th>Job Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                index++;
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@item.UploadPhoto</td>
+                                    <td>@item.EmployeeName</td>
+                                    <td>@item.FatherName</td>
+                                    <td>@item.MotherName</td>
+                                    <td>@item.SpouseName</td>
+                                    <td>@item.DOB</td>
+                                    <td>@item.Gender</td>
+                                    <td>@item.BloodGroup</td>
+                                    <td>@item.MaritalStatus</td>
+                                    <td>@item.TinNo</td>
+                                    <td>@item.NationalID</td>
+                                    <td>@item.Telephone</td>
+                                    <td>@item.MobileNo</td>
+                                    <td>@item.MailID</td>
+                                    <td>@item.PermanentAddress</td>
+                                    <td>@item.PresentAddress</td>
+                                    <td>@item.Branch</td>
+                                    <td>@item.Department</td>
+                                    <td>@item.Designation</td>
+                                    <td>@item.DateOfAppointment</td>
+                                    <td>@item.Religion</td>
+                                    <td>@item.Nationality</td>
+                                    <td>@item.Shift</td>
+                                    <td>@item.Version</td>
+                                    <td>@item.JobType</td>
+                                    <td class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="edit('@item.EmpId', '@item.EmployeeName', '@item.FatherName','@item.MotherName','@item.SpouseName','@item.DOB','@item.Gender','@item.BloodGroup','@item.MaritalStatus','@item.TinNo','@item.NationalID','@item.Telephone','@item.MobileNo','@item.MailID','@item.PresentAddress','@item.PermanentAddress','@item.BranchId','@item.DepartmentId','@item.DesignationId','@item.DateOfAppointment','@item.Religion','@item.Nationality','@item.Shift','@item.Version','@item.UploadPhoto','@item.JobType')"
+                                                data-bs-toggle="modal" data-bs-target="#addModal">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <form asp-action="DeleteBranch" method="post" class="delelePost">
+                                            <input type="hidden" name="id" value="@item.EmpId" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
