@@ -22,6 +22,7 @@ builder.Services.AddScoped<IDepartmentService,DepartmentService>();
 builder.Services.AddScoped<IAddUserService,AddUserService>();
 builder.Services.AddScoped<IEmployeeService,EmployeeService>();
 builder.Services.AddScoped<IDesignationService,DesignationService>();
+builder.Services.AddScoped<IDutySlotService,DutySlotService>();
 
 
 

@@ -1,0 +1,223 @@
+﻿@model IEnumerable<HRM.Models.DutySlot>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="CreateOrUpdateDepartment" method="post">
+            <input type="hidden" id="Id" name="Id">
+            <div class="tab-pane mx-auto mt-4" role="tabpanel" id="step1" style="width:60%">
+                @* <input name="Applicant_Id" hidden class="Applicant_Input" /> *@
+                <div class="card shadow mt-1" style="width: 100%;">
+                    <div class="card-body ">
+                        <div class="container">
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-sm-3 col-form-label">Slot Name :</label>
+                                <div class="col-sm-9">
+                                    <input id="SlotName" name="SlotName" class="form-control form-control-sm w-100" type="text" placeholder="Enter the Spouse Name" tabIndex="2" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-sm-3 col-form-label">Duty Starts From :</label>
+                                <div class="col-sm-9">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input id="StartHour" name="StartHour" class="form-select" style="width: 74px;"></input>
+                                        <label class="mb-0">Hr</label>
+                                        <input id="StartMinute" name="StartMinute" class="form-select" style="width: 74px;"></input>
+                                        <label class="mb-0">Min</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-sm-3 col-form-label">Duty Hour :</label>
+                                <div class="col-sm-9">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input id="DutyHour" name="DutyHour" class="form-select" style="width: 74px;"></input>
+                                        <label class="mb-0">Hr</label>
+                                        <input id="DutyMinute" name="DutyMinute" class="form-select" style="width: 74px;"></input>
+                                        <label class="mb-0">Min</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-sm-3 col-form-label">Duty Ends To :</label>
+                                <div class="col-sm-9">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input id="EndHour" name="EndHour" class="form-select" style="width: 74px;"></input>
+                                        <label class="mb-0">Hr</label>
+                                        <input id="EndMinute" name="EndMinute" class="form-select" style="width: 74px;"></input>
+                                        <label class="mb-0">Min</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 align-items-center">
+                                <button type="submit" id="Submit" class="btn btn-primary btn-sm col-md-2">Submit</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </form>
+
+
+
+        <div class="table-responsive">
+            <table class="table  datanew">
+                <thead class="table-primary">
+                    <tr>
+                        <th>SL No.</th>
+                        <th>Name</th>
+                        <th>StartHour</th>
+                        <th>DutyHour</th>
+                        <th>EndHour</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int index = 0;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        index++;
+                        <tr>
+                            <td>@index</td>
+                            <td>@item.SlotName</td>
+                            <td>@item.DisplayTimeRange</td>
+                            <td>@item.DutyDuration</td>
+                            <td>@item.DisplayEndTime</td>
+                            <td class="d-flex align-items-center gap-2">
+                                <button class="btn btn-warning btn-sm" onclick="editBranch( '@item.Id', '@item.SlotName', '@item.StartHour', '@item.StartMinute', '@item.DutyHour', '@item.DutyMinute', '@item.EndHour', '@item.EndMinute' )" data-bs-toggle="modal" data-bs-target="#addDepartmentModal"> <i class="fas fa-edit"></i> Edit </button>
+                                <form asp-action="DeleteDepartment" method="post">
+                                    <input type="hidden" name="ID" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : #f9f9fb;">
+                <h5 class="modal-title" id="addDepartmentModalLabel">Edit Duty Slot</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdateDepartment" method="post">
+                    <input type="hidden" id="Id" name="Id">
+
+                    <div class="card shadow mt-1" style="width: 100%;">
+                        <div class="card-body ">
+                            <div class="container">
+                                <div class="row mb-2 align-items-center">
+                                    <label class="col-sm-3 col-form-label">Slot Name :</label>
+                                    <div class="col-sm-9">
+                                        <input id="SlotName" name="SlotName" class="form-control form-control-sm w-100" type="text" placeholder="Enter the Spouse Name" tabIndex="2" />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2 align-items-center">
+                                    <label class="col-sm-3 col-form-label">Duty Starts From :</label>
+                                    <div class="col-sm-9">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <input id="StartHour" name="StartHour" class="form-select" style="width: 74px;"></input>
+                                            <label class="mb-0">Hr</label>
+                                            <input id="StartMinute" name="StartMinute" class="form-select" style="width: 74px;"></input>
+                                            <label class="mb-0">Min</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2 align-items-center">
+                                    <label class="col-sm-3 col-form-label">Duty Hour :</label>
+                                    <div class="col-sm-9">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <input id="DutyHour" name="DutyHour" class="form-select" style="width: 74px;"></input>
+                                            <label class="mb-0">Hr</label>
+                                            <input id="DutyMinute" name="DutyMinute" class="form-select" style="width: 74px;"></input>
+                                            <label class="mb-0">Min</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2 align-items-center">
+                                    <label class="col-sm-3 col-form-label">Duty Ends To :</label>
+                                    <div class="col-sm-9">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <input id="EndHour" name="EndHour" class="form-select" style="width: 74px;"></input>
+                                            <label class="mb-0">Hr</label>
+                                            <input id="EndMinute" name="EndMinute" class="form-select" style="width: 74px;"></input>
+                                            <label class="mb-0">Min</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2 align-items-center">
+                                    <button type="submit" id="Edit" class="btn btn-primary btn-sm col-md-2">Edit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        function submitData(){
+        document.getElementById("Id").value = "";
+            document.getElementById("SlotName").value = "";
+            document.getElementById("StartHour").value = "";
+            document.getElementById("DutyHour").value = "";
+            document.getElementById("EndHour").value = "";
+            document.getElementById("Submit").textContent = "Submit";
+        }
+
+
+                function editBranch(id, slotName, startHour, startMinute, dutyHour, dutyMinute, endHour, endMinute) {
+            document.getElementById("Id").value = id;
+            document.getElementById("SlotName").value = slotName;
+            document.getElementById("StartHour").value = startHour;
+            document.getElementById("StartMinute").value = startMinute;
+            document.getElementById("DutyHour").value = dutyHour;
+            document.getElementById("DutyMinute").value = dutyMinute;
+            document.getElementById("EndHour").value = endHour;
+            document.getElementById("EndMinute").value = endMinute;
+
+            document.getElementById("addDepartmentModalLabel").textContent = "Edit Duty Slot";
+            // document.getElementById("modalSubmitText").textContent = "Update"; // এটি থাকলে HTML-এ ওই ID যুক্ত করতে হবে
+        }
+
+    </script>
+
+}
+
+
+
