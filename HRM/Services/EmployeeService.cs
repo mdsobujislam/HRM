@@ -144,7 +144,7 @@ namespace HRM.Services
             {
                 throw;
             }
-        }
+         }
 
         public async Task<bool> UpdateEmployee(Employee employee, IFormFile PhotoFile)
         {
