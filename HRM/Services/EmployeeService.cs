@@ -26,23 +26,22 @@ namespace HRM.Services
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
-                    var queryString = "delete from Employees where id=@id";
+                    await connection.OpenAsync();
+
+                    var queryString = "DELETE FROM Employees WHERE EmpId = @id";
                     var parameters = new DynamicParameters();
-                    parameters.Add("id", empId.ToString(), DbType.String);
-                    var success = await connection.ExecuteAsync(queryString, parameters);
-                    if (success > 0)
-                    {
-                        return true;
-                    }
-                    return false;
+                    parameters.Add("id", empId, DbType.Int32);
+
+                    var affectedRows = await connection.ExecuteAsync(queryString, parameters);
+                    return affectedRows > 0;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
+
 
         public async Task<List<Employee>> GetAllEmployee()
         {

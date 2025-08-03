@@ -56,12 +56,14 @@
                                     <td>
                                         @{
                                             var photoPath = string.IsNullOrEmpty(item.UploadPhoto)
-                                            ? Url.Content("~/uploads/images/defaultPic.jpg")
-                                            : Url.Content("~/uploads/" + item.UploadPhoto);
+                ? Url.Content("~/profile/defaultPic.jpg")
+                : Url.Content("~/profile/" + item.UploadPhoto);
+
                                         }
                                         <img src="@photoPath"
                                              alt="Employee Photo"
                                              style="height: 50px; width: 50px; object-fit: cover; border-radius: 4px;" />
+
                                     </td>
                                     <td>@item.EmployeeName</td>
                                     <td>@item.FatherName</td>
