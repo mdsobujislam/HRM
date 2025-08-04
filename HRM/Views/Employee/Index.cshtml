@@ -216,16 +216,11 @@
                                 </div>
                             </div>
                             <div class="panel-body d-flex justify-content-center align-items-center">
-                                <div class="container">
-                                    <div class="row mt-4">
-                                        <div class="col">
-                                            <span class="pull-right">
-                                                <button class="btn btn-primary nextBtn btn-lg position-absolute start-50 pull-right" type="button">Next</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button class="btn btn-primary nextBtn btn-lg" type="button">
+                                    Next
+                                </button>
                             </div>
+
                         </div>
                         @* end 1st Step *@
 
@@ -328,17 +323,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="panel-body d-flex justify-content-center align-items-center">
-                                    <div class="container">
-                                        <div class="row mt-4">
-                                            <div class="col">
-                                                <span class="pull-right">
-                                                    <button class="btn btn-primary nextBtn btn-lg position-absolute start-50 pull-right" type="button">Next</button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="panel-body d-flex justify-content-center align-items-center mt-4">
+                                    <button class="btn btn-primary nextBtn btn-lg" type="button">
+                                        Next
+                                    </button>
                                 </div>
+
                             </div>
                         </div>
                         @* end 2st Step *@
@@ -358,7 +348,7 @@
                                                                     <label class="col-sm-4 col-form-label">Branch of Posting :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <select asp-for="BranchId" class="form-select select2" asp-items="ViewBag.BranchList" required>
+                                                                            <select asp-for="BranchId" class="form-control form-control-sm" asp-items="ViewBag.BranchList" required>
                                                                                 <option value="">-- Select Branch --</option>
                                                                             </select>
                                                                         </div>
@@ -371,7 +361,7 @@
                                                                     <label class="col-sm-4 col-form-label">Department :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <select asp-for="DepartmentId" class="form-select select2" asp-items="ViewBag.DepartmentList" required>
+                                                                            <select asp-for="DepartmentId" class="form-control form-control-sm " asp-items="ViewBag.DepartmentList" required>
                                                                                 <option value="">-- Select Department --</option>
                                                                             </select>
                                                                         </div>
@@ -387,7 +377,7 @@
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
                                                                             <div class="form-group">
-                                                                                <select asp-for="DesignationId" class="form-select select2" asp-items="ViewBag.DesignationList" required>
+                                                                                <select asp-for="DesignationId" class="form-control form-control-sm" asp-items="ViewBag.DesignationList" required>
                                                                                     <option value="">-- Select Branch --</option>
                                                                                 </select>
                                                                             </div>
@@ -504,14 +494,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-12 d-flex justify-content-between">
-                                    <button type="submit" id="QuotationSubmit" class="btn btn-primary btn-sm col-md-2">Submit</button>
-
-                                    <button type="submit" id="EditSubmit" class="btn btn-warning btn-sm col-md-2">Edit</button>
-
-                                </div>
+                            <div class="panel-body d-flex justify-content-center align-items-center mt-4">
+                                <button type="submit" id="QuotationSubmit" class="btn btn-primary btn-sm col-md-2">Submit</button>
                             </div>
+
+                           
                         </div>
 
                         @* end 3rd Step *@

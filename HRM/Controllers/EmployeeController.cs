@@ -72,11 +72,23 @@ namespace HRM.Controllers
                 }
                 TempData["SuccessMessage"] = "Employee Updated Successfully";
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("GetEmployee");
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmployee(Employee employee, IFormFile PhotoFile)
+        {
+            var result = await _employeeService.UpdateEmployee(employee, PhotoFile);
+            if (result)
+                TempData["Message"] = "Employee updated successfully!";
+            else
+                TempData["Message"] = "Update failed!";
+
+            return RedirectToAction("GetEmployee");
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> DeleteBranch(int id)
+        public async Task<IActionResult> DeleteEmployee(int id)
         {
             var result = await _employeeService.DeleteEmployee(id);
 
@@ -89,7 +101,7 @@ namespace HRM.Controllers
                 TempData["ErrorMessage"] = "Failed to delete employee.";
             }
 
-            return RedirectToAction("GetEmployee"); // or your list view
+            return RedirectToAction("GetEmployee"); 
         }
 
         //[HttpGet]
