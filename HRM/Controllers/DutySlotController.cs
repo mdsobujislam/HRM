@@ -1,18 +1,44 @@
 ﻿using HRM.Interfaces;
 using HRM.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HRM.Controllers
 {
     public class DutySlotController : Controller
     {
         private readonly IDutySlotService _service;
-        public DutySlotController(IDutySlotService service)
+        private readonly IBranchService _branchService;
+        private readonly IDesignationService _designationService;
+        private readonly IDepartmentService _departmentService;
+        public DutySlotController(IDutySlotService service, IBranchService branchService, IDesignationService designationService, IDepartmentService departmentService)
         {
             _service = service;
+            _branchService = branchService;
+            _designationService = designationService;
+            _departmentService = departmentService;
         }
         public async Task<IActionResult> Index()
         {
+            var branchList = await _branchService.GetAllBranch();
+            ViewBag.BranchList = branchList.Select(b => new SelectListItem
+            {
+                Value = b.Id.ToString(),
+                Text = b.Name
+            }).ToList();
+
+            var designationList = await _designationService.GetAllDesignation();
+            ViewBag.DesignationList = designationList.Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.DesignationName
+            }).ToList();
+            var departmentList = await _departmentService.GetAllDepartment();
+            ViewBag.DepartmentList = departmentList.Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.DepartmentName
+            }).ToList();
             var dutySlots = await _service.GetAllDutySlot();
             return View(dutySlots);
         }

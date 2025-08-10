@@ -23,6 +23,7 @@ builder.Services.AddScoped<IAddUserService,AddUserService>();
 builder.Services.AddScoped<IEmployeeService,EmployeeService>();
 builder.Services.AddScoped<IDesignationService,DesignationService>();
 builder.Services.AddScoped<IDutySlotService,DutySlotService>();
+builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
 
 
 

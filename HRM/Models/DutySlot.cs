@@ -40,6 +40,13 @@ namespace HRM.Models
         [Range(0, 59, ErrorMessage = "Minute must be between 0 and 59")]
         public int EndMinute { get; set; }
 
+        public string Branch { get; set; }
+        public int BranchId { get; set; }
+        public string Designation { get; set; }
+        public int DesignationId { get; set; }
+        public string Department { get; set; }
+        public int DepartmentId { get; set; }
+
 
         // ✅ Computed properties to format times
         [NotMapped]

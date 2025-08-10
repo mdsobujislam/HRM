@@ -53,7 +53,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"SELECT Id AS [Slot ID], SlotName, StartHour, StartMinute, DutyHour, DutyMinute, EndHour, EndMinute, RIGHT('0' + CAST(StartHour AS VARCHAR), 2) + ':' + RIGHT('0' + CAST(StartMinute AS VARCHAR), 2) + ' Hr' AS DisplayTimeRange, RIGHT('0' + CAST(DutyHour AS VARCHAR), 2) + ' Hrs ' + RIGHT('0' + CAST(DutyMinute AS VARCHAR), 2) + ' Mins' AS DutyDuration, RIGHT('0' + CAST(EndHour AS VARCHAR), 2) + ':' + RIGHT('0' + CAST(EndMinute AS VARCHAR), 2) + ' Hr' AS DisplayEndTime FROM DutySlots where SubscriptionId=@subscriptionId ORDER BY Id";
+                    var query = @"SELECT t1.Id AS [Slot ID], t1.SlotName, t1.StartHour, t1.StartMinute, t1.DutyHour, t1.DutyMinute, t1.EndHour, t1.EndMinute, RIGHT('0' + CAST(t1.StartHour AS VARCHAR), 2) + ':' + RIGHT('0' + CAST(t1.StartMinute AS VARCHAR), 2) + ' Hr' AS DisplayTimeRange, RIGHT('0' + CAST(t1.DutyHour AS VARCHAR), 2) + ' Hrs ' + RIGHT('0' + CAST(t1.DutyMinute AS VARCHAR), 2) + ' Mins' AS DutyDuration, RIGHT('0' + CAST(t1.EndHour AS VARCHAR), 2) + ':' + RIGHT('0' + CAST(t1.EndMinute AS VARCHAR), 2) + ' Hr' AS DisplayEndTime, case when t1.BranchId is null then 'null' else (select Name from Branch t2 where t2.Id=t1.BranchId) end as Branch, case when t1.DesignationId is null then 'null' else (select DesignationName from Designation t3 where t3.Id=t1.DesignationId) end as Designation,case when t1.DepartmentId is null then 'null' else (select DepartmentName from Department t4 where t4.Id=t1.DepartmentId) end as Department FROM DutySlots t1 where t1.SubscriptionId=@subscriptionId ORDER BY t1.Id";
 
                     var result = await connection.QueryAsync<DutySlot>(query, new { subscriptionId });
                     return result.ToList();
@@ -78,22 +78,22 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "select SlotName from DutySlots where lower(SlotName)='{0}' ";
-                    var query = string.Format(queryString, dutySlot.SlotName.ToLower());
-                    var roleObj = await connection.QueryFirstOrDefaultAsync<string>(query);
-                    if (roleObj != null && roleObj.Length > 0)
-                        return false;
-                    queryString = "insert into DutySlots (SlotName, StartHour, StartMinute, DutyHour, DutyMinute, EndHour, EndMinute,BranchId,SubscriptionId,Status,CreatedAt) values ";
+                    //var queryString = "select SlotName from DutySlots where lower(SlotName)='{0}' ";
+                    //var query = string.Format(queryString, dutySlot.SlotName.ToLower());
+                    //var roleObj = await connection.QueryFirstOrDefaultAsync<string>(query);
+                    //if (roleObj != null && roleObj.Length > 0)
+                    //    return false;
+                    var queryString = "insert into DutySlots (SlotName,StartHour, StartMinute, DutyHour, DutyMinute, EndHour, EndMinute,BranchId,SubscriptionId,Status,CreatedAt) values ";
                     queryString += "( @SlotName, @StartHour, @StartMinute, @DutyHour, @DutyMinute, @EndHour, @EndMinute,@BranchId,@SubscriptionId,@Status,@CreatedAt)";
                     var parameters = new DynamicParameters();
                     parameters.Add("SlotName", dutySlot.SlotName, DbType.String);
+                    parameters.Add("BranchId", dutySlot.BranchId, DbType.Int64);
                     parameters.Add("StartHour", dutySlot.StartHour, DbType.Int64);
                     parameters.Add("StartMinute", dutySlot.StartMinute, DbType.Int64);
                     parameters.Add("DutyHour", dutySlot.DutyHour, DbType.Int64);
                     parameters.Add("DutyMinute", dutySlot.DutyMinute, DbType.Int64);
                     parameters.Add("EndHour", dutySlot.EndHour, DbType.Int64);
                     parameters.Add("EndMinute", dutySlot.EndMinute, DbType.Int64);
-                    parameters.Add("BranchId", branchId);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("status", 1, DbType.Boolean);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -133,7 +133,7 @@ namespace HRM.Services
                     parameters.Add("DutyMinute", dutySlot.DutyMinute, DbType.Int64);
                     parameters.Add("EndHour", dutySlot.EndHour, DbType.Int64);
                     parameters.Add("EndMinute", dutySlot.EndMinute, DbType.Int64);
-                    parameters.Add("BranchId", branchId);
+                    parameters.Add("BranchId", dutySlot.BranchId,DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                     parameters.Add("id", dutySlot.Id.ToString(), DbType.Int64);
