@@ -1,14 +1,15 @@
-﻿@model IEnumerable<HRM.Models.LeaveType>
+﻿@model IEnumerable<HRM.Models.LeaveAllotment>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="col-md-12">
     <div class="card shadow">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Leave List</h5>
             <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
-                    data-bs-target="#addDepartmentModal">
+                    data-bs-target="#addModal">
                 <i class="fas fa-solid fa-plus"></i> Add New
             </button>
         </div>
@@ -18,8 +19,11 @@
                     <thead class="table-primary">
                         <tr>
                             <th>SL No.</th>
-                            <th>Name</th>
-                            <th>Documents</th>
+                            <th>Leave Type</th>
+                            <th>No of Leave</th>
+                            <th>Leave Calculated With Respect To</th>
+                            <th>Leave Carry Forwarded To Next Session</th>
+                            <th>Applicable after No of Year</th>
                             <th>Branch</th>
                             <th>Actions</th>
                         </tr>
@@ -33,12 +37,15 @@
                             index++;
                             <tr>
                                 <td>@index</td>
-                                <td>@item.TypeName</td>
-                                <td>@item.Documents</td>
+                                <td>@item.LeaveType</td>
+                                <td>@item.NoOfLeaves</td>
+                                <td>@item.YearOrMonth</td>
+                                <td>@item.LeaveCarry</td>
+                                <td>@item.NoOfYears</td>
                                 <td>@item.Branch</td>
                                 <td class="d-flex align-items-center gap-2">
                                     <button class="btn btn-warning btn-sm"
-                                            onclick="editBranch('@item.Id', '@item.BranchId','@item.TypeName','@item.Documents')"
+                                            onclick="editBranch('@item.Id', '@item.BranchId')"
                                             data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
@@ -61,28 +68,16 @@
 </div>
 
 
-<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-dark" style="background : #f9f9fb;">
-                <h5 class="modal-title" id="addDepartmentModalLabel">Add LeaveType</h5>
+                <h5 class="modal-title" id="addModalLabel">Add Leave AllotMent</h5>
             </div>
             <div class="modal-body">
                 <form asp-action="CreateOrUpdate" method="post">
-                    <input type="hidden" id="Id" name="Id">
+                    <input type="hidden" id="Id" name="Id" readonly>
                     <div class="row">
-
-                        <div class="col-md-6 mb-3">
-                            <label for="TypeName" class="form-label">Type Name</label>
-                            <input type="text" class="form-control" id="TypeName" name="TypeName" required placeholder="Enter Type Name">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="Documents" class="form-label">Documents</label>
-                            <input class="form-control" id="Documents" name="Documents" rows="4" placeholder="Enter documents details..."></input>
-                        </div>
-                    </div>
-                    <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label for="BranchId" class="form-label">Select Branch</label>
                             <select id="BranchId" name="BranchId" class="form-control" required>
@@ -92,6 +87,46 @@
                                     <option value="@item.Value">@item.Text</option>
                                 }
                             </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="LeaveTypeId" class="form-label">Select Leave Type</label>
+                            <select id="LeaveTypeId" name="LeaveTypeId" class="form-control" required>
+                                <option value="">-- Select Branch --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.leaveTypeSelectList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="NoOfLeaves" class="form-label">No Of Leaves</label>
+                            <input type="text" class="form-control" id="NoOfLeaves" name="NoOfLeaves">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="YearOrMonth" class="form-label">Year/Month</label>
+                            <select class="form-control" id="YearOrMonth" name="YearOrMonth" required>
+                                <option value="">-- Select --</option>
+                                <option value="Year">Year</option>
+                                <option value="Month">Month</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="LeaveCarry" class="form-label">eave Carry Forwarded To Next Session</label>
+                            <select class="form-control" id="LeaveCarry" name="LeaveCarry" required>
+                                <option value="">-- Select --</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="NoOfYears" class="form-label">Applicable after No of Year</label>
+                            <input type="text" class="form-control" id="NoOfYears" name="NoOfYears">
                         </div>
                     </div>
                     <div class="d-flex">
@@ -114,12 +149,15 @@
 
 @section Scripts {
     <script>
-        function resetBranch(){
-        document.getElementById("Id").value = "";
-            document.getElementById("TypeName").value = "";
-            document.getElementById("Documents").value = "";
-            document.getElementById("BranchId").value ="";
-            document.getElementById("addDepartmentModalLabel").textContent = "LeaveType";
+        function resetBranch() {
+            document.getElementById("Id").value = "";
+            document.getElementById("BranchId").value = "";
+            document.getElementById("LeaveTypeId").value = "";
+            document.getElementById("NoOfLeaves").value = "";
+            document.getElementById("YearOrMonth").value = "";
+            document.getElementById("LeaveCarry").value = "";
+            document.getElementById("NoOfYears").value = "";
+            document.getElementById("addModalLabel").textContent = "Add Branch";
             document.getElementById("modalSubmitText").textContent = "Submit";
         }
 
@@ -127,18 +165,18 @@
             resetBranch();
         });
 
-                function editBranch(id, branchId, typeName,documents) {
+        function edit(id, name, address) {
+            console.log("ID:", id);
             document.getElementById("Id").value = id;
-            document.getElementById("TypeName").value = typeName;
-            document.getElementById("Documents").value = documents;
-            document.getElementById("BranchId").value = branchId;
-            document.getElementById("addDepartmentModalLabel").textContent = "Edit Branch";
+            document.getElementById("Name").value = name;
+            document.getElementById("Address").value = address;
+            document.getElementById("addModalLabel").textContent = "Edit Branch";
             document.getElementById("modalSubmitText").textContent = "Update";
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            var addDepartmentModal = document.getElementById("addDepartmentModal");
-            addDepartmentModal.addEventListener("hidden.bs.modal", function () {
+            var addBranchModal = document.getElementById("addModal");
+            addBranchModal.addEventListener("hidden.bs.modal", function () {
                 resetBranch();
             });
         });
@@ -161,9 +199,7 @@
                 });
             });
         });
+
     </script>
 }
-
-
-
 

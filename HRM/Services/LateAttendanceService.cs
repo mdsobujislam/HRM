@@ -1,31 +1,30 @@
 ﻿using Dapper;
 using HRM.Interfaces;
 using HRM.Models;
-using Microsoft.CodeAnalysis.Operations;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace HRM.Services
 {
-    public class LeaveTypeService : ILeaveTypeService
+    public class LateAttendanceService : ILateAttendanceService
     {
         private readonly string _connectionString;
         private readonly BaseService _baseService;
 
-        public LeaveTypeService(IConfiguration configuration, BaseService baseService)
+        public LateAttendanceService(IConfiguration configuration, BaseService baseService)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new ArgumentNullException(nameof(_connectionString));
             _baseService = baseService;
         }
-        public async Task<bool> DeleteTeaveType(int id)
+        public async Task<bool> DeleteLateAttendance(int id)
         {
             try
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var queryString = "delete from LeaveType where id=@id";
+                    var queryString = "delete from LateAttendance where id=@id";
                     var parameters = new DynamicParameters();
                     parameters.Add("id", id.ToString(), DbType.String);
                     var success = await connection.ExecuteAsync(queryString, parameters);
@@ -42,7 +41,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<List<LeaveType>> GetAllTeaveType()
+        public async Task<List<LateAttendance>> GetAllLateAttendance()
         {
             try
             {
@@ -53,9 +52,9 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"Select t1.Id, t1.TypeName,t1.Documents,t2.Name as Branch,t2.Id as BranchId from LeaveType t1 JOIN Branch t2 on t1.BranchId=t2.Id WHERE t1.SubscriptionId=@subscriptionId ";
+                    var query = @"Select t1.Id,t1.LateMin as LateMin,t1.NoOfLate as NoOfLate,t1.AdjustmentType as AdjustmentType,t1.Basic as Basic,t2.TypeName as TypeName,t3.Name as Branch from LateAttendance t1 JOIN LeaveType t2 on t1.LeaveTypeId=t2.Id Join Branch t3 on t1.BranchId=t3.Id WHERE t1.SubscriptionId=@subscriptionId ";
 
-                    var result = await connection.QueryAsync<LeaveType>(query, new { subscriptionId });
+                    var result = await connection.QueryAsync<LateAttendance>(query, new { subscriptionId });
                     return result.ToList();
                 }
             }
@@ -65,7 +64,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> InsertTeaveType(LeaveType teaveType)
+        public async Task<bool> InsertLateAttendance(LateAttendance lateAttendance)
         {
             try
             {
@@ -78,12 +77,15 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into LeaveType (TypeName,Documents,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @TypeName,@Documents,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
+                    var queryString = "insert into LateAttendance (LateMin,NoOfLate,AdjustmentType,Basic,LeaveTypeId,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
+                    queryString += "( @LateMin,@NoOfLate,@AdjustmentType,@Basic,@LeaveTypeId,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
                     var parameters = new DynamicParameters();
-                    parameters.Add("TypeName", teaveType.TypeName, DbType.String);
-                    parameters.Add("Documents", teaveType.Documents, DbType.String);
-                    parameters.Add("BranchId", teaveType.BranchId, DbType.Int64);
+                    parameters.Add("LateMin", lateAttendance.LateMin, DbType.Int64);
+                    parameters.Add("NoOfLate", lateAttendance.NoOfLate, DbType.Int64);
+                    parameters.Add("AdjustmentType", lateAttendance.AdjustmentType, DbType.String);
+                    parameters.Add("Basic", lateAttendance.Basic, DbType.String);
+                    parameters.Add("LeaveTypeId", lateAttendance.LeaveTypeId, DbType.Int64);
+                    parameters.Add("BranchId", lateAttendance.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -101,7 +103,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> UpdateTeaveType(LeaveType teaveType)
+        public async Task<bool> UpdateLateAttendance(LateAttendance lateAttendance)
         {
             try
             {
@@ -114,11 +116,14 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update Designation set TypeName=@TypeName,Documents=@Documents,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='" + teaveType.Id + "' ";
+                    var queryString = "Update LateAttendance set LateMin=@LateMin,NoOfLate=@NoOfLate,AdjustmentType=@AdjustmentType,Basic=@Basic,LeaveTypeId=@LeaveTypeId,BranchId,SubscriptionId,CompanyId,UpdatedAt=@UpdatedAt where Id='" + lateAttendance.Id + "' ";
                     var parameters = new DynamicParameters();
-                    parameters.Add("TypeName", teaveType.TypeName, DbType.String);
-                    parameters.Add("Documents", teaveType.Documents, DbType.String);
-                    parameters.Add("BranchId", teaveType.BranchId, DbType.Int64);
+                    parameters.Add("LateMin", lateAttendance.LateMin, DbType.Int64);
+                    parameters.Add("NoOfLate", lateAttendance.NoOfLate, DbType.Int64);
+                    parameters.Add("AdjustmentType", lateAttendance.AdjustmentType, DbType.String);
+                    parameters.Add("Basic", lateAttendance.Basic, DbType.String);
+                    parameters.Add("LeaveTypeId", lateAttendance.LeaveTypeId, DbType.Int64);
+                    parameters.Add("BranchId", lateAttendance.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);

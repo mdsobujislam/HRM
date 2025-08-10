@@ -1,0 +1,237 @@
+﻿@model IEnumerable<HRM.Models.LateAttendance>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-12">
+    <div class="card shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Leave List</h5>
+            <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                    data-bs-target="#addModal">
+                <i class="fas fa-solid fa-plus"></i> Add New
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table  datanew">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Time Delay/Early (Minutes)</th>
+                            <th>Punishable No of Delay/Early</th>
+                            <th>Delay/Early Adjustment Method</th>
+                            <th>Adjustable Leave Type	</th>
+                            <th>Adjusted with Basic Salary For 1 Day?</th>
+                            <th>Branch</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            index++;
+                            <tr>
+                                <td>@index</td>
+                                <td>@item.LateMin</td>
+                                <td>@item.NoOfLate</td>
+                                <td>@item.AdjustmentType</td>
+                                <td>@item.LeaveType</td>
+                                <td>@item.Basic</td>
+                                <td>@item.Branch</td>
+                                <td class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-warning btn-sm"
+                                            onclick="editBranch('@item.Id', '@item.BranchId')"
+                                            data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <form asp-action="DeleteDepartment" method="post" class="deleteForm">
+                                        <input type="hidden" name="ID" value="@item.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : #f9f9fb;">
+                <h5 class="modal-title" id="addModalLabel">Add Late/Early Login/Logout Punishment</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdate" method="post">
+                    <input type="hidden" id="Id" name="Id" readonly>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="BranchId" class="form-label">Select Branch</label>
+                            <select id="BranchId" name="BranchId" class="form-control" required>
+                                <option value="">-- Select Branch --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="LateMin" class="form-label">Enter The Time which will be considered as Late/Early Login/Logout (Minutes) :</label>
+                            <input type="text" class="form-control" id="LateMin" name="LateMin">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="NoOfLate" class="form-label">No of Late which will be Adjustable for Punishment :</label>
+                            <input type="text" class="form-control" id="NoOfLate" name="NoOfLate">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="AdjustmentType" class="form-label">Late/Early Login/Logout Adjustment Method :</label>
+                            <select class="form-control" id="AdjustmentType" name="AdjustmentType" required>
+                                <option value="">-- Select --</option>
+                                <option value="Leave">Leave</option>
+                                <option value="BasicSalary">Basic Salary</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3" id="leaveTypeDiv" style="display:none;">
+                            <label for="LeaveTypeId" class="form-label">Select Leave Type</label>
+                            <select id="LeaveTypeId" name="LeaveTypeId" class="form-control" required>
+                                <option value="">-- Select Leave Type --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.leaveTypeSelectList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3" id="basicSalaryDiv" style="display:none;">
+                            <label class="form-label d-block">Late Adjusted With Basic Salary For 1 Day :</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="Basic" name="Basic" value="Yes">
+                                <label class="form-check-label" for="Basic">Yes</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-success btn-sm me-2">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function resetBranch() {
+            document.getElementById("Id").value = "";
+            document.getElementById("BranchId").value = "";
+            document.getElementById("LateMin").value = "";
+            document.getElementById("NoOfLate").value = "";
+            document.getElementById("AdjustmentType").value = "";
+            document.getElementById("LeaveTypeId").value = "";
+            document.getElementById("Basic").value = "";
+            document.getElementById("addModalLabel").textContent = "Add Branch";
+            document.getElementById("modalSubmitText").textContent = "Submit";
+        }
+
+        document.getElementById("addNewData").addEventListener("click", function () {
+            resetBranch();
+        });
+
+        function edit(id, name, address) {
+            console.log("ID:", id);
+            document.getElementById("Id").value = id;
+            document.getElementById("Name").value = name;
+            document.getElementById("Address").value = address;
+            document.getElementById("addModalLabel").textContent = "Edit Branch";
+            document.getElementById("modalSubmitText").textContent = "Update";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var addBranchModal = document.getElementById("addModal");
+            addBranchModal.addEventListener("hidden.bs.modal", function () {
+                resetBranch();
+            });
+        });
+
+        document.querySelectorAll('.deleteForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the branch.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+
+
+
+             document.getElementById('AdjustmentType').addEventListener('change', function() {
+            var leaveDiv = document.getElementById('leaveTypeDiv');
+            var basicDiv = document.getElementById('basicSalaryDiv');
+
+            if(this.value === 'Leave') {
+                leaveDiv.style.display = 'block';
+                basicDiv.style.display = 'none';
+                // Make LeaveTypeId required, remove required from Basic checkbox
+                document.getElementById('LeaveTypeId').required = true;
+                document.getElementById('Basic').required = false;
+            } else if(this.value === 'BasicSalary') {
+                leaveDiv.style.display = 'none';
+                basicDiv.style.display = 'block';
+                // Make Basic checkbox required, remove required from LeaveTypeId
+                document.getElementById('Basic').required = true;
+                document.getElementById('LeaveTypeId').required = false;
+            } else {
+                leaveDiv.style.display = 'none';
+                basicDiv.style.display = 'none';
+                document.getElementById('LeaveTypeId').required = false;
+                document.getElementById('Basic').required = false;
+            }
+        });
+
+
+    </script>
+}
+
+
