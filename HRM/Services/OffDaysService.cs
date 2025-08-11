@@ -6,25 +6,25 @@ using System.Data;
 
 namespace HRM.Services
 {
-    public class LateAttendanceService : ILateAttendanceService
+    public class OffDaysService : IOffDaysService
     {
         private readonly string _connectionString;
         private readonly BaseService _baseService;
 
-        public LateAttendanceService(IConfiguration configuration, BaseService baseService)
+        public OffDaysService(IConfiguration configuration, BaseService baseService)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new ArgumentNullException(nameof(_connectionString));
             _baseService = baseService;
         }
-        public async Task<bool> DeleteLateAttendance(int id)
+        public async Task<bool> DeleteOffDays(int id)
         {
             try
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var queryString = "delete from LateAttendance where id=@id";
+                    var queryString = "delete from OffDays where id=@id";
                     var parameters = new DynamicParameters();
                     parameters.Add("id", id.ToString(), DbType.String);
                     var success = await connection.ExecuteAsync(queryString, parameters);
@@ -41,7 +41,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<List<LateAttendance>> GetAllLateAttendance()
+        public async Task<List<OffDays>> GetAllOffDays()
         {
             try
             {
@@ -52,9 +52,9 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"Select t1.Id,t1.LateMin as LateMin,t1.NoOfLate as NoOfLate,t1.AdjustmentType as AdjustmentType,t1.Basic as Basic,(case when t1.Basic<>'0' then (select l.TypeName from LeaveType l where l.Id=t1.LeaveTypeId) else '-' end) as TypeName,t3.Name as Branch from LateAttendance t1  Join Branch t3 on t1.BranchId=t3.Id WHERE t1.SubscriptionId=@subscriptionId";
+                    var query = @"Select t1.OffDay,(select t2.Name from Branch t2 where t1.BranchId=t2.Id ) as Branch,(Select t3.DesignationName from Designation t3 where t1.DesignationId=t3.Id) as Designation,(select t4.DepartmentName from Department t4 where t1.DepartmentId=t4.Id) as Department from OffDays t1 where t1.SubscriptionId=@subscriptionId ";
 
-                    var result = await connection.QueryAsync<LateAttendance>(query, new { subscriptionId });
+                    var result = await connection.QueryAsync<OffDays>(query, new { subscriptionId });
                     return result.ToList();
                 }
             }
@@ -64,7 +64,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> InsertLateAttendance(LateAttendance lateAttendance)
+        public async Task<bool> InsertOffDays(OffDays offDays)
         {
             try
             {
@@ -77,15 +77,13 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into LateAttendance (LateMin,NoOfLate,AdjustmentType,Basic,LeaveTypeId,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @LateMin,@NoOfLate,@AdjustmentType,@Basic,@LeaveTypeId,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
+                    var queryString = "insert into OffDays (OffDay,DesignationId,DepartmentId,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
+                    queryString += "( @OffDay,@DesignationId,@DepartmentId,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
                     var parameters = new DynamicParameters();
-                    parameters.Add("LateMin", lateAttendance.LateMin, DbType.Int64);
-                    parameters.Add("NoOfLate", lateAttendance.NoOfLate, DbType.Int64);
-                    parameters.Add("AdjustmentType", lateAttendance.AdjustmentType, DbType.String);
-                    parameters.Add("Basic", lateAttendance.Basic, DbType.String);
-                    parameters.Add("LeaveTypeId", lateAttendance.LeaveTypeId, DbType.Int64);
-                    parameters.Add("BranchId", lateAttendance.BranchId, DbType.Int64);
+                    parameters.Add("OffDay", offDays.OffDay, DbType.String);
+                    parameters.Add("DesignationId", offDays.DesignationId, DbType.Int64);
+                    parameters.Add("DepartmentId", offDays.DesignationId, DbType.Int64);
+                    parameters.Add("BranchId", offDays.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -103,7 +101,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> UpdateLateAttendance(LateAttendance lateAttendance)
+        public async Task<bool> UpdateOffDays(OffDays offDays)
         {
             try
             {
@@ -116,14 +114,12 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update LateAttendance set LateMin=@LateMin,NoOfLate=@NoOfLate,AdjustmentType=@AdjustmentType,Basic=@Basic,LeaveTypeId=@LeaveTypeId,BranchId,SubscriptionId,CompanyId,UpdatedAt=@UpdatedAt where Id='" + lateAttendance.Id + "' ";
+                    var queryString = "Update OffDays set OffDay=@OffDay,DesignationId=@DesignationId,DepartmentId=@DepartmentId,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='" + offDays.Id + "' ";
                     var parameters = new DynamicParameters();
-                    parameters.Add("LateMin", lateAttendance.LateMin, DbType.Int64);
-                    parameters.Add("NoOfLate", lateAttendance.NoOfLate, DbType.Int64);
-                    parameters.Add("AdjustmentType", lateAttendance.AdjustmentType, DbType.String);
-                    parameters.Add("Basic", lateAttendance.Basic, DbType.String);
-                    parameters.Add("LeaveTypeId", lateAttendance.LeaveTypeId, DbType.Int64);
-                    parameters.Add("BranchId", lateAttendance.BranchId, DbType.Int64);
+                    parameters.Add("OffDay", offDays.OffDay, DbType.String);
+                    parameters.Add("DesignationId", offDays.DesignationId, DbType.String);
+                    parameters.Add("DepartmentId", offDays.DepartmentId, DbType.String);
+                    parameters.Add("BranchId", offDays.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);

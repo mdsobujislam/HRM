@@ -1,4 +1,6 @@
 ﻿using HRM.Interfaces;
+using HRM.Models;
+using HRM.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
@@ -32,6 +34,40 @@ namespace HRM.Controllers
             }).ToList();
             var lateAttendances = await _lateAttendanceService.GetAllLateAttendance();
             return View(lateAttendances);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateOrUpdate(LateAttendance lateAttendance)
+        {
+            if (lateAttendance.Id == 0)
+            {
+                bool isCreated = await _lateAttendanceService.InsertLateAttendance(lateAttendance);
+                if (!isCreated)
+                {
+                    TempData["ErrorMessage"] = "A lateAttendance already exists for this SubscriptionId.";
+                    return RedirectToAction("INdex");
+                }
+                TempData["SuccessMessage"] = "lateAttendance Created Successfully";
+            }
+            else
+            {
+                bool isUpdated = await _lateAttendanceService.InsertLateAttendance(lateAttendance);
+                if (!isUpdated)
+                {
+                    TempData["ErrorMessage"] = "lateAttendance name already exists or update failed";
+                    return RedirectToAction("Index");
+                }
+                TempData["SuccessMessage"] = "lateAttendance Updated Successfully";
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDepartment(int id)
+        {
+            var result = await _lateAttendanceService.DeleteLateAttendance(id);
+
+            TempData["SuccessMessage"] = "Deleted successfully.";
+            return RedirectToAction("Index");
         }
     }
 }
