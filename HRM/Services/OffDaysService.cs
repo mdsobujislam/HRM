@@ -52,7 +52,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"Select t1.OffDay,(select t2.Name from Branch t2 where t1.BranchId=t2.Id ) as Branch,(Select t3.DesignationName from Designation t3 where t1.DesignationId=t3.Id) as Designation,(select t4.DepartmentName from Department t4 where t1.DepartmentId=t4.Id) as Department from OffDays t1 where t1.SubscriptionId=@subscriptionId ";
+                    var query = @"Select t1.Id,t1.OffDay,(select t2.Name from Branch t2 where t1.BranchId=t2.Id ) as Branch,(Select t3.DesignationName from Designation t3 where t1.DesignationId=t3.Id) as Designation,(select t4.DepartmentName from Department t4 where t1.DepartmentId=t4.Id) as Department from OffDays t1 where t1.SubscriptionId=@subscriptionId ";
 
                     var result = await connection.QueryAsync<OffDays>(query, new { subscriptionId });
                     return result.ToList();
@@ -82,7 +82,7 @@ namespace HRM.Services
                     var parameters = new DynamicParameters();
                     parameters.Add("OffDay", offDays.OffDay, DbType.String);
                     parameters.Add("DesignationId", offDays.DesignationId, DbType.Int64);
-                    parameters.Add("DepartmentId", offDays.DesignationId, DbType.Int64);
+                    parameters.Add("DepartmentId", offDays.DepartmentId, DbType.Int64);
                     parameters.Add("BranchId", offDays.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);

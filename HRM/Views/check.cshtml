@@ -1,0 +1,104 @@
+﻿
+
+
+
+
+@{
+    var year = ViewBag.Year;
+    var holidayLookup = ViewBag.HolidayLookup as Dictionary<string, string>;
+    string[] monthNames = new[]
+    {
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    };
+}
+
+<style>
+    .holiday-table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+
+        .holiday-table th,
+        .holiday-table td {
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .holiday-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .holiday-table tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        .holiday-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .holiday-highlight {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        padding: 2px;
+        border-radius: 3px;
+        margin-top: 3px;
+        display: inline-block;
+    }
+</style>
+
+<h3>Create Holiday List</h3>
+
+<form method="post" asp-action="SaveHolidays">
+    <label style="font-weight:bold;">Year :</label>
+    <input type="text" name="Year" value="@year" style="width:80px;text-align:center;" />
+    <button type="submit" style="margin-left:10px;">Submit</button>
+
+    <table class="holiday-table">
+        <thead>
+            <tr>
+                <th>Day</th>
+                @foreach (var month in monthNames)
+                {
+                    <th>@month</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int day = 1; day <= 31; day++)
+            {
+                <tr>
+                    <td>@day</td>
+                    @for (int month = 1; month <= 12; month++)
+                    {
+                        string key = $"{month}-{day}";
+                        bool isHoliday = holidayLookup.ContainsKey(key);
+                        string holidayName = isHoliday ? holidayLookup[key] : "";
+
+                        <td>
+                            <input type="checkbox"
+                                   name="Holidays"
+                                   value="@($"{month}-{day}")"
+                                   @(isHoliday ? "checked" : "") />
+
+                            <input type="hidden"
+                                   name="HolidayPurposes[@($"{month}-{day}")]"
+                                   value="@holidayName"
+                                   class="holiday-purpose" />
+
+                            @if (!string.IsNullOrEmpty(holidayName))
+                            {
+                                <div class="holiday-highlight">@holidayName</div>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

@@ -22,6 +22,7 @@
                             <th>Off Days</th>
                             <th>Branch</th>
                             <th>Designation</th>
+                            <th>Department</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -44,7 +45,7 @@
                                             data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <form asp-action="DeleteDepartment" method="post" class="deleteForm">
+                                    <form asp-action="Delete" method="post" class="deleteForm">
                                         <input type="hidden" name="ID" value="@item.Id" />
                                         <button type="submit" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash-alt"></i> Delete
@@ -110,31 +111,31 @@
                             <label class="form-label d-block">Days :</label>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Sunday" name="OffDay" value="Sunday">
+                                <input class="form-check-input" type="checkbox" id="Sunday" name="OffDayList" value="Sunday">
                                 <label class="form-check-label" for="day1">Sunday</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Monday" name="OffDay" value="Monday">
+                                <input class="form-check-input" type="checkbox" id="Monday" name="OffDayList" value="Monday">
                                 <label class="form-check-label" for="day2">Monday</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Tuesday" name="OffDay" value="Tuesday">
+                                <input class="form-check-input" type="checkbox" id="Tuesday" name="OffDayList" value="Tuesday">
                                 <label class="form-check-label" for="day3">Tuesday</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Wednesday" name="OffDay" value="Wednesday">
+                                <input class="form-check-input" type="checkbox" id="Wednesday" name="OffDayList" value="Wednesday">
                                 <label class="form-check-label" for="day4">Wednesday</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Thursday" name="OffDay" value="Thursday">
+                                <input class="form-check-input" type="checkbox" id="Thursday" name="OffDayList" value="Thursday">
                                 <label class="form-check-label" for="day5">Thursday</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Friday" name="OffDay" value="Friday">
+                                <input class="form-check-input" type="checkbox" id="Friday" name="OffDayList" value="Friday">
                                 <label class="form-check-label" for="day6">Friday</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="Saturday" name="OffDay" value="Saturday">
+                                <input class="form-check-input" type="checkbox" id="Saturday" name="OffDayList" value="Saturday">
                                 <label class="form-check-label" for="day7">Saturday</label>
                             </div>
                         </div>
@@ -169,12 +170,10 @@
         document.getElementById("DesignationId").value = "";
         document.getElementById("DepartmentId").value = "";
 
-             // Check the days that match
         document.querySelectorAll('input[name="OffDay"]').forEach(function (checkbox) {
             checkbox.checked = selectedDays.includes(checkbox.value);
         });
 
-        // Reset modal titles/buttons
         document.getElementById("addModalLabel").textContent = "Add Branch";
         document.getElementById("modalSubmitText").textContent = "Submit";
         }

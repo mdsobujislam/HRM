@@ -1,0 +1,212 @@
+﻿
+
+@model IEnumerable<HRM.Models.HolidayCalendar>
+@{
+    var year = ViewBag.Year;
+    var holidayLookup = ViewBag.HolidayLookup as Dictionary<string, string>;
+    string[] monthNames = new[] { "January", "February", "March", "April", "May", "June",
+                                   "July", "August", "September", "October", "November", "December" };
+}
+
+<style>
+    .holiday-table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+
+        .holiday-table th,
+        .holiday-table td {
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .holiday-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .holiday-table tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        .holiday-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .holiday-highlight {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        padding: 2px;
+        border-radius: 3px;
+        margin-top: 3px;
+        display: inline-block;
+    }
+</style>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="row align-items-center">
+            
+            <label class="col-sm-4 col-form-label">Year :</label>
+            <div class="col-sm-8">
+                <select id="year" name="year" class="form-select form-select-sm mb-3">
+                    @for (int i = 2020; i <= DateTime.Now.Year + 1; i++)
+                    {
+                        <option value="@i" selected="@(i == DateTime.Now.Year ? "selected" : null)">@i</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="row align-items-center">
+            <label class="col-sm-4 col-form-label">Branch :</label>
+            <div class="col-sm-8">
+                <select id="BranchId" name="BranchId" class="form-control select2" required>
+                    <option value="">-- Select Branch --</option>
+                    @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="row align-items-center">
+            <button type="submit" id="Submit" class="btn btn-primary btn-sm col-md-4">Submit</button>
+        </div>
+    </div>
+</div>
+
+
+<h3>Create Holiday List</h3>
+
+<form method="post" asp-action="SaveHolidays">
+    @* <label>Year :</label>
+    <input type="text" name="Year" value="@year" />
+    <button type="submit">Submit</button> *@
+
+    <table class="holiday-table table table-bordered text-center align-middle">
+        <thead>
+            <tr>
+                <th>Day</th>
+                @foreach (var month in monthNames)
+                {
+                    <th>@month</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int day = 1; day <= 31; day++)
+            {
+                <tr>
+                    <td>@day</td>
+                    @for (int month = 1; month <= 12; month++)
+                    {
+                        string key = $"{month}-{day}";
+                        bool isHoliday = holidayLookup.ContainsKey(key);
+                        string holidayName = isHoliday ? holidayLookup[key] : "";
+
+                        <td>
+                            <input type="checkbox"
+                                   class="holiday-checkbox"
+                                   data-date="@($"{month}-{day}")"
+                                   @(isHoliday ? "checked" : "") />
+
+                            <input type="hidden"
+                                   name="HolidayPurposes[@($"{month}-{day}")]"
+                                   value="@holidayName"
+                                   class="holiday-purpose" />
+
+                            @if (!string.IsNullOrEmpty(holidayName))
+                            {
+                                <div class="holiday-label">
+                                    @holidayName
+                                </div>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="holidayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Holiday Purpose</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label>Purpose:</label>
+                <input type="text" id="holidayPurposeInput" class="form-control" />
+                <input type="hidden" id="holidayDateInput" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="savePurposeBtn" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentDate = "";
+
+        document.querySelectorAll(".holiday-checkbox").forEach(cb => {
+            cb.addEventListener("change", function () {
+                if (this.checked) {
+                    currentDate = this.dataset.date;
+                    document.getElementById("holidayPurposeInput").value = "";
+                    document.getElementById("holidayDateInput").value = currentDate;
+                    new bootstrap.Modal(document.getElementById('holidayModal')).show();
+                } else {
+                    // Uncheck → remove label and clear hidden field
+                    let td = this.closest("td");
+                    td.querySelector(".holiday-purpose").value = "";
+                    let label = td.querySelector(".holiday-label");
+                    if (label) label.remove();
+                }
+            });
+        });
+
+        document.getElementById("savePurposeBtn").addEventListener("click", function () {
+            let purpose = document.getElementById("holidayPurposeInput").value;
+            if (purpose.trim() === "") {
+                alert("Please enter a purpose.");
+                return;
+            }
+
+            let date = document.getElementById("holidayDateInput").value;
+            let checkbox = document.querySelector(`.holiday-checkbox[data-date='${date}']`);
+            let td = checkbox.closest("td");
+
+            // Save to hidden input
+            td.querySelector(".holiday-purpose").value = purpose;
+
+            // Show label
+            let label = td.querySelector(".holiday-label");
+            if (!label) {
+                label = document.createElement("div");
+                label.className = "holiday-label text-white fw-bold bg-danger p-1 mt-1";
+                td.appendChild(label);
+            }
+            label.textContent = purpose;
+
+            bootstrap.Modal.getInstance(document.getElementById('holidayModal')).hide();
+        });
+    </script>
+}
+
+

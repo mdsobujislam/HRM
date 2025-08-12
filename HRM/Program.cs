@@ -27,6 +27,7 @@ builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
 builder.Services.AddScoped<ILeaveAllotmentService,LeaveAllotmentService>();
 builder.Services.AddScoped<ILateAttendanceService,LateAttendanceService>();
 builder.Services.AddScoped<IOffDaysService,OffDaysService>();
+builder.Services.AddScoped<IHolidayCalendarService,HolidayCalendarService>();
 
 
 

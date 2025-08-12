@@ -70,7 +70,7 @@ namespace HRM.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var result = await _offDaysService.DeleteOffDays(id);
 
