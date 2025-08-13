@@ -1,0 +1,126 @@
+﻿@model IEnumerable<HRM.Models.Salary>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Add Salary Records</h3>
+
+<form method="post" asp-action="SaveSalary">
+    <div class="container mt-3">
+        <div class="row g-2 align-items-center mb-3">
+            <div class="col-md-4">
+                <select id="salaryItem" class="form-select">
+                    <option value="">-- Select Salary Item --</option>
+                    @foreach (var item in ViewBag.SalaryHeadsList as List<SelectListItem>)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <select id="branch" class="form-select">
+                    <option value="">-- Select Branch --</option>
+                    @foreach (var branch in ViewBag.BranchList as List<SelectListItem>)
+                    {
+                        <option value="@branch.Value">@branch.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" id="value" class="form-control" placeholder="Value" />
+            </div>
+
+            <div class="col-md-2">
+                <button type="button" id="addBtn" class="btn btn-primary w-100">Add</button>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped" id="salaryTable">
+            <thead>
+                <tr>
+                    <th>Salary Item</th>
+                    <th>Branch</th>
+                    <th>Value</th>
+                    <th style="width:80px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <strong>Total Value: <span id="totalValue">0</span></strong>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll("#salaryTable tbody tr td:nth-child(3)").forEach(td => {
+                total += parseFloat(td.textContent) || 0;
+            });
+            document.getElementById("totalValue").textContent = total.toFixed(2);
+        }
+
+        document.getElementById("addBtn").addEventListener("click", function () {
+            let salaryItemDropdown = document.getElementById("salaryItem");
+            let branchDropdown = document.getElementById("branch");
+            let valueInput = document.getElementById("value");
+
+            let salaryItemText = salaryItemDropdown.options[salaryItemDropdown.selectedIndex].text;
+            let salaryItemValue = salaryItemDropdown.value;
+            let branchText = branchDropdown.options[branchDropdown.selectedIndex].text;
+            let branchValue = branchDropdown.value;
+            let value = valueInput.value;
+
+            if (!salaryItemValue || !branchValue || !value) {
+                alert("Please fill all fields before adding.");
+                return;
+            }
+
+            let tableBody = document.querySelector("#salaryTable tbody");
+
+            let row = `
+                <tr>
+                    <td>
+                        ${salaryItemText}
+                        <input type="hidden" name="SalaryHeadsId[]" value="${salaryItemValue}" />
+                    </td>
+                    <td>
+                        ${branchText}
+                        <input type="hidden" name="BranchId[]" value="${branchValue}" />
+                    </td>
+                    <td>
+                        ${value}
+                        <input type="hidden" name="Value[]" value="${value}" />
+                    </td>
+                    <td><button type="button" class="btn btn-danger btn-sm removeBtn">X</button></td>
+                </tr>
+            `;
+
+            tableBody.insertAdjacentHTML("beforeend", row);
+
+            // Reset inputs
+            salaryItemDropdown.value = "";
+            branchDropdown.value = "";
+            valueInput.value = "";
+
+            updateTotal();
+        });
+
+        // Remove row event
+        document.querySelector("#salaryTable").addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeBtn")) {
+                e.target.closest("tr").remove();
+                updateTotal();
+            }
+        });
+    </script>
+}
