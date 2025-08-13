@@ -17,120 +17,89 @@ namespace HRM.Services
                 ?? throw new ArgumentNullException(nameof(_connectionString));
             _baseService = baseService;
         }
-        public async Task<bool> DeleteSalaryHeads(int id)
-        {
-            try
-            {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    connection.Open();
-                    var queryString = "delete from SalaryHeads where id=@id";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("id", id.ToString(), DbType.String);
-                    var success = await connection.ExecuteAsync(queryString, parameters);
-                    if (success > 0)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
 
         public async Task<List<SalaryHeads>> GetAllSalaryHeads()
         {
-            try
-            {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    connection.Open();
-                    var subscriptionId = _baseService.GetSubscriptionId();
-                    var userId = _baseService.GetUserId();
-                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
 
-                    var query = @"Select t1.Id,t1.Salaryitems,t2.Name from SalaryHeads t1 Join Branch t2 on t1.BranchId=t2.Id where t1.SubscriptionId=@subscriptionId ";
+            var subscriptionId = _baseService.GetSubscriptionId();
 
-                    var result = await connection.QueryAsync<SalaryHeads>(query, new { subscriptionId });
-                    return result.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var query = @"
+SELECT t1.Id, t1.Salaryitems, t1.BranchId, t2.Name AS Branch
+FROM SalaryHeads t1
+JOIN Branch t2 ON t1.BranchId = t2.Id
+WHERE t1.SubscriptionId = @subscriptionId";
+
+            var result = await connection.QueryAsync<SalaryHeads>(query, new { subscriptionId });
+            return result.GroupBy(s => s.Id).Select(g => g.First()).ToList();
+
+            return result.ToList();
         }
 
         public async Task<bool> InsertSalaryHeads(SalaryHeads salaryHeads)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    connection.Open();
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
 
-                    var subscriptionId = _baseService.GetSubscriptionId();
-                    var userId = _baseService.GetUserId();
-                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
-                    var companyId = await _baseService.GetCompanyId(subscriptionId);
+            var subscriptionId = _baseService.GetSubscriptionId();
+            var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into SalaryHeads (Salaryitems,DBranchId,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @Salaryitems,,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("Salaryitems", salaryHeads.Salaryitems, DbType.String);
-                    parameters.Add("BranchId", salaryHeads.BranchId, DbType.Int64);
-                    parameters.Add("SubscriptionId", subscriptionId);
-                    parameters.Add("CompanyId", companyId);
-                    parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
-                    var success = await connection.ExecuteAsync(queryString, parameters);
-                    if (success > 0)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var query = @"
+INSERT INTO SalaryHeads (Salaryitems, BranchId, SubscriptionId, CompanyId, CreatedAt)
+VALUES (@Salaryitems, @BranchId, @SubscriptionId, @CompanyId, @CreatedAt)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Salaryitems", salaryHeads.Salaryitems, DbType.String);
+            parameters.Add("BranchId", salaryHeads.BranchId, DbType.Int32);
+            parameters.Add("SubscriptionId", subscriptionId, DbType.Int32);
+            parameters.Add("CompanyId", companyId, DbType.Int32);
+            parameters.Add("CreatedAt", DateTime.Now, DbType.DateTime);
+
+            var success = await connection.ExecuteAsync(query, parameters);
+            return success > 0;
         }
 
         public async Task<bool> UpdateSalaryHeads(SalaryHeads salaryHeads)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    connection.Open();
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
 
-                    var subscriptionId = _baseService.GetSubscriptionId();
-                    var userId = _baseService.GetUserId();
-                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
-                    var companyId = await _baseService.GetCompanyId(subscriptionId);
+            var subscriptionId = _baseService.GetSubscriptionId();
+            var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update OffDays set Salaryitems=@Salaryitems,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='" + salaryHeads.Id + "' ";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("Salaryitems", salaryHeads.Salaryitems, DbType.String);
-                    parameters.Add("BranchId", salaryHeads.BranchId, DbType.Int64);
-                    parameters.Add("SubscriptionId", subscriptionId);
-                    parameters.Add("CompanyId", companyId);
-                    parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
-                    var success = await connection.ExecuteAsync(queryString, parameters);
-                    if (success > 0)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var query = @"
+UPDATE SalaryHeads
+SET Salaryitems = @Salaryitems,
+    BranchId = @BranchId,
+    SubscriptionId = @SubscriptionId,
+    CompanyId = @CompanyId,
+    UpdatedAt = @UpdatedAt
+WHERE Id = @Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", salaryHeads.Id, DbType.Int32);
+            parameters.Add("Salaryitems", salaryHeads.Salaryitems, DbType.String);
+            parameters.Add("BranchId", salaryHeads.BranchId, DbType.Int32);
+            parameters.Add("SubscriptionId", subscriptionId, DbType.Int32);
+            parameters.Add("CompanyId", companyId, DbType.Int32);
+            parameters.Add("UpdatedAt", DateTime.Now, DbType.DateTime);
+
+            var success = await connection.ExecuteAsync(query, parameters);
+            return success > 0;
+        }
+
+        public async Task<bool> DeleteSalaryHeads(int id)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            var query = "DELETE FROM SalaryHeads WHERE Id = @Id";
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+
+            var success = await connection.ExecuteAsync(query, parameters);
+            return success > 0;
         }
     }
 }

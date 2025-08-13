@@ -80,7 +80,7 @@
                             <label for="BranchId" class="form-label">Select Branch</label>
                             <select id="BranchId" name="BranchId" class="form-control" required>
                                 <option value="">-- Select Branch --</option>
-                                @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                @foreach (var item in (ViewBag.BranchList as List<SelectListItem>) ?? new List<SelectListItem>())
                                 {
                                     <option value="@item.Value">@item.Text</option>
                                 }
