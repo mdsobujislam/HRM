@@ -147,11 +147,19 @@
                 <h5 class="modal-title">Add Holiday Purpose</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
-                <label>Purpose:</label>
+                <label>Event Date :</label>
+                <input type="date" id="eventDateInput" class="form-control" />
+                <input type="hidden" id="hiddenEventDate" />
+            </div>
+
+            <div class="modal-body">
+                <label>Purpose :</label>
                 <input type="text" id="holidayPurposeInput" class="form-control" />
                 <input type="hidden" id="holidayDateInput" />
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" id="savePurposeBtn" class="btn btn-primary">Save</button>
@@ -159,6 +167,7 @@
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script>
@@ -180,6 +189,8 @@
                 }
             });
         });
+
+        // save modal code
 
         document.getElementById("savePurposeBtn").addEventListener("click", function () {
             let purpose = document.getElementById("holidayPurposeInput").value;
@@ -206,6 +217,91 @@
 
             bootstrap.Modal.getInstance(document.getElementById('holidayModal')).hide();
         });
+
+
+        // Show Date in calender code
+
+        //                         document.querySelectorAll(".holiday-checkbox").forEach(cb => {
+        //     cb.addEventListener("change", function (e) {
+        //         if (this.checked) {
+        //             let selectedYear = document.getElementById("year").value; // get year from dropdown
+        //             let dateParts = this.dataset.date.split("-"); // month-day from data-date="MM-DD"
+        //             let month = parseInt(dateParts[0], 10);
+        //             let day = parseInt(dateParts[1], 10);
+
+        //             // Build date string manually to avoid timezone issues
+        //             let formattedForInput = `${selectedYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        //             document.getElementById("eventDateInput").value = formattedForInput;
+
+        //             // Human-readable format (dd/MM/yyyy)
+        //             let displayDate = `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${selectedYear}`;
+        //             document.getElementById("hiddenEventDate").value = displayDate;
+
+        //             // Store month-day for later saving
+        //             document.getElementById("holidayDateInput").value = this.dataset.date;
+
+        //             // Clear previous purpose
+        //             document.getElementById("holidayPurposeInput").value = "";
+
+        //             // Open modal only once
+        //             let modalElement = document.getElementById('holidayModal');
+        //             if (!modalElement.classList.contains("show")) {
+        //                 new bootstrap.Modal(modalElement).show();
+        //             }
+        //         } else {
+        //             // Uncheck → remove label and clear hidden field
+        //             let td = this.closest("td");
+        //             let purposeInput = td.querySelector(".holiday-purpose");
+        //             if (purposeInput) purposeInput.value = "";
+
+        //             let label = td.querySelector(".holiday-label");
+        //             if (label) label.remove();
+        //         }
+        //     }, { once: false }); // ensure not duplicated
+        // });
+
+
+
+                const holidayModalElement = document.getElementById('holidayModal');
+        const holidayModal = new bootstrap.Modal(holidayModalElement);
+
+        document.querySelectorAll(".holiday-checkbox").forEach(cb => {
+            cb.addEventListener("change", function () {
+                if (this.checked) {
+                    let selectedYear = document.getElementById("year").value; // get year from dropdown
+                    let dateParts = this.dataset.date.split("-");
+                    let month = parseInt(dateParts[0], 10);
+                    let day = parseInt(dateParts[1], 10);
+
+                    let formattedForInput = `${selectedYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    document.getElementById("eventDateInput").value = formattedForInput;
+
+                    let displayDate = `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${selectedYear}`;
+                    document.getElementById("hiddenEventDate").value = displayDate;
+
+                    document.getElementById("holidayDateInput").value = this.dataset.date;
+                    document.getElementById("holidayPurposeInput").value = "";
+
+                    holidayModal.show();  // use existing modal instance
+                } else {
+                    let td = this.closest("td");
+                    let purposeInput = td.querySelector(".holiday-purpose");
+                    if (purposeInput) purposeInput.value = "";
+
+                    let label = td.querySelector(".holiday-label");
+                    if (label) label.remove();
+                }
+            });
+        });
+
+
+
+
+                
+
+
+
+
     </script>
 }
 
