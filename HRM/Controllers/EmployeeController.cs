@@ -72,9 +72,37 @@ namespace HRM.Controllers
                 }
                 TempData["SuccessMessage"] = "Employee Updated Successfully";
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("GetEmployee");
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmployee(Employee employee, IFormFile PhotoFile)
+        {
+            var result = await _employeeService.UpdateEmployee(employee, PhotoFile);
+            if (result)
+                TempData["Message"] = "Employee updated successfully!";
+            else
+                TempData["Message"] = "Update failed!";
+
+            return RedirectToAction("GetEmployee");
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            var result = await _employeeService.DeleteEmployee(id);
+
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Employee deleted successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to delete employee.";
+            }
+
+            return RedirectToAction("GetEmployee"); 
+        }
 
         //[HttpGet]
         //public async Task<IActionResult> CreateOrUpdate(int? id)

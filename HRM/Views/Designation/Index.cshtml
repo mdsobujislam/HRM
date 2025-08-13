@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <div class="d-flex">
-                        <button type="submit" class="btn btn-success btn-sm me-2">
+                        <button type="submit" class="btn btn-primary btn-sm me-2">
                             <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
                         </button>
                         <button type="reset" class="btn btn-secondary btn-sm me-2">
@@ -111,7 +111,7 @@
         document.getElementById("DesignationId").value = "";
             document.getElementById("DesignationName").value = "";
             document.getElementById("BranchId").value ="";
-            document.getElementById("addDepartmentModalLabel").textContent = "Add Branch";
+            document.getElementById("addDepartmentModalLabel").textContent = "Add Designation";
             document.getElementById("modalSubmitText").textContent = "Submit";
         }
 
@@ -123,7 +123,7 @@
             document.getElementById("DesignationId").value = id;
             document.getElementById("DesignationName").value = designationName;
             document.getElementById("BranchId").value = branchId;
-            document.getElementById("addDepartmentModalLabel").textContent = "Edit Branch";
+            document.getElementById("addDepartmentModalLabel").textContent = "Edit Designation";
             document.getElementById("modalSubmitText").textContent = "Update";
         }
 
@@ -139,7 +139,7 @@
                 e.preventDefault();
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "This will permanently delete the branch.",
+                    text: "This will permanently delete the Designation.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
