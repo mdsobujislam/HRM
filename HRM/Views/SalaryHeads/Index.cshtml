@@ -1,8 +1,118 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@model IEnumerable<HRM.Models.SalaryHeads>
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Salary Heads List</h5>
+                <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                        data-bs-target="#addSalaryHeadModal">
+                    <i class="fas fa-plus"></i> Add New
+                </button>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Salary Item</th>
+                            <th>Branch</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 0;
+                            foreach (var item in Model)
+                            {
+                                index++;
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@item.Salaryitems</td>
+                                    <td>@item.Branch</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="editSalaryHead('@item.Id', '@item.BranchId', '@item.Salaryitems')"
+                                                data-bs-toggle="modal" data-bs-target="#addSalaryHeadModal">
+                                            Edit
+                                        </button>
+                                        <form asp-action="Delete" method="post" class="d-inline deleteForm">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="addSalaryHeadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalTitle">Add Salary Head</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdate" method="post">
+                    <input type="hidden" id="SalaryHeadId" name="Id">
+
+                    <div class="mb-3">
+                        <label for="Salaryitems" class="form-label">Salary Item</label>
+                        <input type="text" class="form-control" id="Salaryitems" name="Salaryitems" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="BranchId" class="form-label">Select Branch</label>
+                        <select id="BranchId" name="BranchId" class="form-control" required>
+                            <option value="">-- Select Branch --</option>
+                            @foreach (var branch in (List<SelectListItem>)ViewBag.BranchList)
+                            {
+                                <option value="@branch.Value">@branch.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-primary" id="modalSubmit">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function resetModal() {
+            document.getElementById("SalaryHeadId").value = "";
+            document.getElementById("Salaryitems").value = "";
+            document.getElementById("BranchId").value = "";
+            document.getElementById("modalTitle").textContent = "Add Salary Head";
+            document.getElementById("modalSubmit").textContent = "Submit";
+        }
+
+        document.getElementById("addNewData").addEventListener("click", resetModal);
+
+        function editSalaryHead(id, branchId, salaryItem) {
+            document.getElementById("SalaryHeadId").value = id;
+            document.getElementById("Salaryitems").value = salaryItem;
+            document.getElementById("BranchId").value = branchId;
+            document.getElementById("modalTitle").textContent = "Edit Salary Head";
+            document.getElementById("modalSubmit").textContent = "Update";
+        }
+
+        document.querySelectorAll('.deleteForm').forEach(function(form){
+            form.addEventListener('submit', function(e){
+                if(!confirm("Are you sure you want to delete this Salary Head?")) e.preventDefault();
+            });
+        });
+    </script>
 }
-
-<h1>Index</h1>
-
