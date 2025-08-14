@@ -32,6 +32,8 @@ builder.Services.AddScoped<ISalaryHeadsService,SalaryHeadsService>();
 //builder.Services.AddScoped<ISalaryService,SalaryService>();
 builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<ISalaryHeadsService, SalaryHeadsService>();
+builder.Services.AddScoped<IOvertimeService, OvertimeService>();
+builder.Services.AddScoped<IBonusCalculateService, BonusCalculateService>();
 
 
 
