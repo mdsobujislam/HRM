@@ -69,6 +69,23 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row mb-2">
+                                <div class="col-md-6">
+                                    <div class="row align-items-center">
+                                        <label class="col-sm-4 col-form-label">Designation :</label>
+                                        <div class="col-sm-8">
+                                            <select id="DesignationId" name="DesignationId" class="form-control select2" required>
+                                                <option value="">-- Select Designation --</option>
+                                                @foreach (var item in (List<SelectListItem>)ViewBag.EmployeeList)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <br />
                             <hr />
                             <div class="row mb-2 align-items-center">
@@ -114,60 +131,8 @@
                     </div>
                 </div>
             </div>
-
-
-
         </form>
 
-
-
-
-        <div class="table-responsive">
-            <table class="table  datanew">
-                <thead class="table-primary">
-                    <tr>
-                        <th>SL No.</th>
-                        <th>Name</th>
-                        <th>Branch</th>
-                        <th>Designation</th>
-                        <th>Department</th>
-                        <th>StartHour</th>
-                        <th>DutyHour</th>
-                        <th>EndHour</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int index = 0;
-                    }
-                    @foreach (var item in Model)
-                    {
-                        index++;
-                        <tr>
-                            <td>@index</td>
-                            <td>@item.BonusType</td>
-                            <td>@item.Branch</td>
-                            <td>@item.Designation</td>
-                            <td>@item.Department</td>
-                            <td>@item.DisplayTimeRange</td>
-                            <td>@item.DutyDuration</td>
-                            <td>@item.DisplayEndTime</td>
-                            <td class="d-flex align-items-center gap-2">
-                                <button class="btn btn-warning btn-sm" onclick="editBranch( '@item.Id', '@item.SlotName','@item.BranchId','@item.DesignationId','@item.DepartmentId', '@item.StartHour', '@item.StartMinute', '@item.DutyHour', '@item.DutyMinute', '@item.EndHour', '@item.EndMinute' )" data-bs-toggle="modal" data-bs-target="#addDepartmentModal"> <i class="fas fa-edit"></i> Edit </button>
-                                <form asp-action="DeleteDepartment" method="post">
-                                    <input type="hidden" name="ID" value="@item.Id" />
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-        </div>
 
     </div>
 </div>
