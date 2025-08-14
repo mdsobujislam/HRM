@@ -29,7 +29,8 @@ builder.Services.AddScoped<ILateAttendanceService,LateAttendanceService>();
 builder.Services.AddScoped<IOffDaysService,OffDaysService>();
 builder.Services.AddScoped<IHolidayCalendarService,HolidayCalendarService>();
 builder.Services.AddScoped<ISalaryHeadsService,SalaryHeadsService>();
-builder.Services.AddScoped<ISalaryService,SalaryService>();
+//builder.Services.AddScoped<ISalaryService,SalaryService>();
+builder.Services.AddScoped<ISalaryService, SalaryService>();
 
 
 
