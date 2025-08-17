@@ -1,0 +1,15 @@
+dotnet ef migrations add NewTableName
+dotnet ef database update
+
+--Add new table
+Add-Migration AddDepartmentTable
+Update-Database
+
+--Update table
+Add-Migration UpdateEmployeeTable
+Update-Database
+
+
+prevoius--Cascade -->NoAction
+
+01616616221--brac
