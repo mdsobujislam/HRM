@@ -54,7 +54,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"select overhour as [Awardable Overtime (Hour)],adjustmenttype as [Overtime Award Method], (case when LeavetypeId<>'0' then (select l.typename from LeaveType l where l.id=overtime.leavetypeId) else '-' end) as [Awardable Leave Type],(case when Basic='True' then 'Yes'else 'No' end) as [Awardable with Basic Salary] from overtime Join Branch t3 on overtime.BranchId=t3.Id WHERE overtime.SubscriptionId=@subscriptionId";
+                    var query = @"Select t2.BonusTypesName as BonusType,CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate,t3.EmployeeName as Employee, t4.Name as BonusType, t5.DesignationName as Designation,t6.DepartmentName as Department,t1.Percentage as Percentage,t1.BonusAmount as BonusAmount from BonusCalculate t1 JOIN BonusType t2 on t2.Id=t1.BonusTypeId JOIN Employees t3 on t3.EmpId=t1.EmployeeId JOIN Branch t4 on t4.Id=t1.BranchId JOIN Designation t5 on t5.Id=t1.DesignationId JOIN Department t6 on t6.Id=t1.DepartmentId where t1.SubscriptionId=@subscriptionId";
 
                     var result = await connection.QueryAsync<BonusCalculate>(query, new { subscriptionId });
                     return result.ToList();
@@ -65,6 +65,55 @@ namespace HRM.Services
                 throw;
             }
         }
+
+        public async Task<List<BonusCalculate>> GetAllDataShowAsync(BonusCalculate bonusCalculate)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+
+                    
+
+                    var query = "";
+
+                    if (bonusCalculate.BranchId != 0)
+                    {
+                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t4.Id = '"+bonusCalculate.BranchId+"' AND t1.BonusDate BETWEEN '"+bonusCalculate.FromDate+ "' AND '"+bonusCalculate.ToDate+"' ";
+                    }
+                    if (bonusCalculate.DepartmentId != 0)
+                    {
+                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t6.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
+                    }
+                    if (bonusCalculate.DesignationId != 0)
+                    {
+                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t5.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
+                    }
+                    if (bonusCalculate.EmployeeId != 0)
+                    {
+                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t3.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
+                    }
+
+                    if (string.IsNullOrEmpty(bonusCalculate.FromDate) || string.IsNullOrEmpty(bonusCalculate.ToDate))
+                    {
+                        return new List<BonusCalculate>();
+                    }
+
+                    var result = await connection.QueryAsync<BonusCalculate>(query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching bonus data", ex);
+            }
+        }
+
 
         public async Task<bool> InsertBonusCalculate(BonusCalculate bonusCalculate)
         {

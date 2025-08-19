@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<HRM.Models.BonusCalculate>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "ShowData";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,13 +11,12 @@
                 <h5 class="mb-0">📋 Create Bonus</h5>
             </div>
             <div class="card-body">
-                <form asp-action="Insert" method="post" enctype="multipart/form-data">
+                <form asp-action="ShowData" method="post" enctype="multipart/form-data">
                     <div class="row g-3">
-                        <!-- Bonus Type -->
-                        <div class="col-md-4">
-                            <label for="BonusTypeId" class="form-label fw-semibold">Bonus Type</label>
-                            <select id="BonusTypeId" name="BonusTypeId" class="form-select select2" required>
-                                <option value="">-- Select Bonus Type --</option>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Bonus Type</label>
+                            <select id="BonusTypeId" name="BonusTypeId" class="form-select select2">
+                                <option value="">-- Select Branch --</option>
                                 @foreach (var item in (List<SelectListItem>)ViewBag.BonusTypeList)
                                 {
                                     <option value="@item.Value">@item.Text</option>
@@ -25,21 +24,18 @@
                             </select>
                         </div>
 
-                        <!-- Bonus Date -->
-                        <div class="col-md-4">
-                            <label for="BonusDate" class="form-label fw-semibold">Date</label>
-                            <input type="date" class="form-control" id="BonusDate" name="BonusDate" required>
-                        </div>
-
-                        <!-- Percentage -->
-                        <div class="col-md-4">
-                            <label for="Percentage" class="form-label fw-semibold">Percentage (%)</label>
-                            <input type="number" step="0.01" class="form-control" id="Percentage" name="Percentage" required placeholder="Enter Percentage">
-                        </div>
-
-                        <!-- Branch -->
                         <div class="col-md-3">
-                            <label for="BranchId" class="form-label fw-semibold">Branch</label>
+                            <label for="FromDate" class="form-label fw-semibold">From Date</label>
+                            <input type="date" id="FromDate" name="FromDate" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ToDate" class="form-label fw-semibold">To Date</label>
+                            <input type="date" id="ToDate" name="ToDate" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row g-3 my-1">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Branch</label>
                             <select id="BranchId" name="BranchId" class="form-select select2">
                                 <option value="">-- Select Branch --</option>
                                 @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
@@ -49,9 +45,8 @@
                             </select>
                         </div>
 
-                        <!-- Department -->
                         <div class="col-md-3">
-                            <label for="DepartmentId" class="form-label fw-semibold">Department</label>
+                            <label class="form-label fw-semibold">Department</label>
                             <select id="DepartmentId" name="DepartmentId" class="form-select select2">
                                 <option value="">-- Select Department --</option>
                                 @foreach (var item in (List<SelectListItem>)ViewBag.DepartmentList)
@@ -61,9 +56,8 @@
                             </select>
                         </div>
 
-                        <!-- Designation -->
                         <div class="col-md-3">
-                            <label for="DesignationId" class="form-label fw-semibold">Designation</label>
+                            <label class="form-label fw-semibold">Designation</label>
                             <select id="DesignationId" name="DesignationId" class="form-select select2" required>
                                 <option value="">-- Select Designation --</option>
                                 @foreach (var item in (List<SelectListItem>)ViewBag.DesignationList)
@@ -73,9 +67,8 @@
                             </select>
                         </div>
 
-                        <!-- Employee -->
                         <div class="col-md-3">
-                            <label for="EmployeeId" class="form-label fw-semibold">Employee</label>
+                            <label class="form-label fw-semibold">Employee</label>
                             <select id="EmployeeId" name="EmployeeId" class="form-select select2" required>
                                 <option value="">-- Select Employee --</option>
                                 @foreach (var item in (List<SelectListItem>)ViewBag.EmployeeList)
@@ -84,11 +77,17 @@
                                 }
                             </select>
                         </div>
+                    </div>
 
-                        <!-- Submit Button -->
-                        <div class="col-12 text-end mt-3">
-                            <button type="submit" class="btn btn-primary px-5">
-                                💾 Submit
+
+
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-end">
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-eye"></i> Show
+                            </button>
+                            <button type="reset" class="btn btn-secondary px-4 ms-2">
+                                <i class="bi bi-x-circle"></i> Reset
                             </button>
                         </div>
                     </div>
@@ -100,6 +99,54 @@
 
 
 
+<div class="col-md-12">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table  datanew">
+                    <a asp-action="ExportPdf" asp-route-FromDate="@Model.FirstOrDefault()?.FromDate" asp-route-ToDate="@Model.FirstOrDefault()?.ToDate" class="btn btn-danger">
+                        Download PDF
+                    </a>
+                    <thead class="table-primary">
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Bonus Type</th>
+                            <th>Bonus Date</th>
+                            <th>Percentage</th>
+                            <th>Bonus Amount</th>
+                            <th>Employee Name</th>
+                            <th>Branch</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            index++;
+                            <tr>
+                                <td>@index</td>
+                                <td>@item.BonusType</td>
+                                @* <td>@item.BonusDate</td> *@
+                                <td>@item.BonusDate.ToString()</td>
+                                <td>@item.Percentage</td>
+                                @* <td>@item.BonusAmount</td> *@
+                                <td class="text-end">@item.BonusAmount.ToString("N2")</td>
+                                <td>@item.Employee</td>
+                                <td>@item.Branch</td>
+                                <td>@item.Designation</td>
+                                <td>@item.Department</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts {
@@ -186,4 +233,6 @@
     </script>
 
 }
+
+
 

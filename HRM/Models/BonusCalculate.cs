@@ -5,7 +5,10 @@
         public int Id { get; set; }
         public int BonusTypeId { get; set; }
         public string BonusType { get; set; }
-        public DateTime BonusDate { get; set; }
+        public string BonusDate { get; set; }
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
+        public double BonusAmount { get; set; }
         public double Percentage { get; set; }
         public int EmployeeId { get; set; }
         public string Employee { get; set; }
