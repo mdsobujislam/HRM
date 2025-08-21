@@ -104,7 +104,7 @@ namespace HRM.Services
 
 
                     var queryString = "insert into Employees (EmployeeName,FatherName,MotherName,SpouseName,DOB,Gender,BloodGroup,MaritalStatus,TinNo,NationalID,Telephone,MobileNo,MailID,PermanentAddress,PresentAddress,DateOfAppointment,Religion,Nationality,Shift,Version,JobType,UploadPhoto,BranchId,DepartmentId,DesignationId,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @EmployeeName,@FatherName,@MotherName,@SpouseName,@DOB,@Gender,@BloodGroup,@MaritalStatus,@TinNo,@NationalID,@Telephone,@MobileNo,@MailID,@PermanentAddress,@PresentAddress,@DateOfAppointment,@Religion,@Nationality,@Shift,@Version,@JobType,@UploadPhoto,@BranchId,@DepartmentId,@DesignationId,@SubscriptionId,@CompanyId,@CreatedAt)";
+                    queryString += "( @EmployeeName,@FatherName,@MotherName,@SpouseName,@DOB,@Gender,@BloodGroup,@MaritalStatus,@TinNo,@NationalID,@Telephone,@MobileNo,@MailID,@PermanentAddress,@PresentAddress,@DateOfAppointment,@Religion,@Nationality,@Shift,@Version,@JobType,@UploadPhoto,@BranchId,@DepartmentId,@DesignationId,@SubscriptionId,@CompanyId,@CreatedAt);SELECT SCOPE_IDENTITY();";
                     var parameters = new DynamicParameters();
                     parameters.Add("EmployeeName", employee.EmployeeName, DbType.String);
                     parameters.Add("FatherName", employee.FatherName, DbType.String);
@@ -134,8 +134,22 @@ namespace HRM.Services
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
-                    var success = await connection.ExecuteAsync(queryString, parameters);
-                    if (success > 0)
+                    //var success = await connection.ExecuteAsync(queryString, parameters);
+                    var Id = await connection.ExecuteScalarAsync<int>(queryString, parameters);
+
+                    var updateQuery = @"INSERT INTO Users (EmployeeId,Name, MobileNo, Email,Password,BranchId, SubscriptionId,Status,CreatedAt) VALUES (@EmployeeId,@Name, @MobileNo, @Email,@Password, @BranchId, @SubscriptionId,@Status,@CreatedAt)";
+                    var userParameters = new DynamicParameters();
+                    userParameters.Add("EmployeeId", Id);
+                    userParameters.Add("Name", employee.EmployeeName, DbType.String);
+                    userParameters.Add("MobileNo", employee.MobileNo, DbType.String);
+                    userParameters.Add("Email", employee.MailID, DbType.String);
+                    userParameters.Add("Password",123456, DbType.String); // Default password, should be hashed in production
+                    userParameters.Add("BranchId", employee.BranchId, DbType.Int64);
+                    userParameters.Add("SubscriptionId", subscriptionId, DbType.Int32);
+                    userParameters.Add("Status", 1, DbType.Int32); // Assuming 1 is for active status
+                    userParameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
+                    var userSuccess = await connection.ExecuteAsync(updateQuery, userParameters);
+                    if (userSuccess > 0)
                     {
                         return true;
                     }

@@ -36,6 +36,7 @@ builder.Services.AddScoped<IOvertimeService, OvertimeService>();
 builder.Services.AddScoped<IBonusCalculateService, BonusCalculateService>();
 builder.Services.AddScoped<IBonusTypeService, BonusTypeService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
 
 
 

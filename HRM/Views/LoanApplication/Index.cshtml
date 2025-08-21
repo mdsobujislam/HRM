@@ -1,0 +1,197 @@
+﻿@model IEnumerable<HRM.Models.LoanApplication>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Employee List</h5>
+                <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                        data-bs-target="#addSalaryHeadModal">
+                    <i class="fas fa-plus"></i> Add New
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Empp Id</th>
+                                <th>Employee Name</th>
+                                <th>Appli Date</th>
+                                <th>Branch</th>
+                                <th>Designation</th>
+                                <th>Department</th>
+                                <th>BasicSalary</th>
+                                <th>AmountLoan</th>
+                                <th>Duration</th>
+                                <th>RecommendedAmount</th>
+                                <th>RecommendDate</th>
+                                <th>PreviousLoan</th>
+                                <th>Repaid</th>
+                                <th>Hr_Rem</th>
+                                <th>LoanApproved</th>
+                                <th>LoanAppDate</th>
+                                <th>Term</th>
+                                <th>interest</th>
+                                <th>AppStatus</th>
+                                <th>LoanIssued</th>
+                                <th>LoanId</th>
+                                <th>Remarks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                                foreach (var item in Model)
+                                {
+                                    index++;
+                                    <tr>
+                                        <td>@index</td>
+                                        <td>@item.EmployeeId</td>
+                                        <td>@item.EmployeeName</td>
+                                        <td>@item.AppliDate</td>
+                                        <td>@item.Branch</td>
+                                        <td>@item.Designation</td>
+                                        <td>@item.Department</td>
+                                        <td>@item.BasicSalary</td>
+                                        <td>@item.AmountLoan</td>
+                                        <td>@item.Duration</td>
+                                        <td>@item.RecommendedAmount</td>
+                                        <td>@item.RecommendDate</td>
+                                        <td>@item.PreviousLoan</td>
+                                        <td>@item.Repaid</td>
+                                        <td>@item.Hr_Rem</td>
+                                        <td>@item.LoanApproved</td>
+                                        <td>@item.LoanAppDate</td>
+                                        <td>@item.Term</td>
+                                        <td>@item.interest</td>
+                                        <td>@item.AppStatus</td>
+                                        <td>@item.LoanIssued</td>
+                                        <td>@item.LoanId</td>
+                                        <td>@item.Remarks</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm"
+                                                    onclick="editSalaryHead('@item.Id', '@item.AmountLoan')"
+                                                    data-bs-toggle="modal" data-bs-target="#addSalaryHeadModal">
+                                                Edit
+                                            </button>
+                                            <form asp-action="Delete" method="post" class="d-inline deleteForm">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="addSalaryHeadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalTitle">Add Salary Head</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" method="post">
+                    <input type="hidden" id="SalaryHeadId" name="Id">
+
+                    <div class="mb-3">
+                        <label for="AmountLoan" class="form-label">Loan Amount</label>
+                        <input type="text" class="form-control" id="AmountLoan" name="AmountLoan" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label for="Remarks" class="form-label">Remarks</label>
+                            <textarea class="form-control" id="Remarks" name="Remarks" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-primary" id="modalSubmit">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+            function edit(empId, employeeName, fatherName, motherName, spouseName, dob, gender, bloodGroup, maritalStatus,
+                  tinNo, nationalID, telephone, mobileNo, mailID, presentAddress, permanentAddress,
+                  branchId, departmentId, designationId, dateOfAppointment, religion, nationality,
+                  shift, version, uploadPhoto, jobType) {
+
+        document.getElementById("EmpId").value = empId;
+        document.getElementById("EmployeeName").value = employeeName;
+        document.getElementById("FatherName").value = fatherName;
+        document.getElementById("MotherName").value = motherName;
+        document.getElementById("SpouseName").value = spouseName;
+        document.getElementById("DOB").value = dob;
+        document.getElementById("Gender").value = gender;
+        document.getElementById("BloodGroup").value = bloodGroup;
+        document.getElementById("MaritalStatus").value = maritalStatus;
+        document.getElementById("TinNo").value = tinNo;
+        document.getElementById("NationalID").value = nationalID;
+        document.getElementById("Telephone").value = telephone;
+        document.getElementById("MobileNo").value = mobileNo;
+        document.getElementById("MailID").value = mailID;
+        document.getElementById("PermanentAddress").value = permanentAddress;
+        document.getElementById("PresentAddress").value = presentAddress;
+        document.getElementById("BranchId").value = branchId;
+        document.getElementById("DepartmentId").value = departmentId;
+        document.getElementById("DesignationId").value = designationId;
+        document.getElementById("DateOfAppointment").value = dateOfAppointment;
+        document.getElementById("Religion").value = religion;
+        document.getElementById("Nationality").value = nationality;
+        document.getElementById("Shift").value = shift;
+        document.getElementById("Version").value = version;
+        document.getElementById("JobType").value = jobType;
+
+        const existingPhoto = document.getElementById("existingPhoto");
+        if (uploadPhoto && uploadPhoto !== "null" && uploadPhoto !== "") {
+            existingPhoto.src = "/profile/" + uploadPhoto;
+        } else {
+            existingPhoto.src = "";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.deleteForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the Employee.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+
