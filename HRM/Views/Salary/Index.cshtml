@@ -9,18 +9,39 @@
 <form method="post" asp-action="SaveSalary">
     <div class="container mt-3">
         <div class="row g-2 align-items-center mb-3">
-            <div class="col-md-4">
-                <select id="salaryItem" class="form-select">
-                    <option value="">-- Select Salary Item --</option>
-                    @foreach (var item in ViewBag.SalaryHeadsList as List<SelectListItem>)
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
+            <!-- Calculation Type -->
+            <div class="col-md-3">
+                <select id="calculationType" class="form-select">
+                    <option value="0">-- Select Calculation Type --</option>
+                    <option value="1">Branch-wise</option>
+                    <option value="2">Department-wise</option>
+                    <option value="3">Designation-wise</option>
+                    <option value="4">Employee-wise</option>
                 </select>
             </div>
 
-            <div class="col-md-4">
-                <select id="branch" class="form-select">
+            <!-- Month Selection -->
+            <div class="col-md-3">
+                <select id="monthSelect" class="form-select">
+                    <option value="">-- Select Month --</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+
+            <!-- Criteria Dropdowns -->
+            <div class="col-md-3">
+                <select id="branch" class="form-select criteria-dropdown" data-type="branch">
                     <option value="">-- Select Branch --</option>
                     @foreach (var branch in ViewBag.BranchList as List<SelectListItem>)
                     {
@@ -29,97 +50,562 @@
                 </select>
             </div>
 
-            <div class="col-md-2">
-                <input type="number" id="value" class="form-control" placeholder="Value" />
+            <div class="col-md-3">
+                <select id="department" class="form-select criteria-dropdown" data-type="department">
+                    <option value="">-- Select Department --</option>
+                    @foreach (var department in ViewBag.DepartmentList as List<SelectListItem>)
+                    {
+                        <option value="@department.Value">@department.Text</option>
+                    }
+                </select>
             </div>
 
-            <div class="col-md-2">
-                <button type="button" id="addBtn" class="btn btn-primary w-100">Add</button>
+            <div class="col-md-3">
+                <select id="designation" class="form-select criteria-dropdown" data-type="designation">
+                    <option value="">-- Select Designation --</option>
+                    @foreach (var designation in ViewBag.DesignationList as List<SelectListItem>)
+                    {
+                        <option value="@designation.Value">@designation.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <!-- Employee Autocomplete Input -->
+                <div class="employee-autocomplete-container">
+                    <input type="text" id="employeeSearch" class="form-control criteria-dropdown"
+                           data-type="employee" placeholder="Search employee..." autocomplete="off" />
+                    <select id="employee" class="criteria-dropdown" data-type="employee" style="display: none;">
+                        <option value="">-- Select Employee --</option>
+                        @foreach (var employee in ViewBag.EmployeeList as List<SelectListItem>)
+                        {
+                            <option value="@employee.Value">@employee.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <button type="button" id="calculateBtn" class="btn btn-primary w-100" disabled>Calculate & Save</button>
             </div>
         </div>
 
-        <table class="table table-bordered table-striped" id="salaryTable">
-            <thead>
-                <tr>
-                    <th>Salary Item</th>
-                    <th>Branch</th>
-                    <th>Value</th>
-                    <th style="width:80px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be added dynamically -->
-            </tbody>
-        </table>
+        <!-- Salary Items Modal Trigger -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <button type="button" id="addSalaryItemsBtn" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#salaryHeadsModal">
+                    Configure Salary Items
+                </button>
+            </div>
+        </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <strong>Total Value: <span id="totalValue">0</span></strong>
-            <button type="submit" class="btn btn-success">Submit</button>
+        <!-- Results Summary (without table) -->
+        <div class="card mb-3" id="resultsCard" style="display: none;">
+            <div class="card-header">
+                <h5 class="card-title">Calculation Results</h5>
+            </div>
+            <div class="card-body">
+                @* <div class="alert alert-info" id="resultsSummary"></div> *@
+                <div class="alert alert-success" id="successMessage" style="display: none;"></div>
+                <div class="alert alert-danger" id="errorMessage" style="display: none;"></div>
+            </div>
         </div>
     </div>
 </form>
 
+<!-- Salary Heads Modal -->
+<div class="modal fade" id="salaryHeadsModal" tabindex="-1" aria-labelledby="salaryHeadsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="salaryHeadsModalLabel">Configure Salary Items</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="modalSalaryTable">
+                    <thead>
+                        <tr>
+                            <th>Salary Item</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.SalaryHeadsList as List<SelectListItem>)
+                        {
+                            <tr>
+                                <td>@item.Text</td>
+                                <td>
+                                    <input type="number" step="0.01" class="form-control salaryValueInput"
+                                           data-id="@item.Value" data-name="@item.Text" value="0" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="saveSalaryItems" class="btn btn-primary">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+}
+
 @section Scripts {
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script>
-        function updateTotal() {
-            let total = 0;
-            document.querySelectorAll("#salaryTable tbody tr td:nth-child(3)").forEach(td => {
-                total += parseFloat(td.textContent) || 0;
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize autocomplete for employee search
+            $("#employeeSearch").autocomplete({
+                source: function(request, response) {
+                    // Get all employee options
+                    var employeeOptions = $("#employee option");
+                    var matches = $.map(employeeOptions, function(option) {
+                        var text = $(option).text();
+                        var value = $(option).val();
+
+                        // Skip the placeholder option
+                        if (!value) return null;
+
+                        // Check if the text contains the search term (case insensitive)
+                        if (text.toLowerCase().indexOf(request.term.toLowerCase()) >= 0) {
+                            return {
+                                label: text,
+                                value: value
+                            };
+                        }
+                        return null;
+                    });
+                    response(matches);
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    // Set the value of the hidden select element
+                    $("#employee").val(ui.item.value);
+
+                    // Update the calculate button state
+                    updateCalculateButton();
+
+                    // Update the search input to show the selected employee name
+                    $(this).val(ui.item.label);
+
+                    return false;
+                },
+                focus: function(event, ui) {
+                    // Prevent the input value from being updated when navigating with keyboard
+                    event.preventDefault();
+                }
             });
-            document.getElementById("totalValue").textContent = total.toFixed(2);
-        }
 
-        document.getElementById("addBtn").addEventListener("click", function () {
-            let salaryItemDropdown = document.getElementById("salaryItem");
-            let branchDropdown = document.getElementById("branch");
-            let valueInput = document.getElementById("value");
+            // Clear the selection when the input is cleared
+            $("#employeeSearch").on('input', function() {
+                if (!$(this).val()) {
+                    $("#employee").val("");
+                    updateCalculateButton();
+                }
+            });
 
-            let salaryItemText = salaryItemDropdown.options[salaryItemDropdown.selectedIndex].text;
-            let salaryItemValue = salaryItemDropdown.value;
-            let branchText = branchDropdown.options[branchDropdown.selectedIndex].text;
-            let branchValue = branchDropdown.value;
-            let value = valueInput.value;
+            // Update disableDropdownsExcept function to handle autocomplete
+            function disableDropdownsExcept(exceptType) {
+                const criteriaDropdowns = document.querySelectorAll('.criteria-dropdown');
+                criteriaDropdowns.forEach(dropdown => {
+                    if (dropdown.dataset.type !== exceptType) {
+                        dropdown.disabled = true;
+                        dropdown.value = '';
 
-            if (!salaryItemValue || !branchValue || !value) {
-                alert("Please fill all fields before adding.");
-                return;
+                        // Additional handling for autocomplete input
+                        if (dropdown.id === 'employeeSearch') {
+                            dropdown.value = '';
+                            $("#employee").val(""); // Clear the hidden select
+                        }
+                    }
+                });
             }
 
-            let tableBody = document.querySelector("#salaryTable tbody");
+            // Update calculation type change handler
+            document.getElementById('calculationType').addEventListener('change', function() {
+                const calculationType = parseInt(this.value);
+                const criteriaDropdowns = document.querySelectorAll('.criteria-dropdown');
 
-            let row = `
-                <tr>
-                    <td>
-                        ${salaryItemText}
-                        <input type="hidden" name="SalaryHeadsId[]" value="${salaryItemValue}" />
-                    </td>
-                    <td>
-                        ${branchText}
-                        <input type="hidden" name="BranchId[]" value="${branchValue}" />
-                    </td>
-                    <td>
-                        ${value}
-                        <input type="hidden" name="Value[]" value="${value}" />
-                    </td>
-                    <td><button type="button" class="btn btn-danger btn-sm removeBtn">X</button></td>
-                </tr>
-            `;
+                // Enable all dropdowns first
+                criteriaDropdowns.forEach(dropdown => {
+                    dropdown.disabled = false;
+                    dropdown.value = '';
+                });
 
-            tableBody.insertAdjacentHTML("beforeend", row);
+                // Clear autocomplete input if not employee-wise
+                if (calculationType !== 4) {
+                    $("#employeeSearch").val("");
+                    $("#employee").val("");
+                }
 
-            // Reset inputs
-            salaryItemDropdown.value = "";
-            branchDropdown.value = "";
-            valueInput.value = "";
+                // Disable based on calculation type
+                switch(calculationType) {
+                    case 1: // Branch-wise
+                        disableDropdownsExcept('branch');
+                        break;
+                    case 2: // Department-wise
+                        disableDropdownsExcept('department');
+                        break;
+                    case 3: // Designation-wise
+                        disableDropdownsExcept('designation');
+                        break;
+                    case 4: // Employee-wise
+                        disableDropdownsExcept('employee');
+                        break;
+                    default:
+                        criteriaDropdowns.forEach(dropdown => dropdown.disabled = true);
+                        break;
+                }
 
-            updateTotal();
-        });
+                updateCalculateButton();
+            });
 
-        // Remove row event
-        document.querySelector("#salaryTable").addEventListener("click", function (e) {
-            if (e.target.classList.contains("removeBtn")) {
-                e.target.closest("tr").remove();
-                updateTotal();
+            function updateCalculateButton() {
+                const calculationType = parseInt(document.getElementById('calculationType').value);
+                const monthSelected = document.getElementById('monthSelect').value !== '';
+                let criteriaSelected = false;
+
+                // Check if salary values are configured
+                const salaryValuesJson = document.getElementById('calculateBtn').dataset.salaryValues;
+                const hasSalaryValues = salaryValuesJson && Object.keys(JSON.parse(salaryValuesJson)).length > 0;
+
+                switch(calculationType) {
+                    case 1:
+                        criteriaSelected = document.getElementById('branch').value !== '';
+                        break;
+                    case 2:
+                        criteriaSelected = document.getElementById('department').value !== '';
+                        break;
+                    case 3:
+                        criteriaSelected = document.getElementById('designation').value !== '';
+                        break;
+                    case 4:
+                        criteriaSelected = document.getElementById('employee').value !== '';
+                        break;
+                }
+
+                document.getElementById('calculateBtn').disabled = !(calculationType > 0 && monthSelected && criteriaSelected && hasSalaryValues);
+            }
+
+            // Update button state when criteria change
+            document.querySelectorAll('.criteria-dropdown, #monthSelect').forEach(dropdown => {
+                dropdown.addEventListener('change', updateCalculateButton);
+            });
+
+            // Modal handling code
+            document.getElementById('saveSalaryItems').addEventListener('click', function() {
+                // Collect all salary values from the modal
+                const salaryValues = {};
+                const salaryHeadNames = {};
+
+                document.querySelectorAll('.salaryValueInput').forEach(input => {
+                    const value = parseFloat(input.value) || 0;
+                    // Store all salary heads, even with 0 values
+                    salaryHeadNames[input.dataset.id] = input.dataset.name;
+                    salaryValues[input.dataset.id] = value;
+                });
+
+                // Store the values in data attributes on the calculate button for later use
+                document.getElementById('calculateBtn').dataset.salaryValues = JSON.stringify(salaryValues);
+                document.getElementById('calculateBtn').dataset.salaryHeadNames = JSON.stringify(salaryHeadNames);
+
+                // Close the modal
+                bootstrap.Modal.getInstance(document.getElementById('salaryHeadsModal')).hide();
+
+                // Enable calculate button if all criteria are met
+                updateCalculateButton();
+
+                // Show success message
+                alert('Salary items configured successfully! You can now click Calculate & Save.');
+            });
+
+            // Clear stored values when modal is opened and update based on branch
+            document.getElementById('salaryHeadsModal').addEventListener('show.bs.modal', async function () {
+                const calculationType = parseInt(document.getElementById('calculationType').value);
+                let branchId = null;
+
+                try {
+                    switch(calculationType) {
+                        case 1: // Branch-wise
+                            branchId = document.getElementById('branch').value;
+                            break;
+                        case 2: // Department-wise
+                            const departmentId = document.getElementById('department').value;
+                            if (departmentId) {
+                                const response = await fetch(`/Salary/GetBranchFromDepartment?departmentId=${departmentId}`);
+                                if (response.ok) {
+                                    const result = await response.json();
+                                    branchId = result.branchId;
+                                }
+                            }
+                            break;
+                        case 3: // Designation-wise
+                            const designationId = document.getElementById('designation').value;
+                            if (designationId) {
+                                const response = await fetch(`/Salary/GetBranchFromDesignation?designationId=${designationId}`);
+                                if (response.ok) {
+                                    const result = await response.json();
+                                    branchId = result.branchId;
+                                }
+                            }
+                            break;
+                        case 4: // Employee-wise
+                            const employeeId = document.getElementById('employee').value;
+                            if (employeeId) {
+                                const response = await fetch(`/Salary/GetBranchFromEmployee?employeeId=${employeeId}`);
+                                if (response.ok) {
+                                    const result = await response.json();
+                                    branchId = result.branchId;
+                                }
+                            }
+                            break;
+                    }
+
+                    await updateSalaryHeadsModal(branchId);
+                } catch (error) {
+                    console.error('Error determining branch:', error);
+                    showAllSalaryHeads(); // Fallback
+                }
+
+                document.getElementById('calculateBtn').dataset.salaryValues = '';
+                document.getElementById('calculateBtn').dataset.salaryHeadNames = '';
+                document.getElementById('calculateBtn').disabled = true;
+            });
+
+            // Update criteria dropdown change events to refresh modal if open
+            document.querySelectorAll('.criteria-dropdown').forEach(dropdown => {
+                dropdown.addEventListener('change', async function() {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('salaryHeadsModal'));
+                    if (modal && modal._isShown) {
+                        const calculationType = parseInt(document.getElementById('calculationType').value);
+                        let branchId = null;
+
+                        try {
+                            switch(calculationType) {
+                                case 1: // Branch-wise
+                                    branchId = document.getElementById('branch').value;
+                                    break;
+                                case 2: // Department-wise
+                                    const departmentId = document.getElementById('department').value;
+                                    if (departmentId) {
+                                        const response = await fetch(`/Salary/GetBranchFromDepartment?departmentId=${departmentId}`);
+                                        if (response.ok) {
+                                            const result = await response.json();
+                                            branchId = result.branchId;
+                                        }
+                                    }
+                                    break;
+                                case 3: // Designation-wise
+                                    const designationId = document.getElementById('designation').value;
+                                    if (designationId) {
+                                        const response = await fetch(`/Salary/GetBranchFromDesignation?designationId=${designationId}`);
+                                        if (response.ok) {
+                                            const result = await response.json();
+                                            branchId = result.branchId;
+                                        }
+                                    }
+                                    break;
+                                case 4: // Employee-wise
+                                    const employeeId = document.getElementById('employee').value;
+                                    if (employeeId) {
+                                        const response = await fetch(`/Salary/GetBranchFromEmployee?employeeId=${employeeId}`);
+                                        if (response.ok) {
+                                            const result = await response.json();
+                                            branchId = result.branchId;
+                                        }
+                                    }
+                                    break;
+                            }
+
+                            await updateSalaryHeadsModal(branchId);
+                        } catch (error) {
+                            console.error('Error updating modal:', error);
+                            showAllSalaryHeads();
+                        }
+                    }
+                });
+            });
+
+            // Calculate and save salaries directly
+            document.getElementById('calculateBtn').addEventListener('click', async function() {
+                const calculationType = parseInt(document.getElementById('calculationType').value);
+                const monthIndex = document.getElementById('monthSelect').value;
+                const monthName = document.getElementById('monthSelect').selectedOptions[0]?.text;
+
+                // Get the stored salary values from the data attribute
+                const salaryValuesJson = this.dataset.salaryValues;
+                const salaryHeadNamesJson = this.dataset.salaryHeadNames;
+
+                if (!salaryValuesJson) {
+                    alert('Please configure salary items first by clicking "Configure Salary Items"');
+                    return;
+                }
+
+                const salaryValues = JSON.parse(salaryValuesJson);
+                const salaryHeadNames = JSON.parse(salaryHeadNamesJson);
+
+                // Get selected criteria
+                let branchId = null, departmentId = null, designationId = null, employeeId = null;
+
+                switch(calculationType) {
+                    case 1:
+                        branchId = document.getElementById('branch').value;
+                        break;
+                    case 2:
+                        departmentId = document.getElementById('department').value;
+                        break;
+                    case 3:
+                        designationId = document.getElementById('designation').value;
+                        break;
+                    case 4:
+                        employeeId = document.getElementById('employee').value;
+                        break;
+                }
+
+                try {
+                    // Show loading state
+                    const calculateBtn = document.getElementById('calculateBtn');
+                    const originalText = calculateBtn.textContent;
+                    calculateBtn.textContent = 'Calculating...';
+                    calculateBtn.disabled = true;
+
+                    // First calculate the salaries
+                    const calculateResponse = await fetch('/Salary/CalculateSalary', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            calculationType: calculationType,
+                            branchId: branchId ? parseInt(branchId) : null,
+                            departmentId: departmentId ? parseInt(departmentId) : null,
+                            designationId: designationId ? parseInt(designationId) : null,
+                            employeeId: employeeId ? parseInt(employeeId) : null,
+                            monthIndex: parseInt(monthIndex),
+                            month: monthName,
+                            salaryValues: salaryValues
+                        })
+                    });
+
+                    // Check if response is JSON
+                    const contentType = calculateResponse.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const text = await calculateResponse.text();
+                        throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+                    }
+
+                    const calculateResult = await calculateResponse.json();
+
+                    if (!calculateResponse.ok) {
+                        throw new Error(calculateResult.error || 'Unknown error occurred during calculation');
+                    }
+
+                    if (calculateResult.success) {
+                        // Now save the calculated salaries directly
+                        const saveResponse = await fetch('/Salary/SaveCalculatedSalaries', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(calculateResult.salaries)
+                        });
+
+                        const saveResult = await saveResponse.json();
+
+                        if (saveResult.success) {
+                            // Show success message
+                            document.getElementById('resultsCard').style.display = 'block';
+                            // document.getElementById('resultsSummary').textContent =
+                            //     `Successfully saved salaries for ${calculateResult.employeeCount} employees. Total amount: ${calculateResult.totalAmount.toFixed(2)}`;
+                            document.getElementById('successMessage').textContent = saveResult.message;
+                            document.getElementById('successMessage').style.display = 'block';
+                            document.getElementById('errorMessage').style.display = 'none';
+
+                            // Clear form
+                            document.querySelectorAll('.criteria-dropdown').forEach(dropdown => {
+                                dropdown.value = '';
+                            });
+                            document.getElementById('monthSelect').value = '';
+                            document.getElementById('calculationType').value = '0';
+                            document.getElementById('calculateBtn').dataset.salaryValues = '';
+                            document.getElementById('calculateBtn').dataset.salaryHeadNames = '';
+                            updateCalculateButton();
+                        } else {
+                            throw new Error(saveResult.message || 'Failed to save salaries');
+                        }
+                    } else {
+                        throw new Error(calculateResult.error || 'Calculation failed');
+                    }
+                } catch (error) {
+                    console.error('Error calculating/saving salaries:', error);
+                    document.getElementById('resultsCard').style.display = 'block';
+                    document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('successMessage').style.display = 'none';
+                } finally {
+                    // Restore button state
+                    calculateBtn.textContent = 'Calculate & Save';
+                    calculateBtn.disabled = false;
+                }
+            });
+
+            // Function to update modal with branch-specific salary heads
+            async function updateSalaryHeadsModal(branchId) {
+                if (!branchId) {
+                    showAllSalaryHeads();
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/Salary/GetSalaryHeadsByBranch?branchId=${branchId}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch salary heads');
+                    }
+
+                    const salaryHeads = await response.json();
+                    updateModalWithSalaryHeads(salaryHeads);
+                } catch (error) {
+                    console.error('Error fetching salary heads:', error);
+                    showAllSalaryHeads(); // Fallback to show all
+                }
+            }
+
+            function updateModalWithSalaryHeads(salaryHeads) {
+                const modalBody = document.querySelector('#modalSalaryTable tbody');
+                modalBody.innerHTML = '';
+
+                if (salaryHeads.length === 0) {
+                    modalBody.innerHTML = '<tr><td colspan="2" class="text-center">No salary items found for this branch</td></tr>';
+                    return;
+                }
+
+                salaryHeads.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.salaryitems}</td>
+                        <td>
+                            <input type="number" step="0.01" class="form-control salaryValueInput"
+                                   data-id="${item.id}" data-name="${item.salaryitems}" value="0" />
+                        </td>
+                    `;
+                    modalBody.appendChild(row);
+                });
+            }
+
+            function showAllSalaryHeads() {
+                const modalBody = document.querySelector('#modalSalaryTable tbody');
+                modalBody.innerHTML = '';
+
+                // Show all salary heads by using the original content
+                const originalRows = document.querySelectorAll('#salaryHeadsModal tr:not(:first-child)');
+                originalRows.forEach(row => {
+                    modalBody.appendChild(row.cloneNode(true));
+                });
             }
         });
     </script>
