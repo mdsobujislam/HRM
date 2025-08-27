@@ -80,7 +80,7 @@ namespace ServiceManagementSystem.Services
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var queryString = "select id,name,status,";
+                    var queryString = "select EmployeeId,id,name,status,";
                     queryString += "Email,MobileNo,SubscriptionId from Users where email='{0}' and password='{1}' and status=1";
                     var query = string.Format(queryString, userName,password);
                     var user = await connection.QueryFirstOrDefaultAsync<User>(query);

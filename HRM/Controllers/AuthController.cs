@@ -57,9 +57,9 @@ namespace ServiceManagementSystem.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Name),
-                        //new Claim(ClaimTypes.NameIdentifier, user.EmployeeId.ToString()),
-                        new Claim(ClaimTypes.NameIdentifier,
-          (user.EmployeeId > 0 ? user.EmployeeId : user.Id).ToString()),
+                        new Claim(ClaimTypes.NameIdentifier, user.EmployeeId.ToString()),
+          //              new Claim(ClaimTypes.NameIdentifier,
+          //(user.EmployeeId > 0 ? user.EmployeeId : user.Id).ToString()),
 
                         new Claim("SubscriptionId", user.SubscriptionId.ToString())
                     };

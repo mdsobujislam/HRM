@@ -233,8 +233,29 @@
                                 <li>
                                     <a asp-controller="Employee" asp-action="GetEmployee">Employee List</a>
                                 </li>
+                            </ul>
+                        </li>
+
+                        <li class="submenu">
+                            <a href="javascript:void(0);">
+                                <img src="~/assets/img/icons/settings.svg" alt="img" />
+                                <span>
+                                    Loan Management
+                                </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
                                 <li>
                                     <a asp-controller="LoanApplication" asp-action="Index">Loan Application</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="RecommendLoanApplication" asp-action="Index">Recommend Loan Application</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="LoanApproval" asp-action="Index">Loan Approval</a>
+                                </li>
+                                <li>
+                                    <a asp-controller="EmployeeLoan" asp-action="Index">Employee Loan Issue</a>
                                 </li>
                             </ul>
                         </li>

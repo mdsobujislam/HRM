@@ -1,0 +1,235 @@
+﻿@model IEnumerable<HRM.Models.LoanApproval>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-label,
+    .form-control {
+        font-size: 0.75rem; /* smaller font */
+    }
+</style>
+
+
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📋 Employee Loan Application List</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Index" method="post" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="FromDate" class="form-label fw-semibold">From Date</label>
+                            <input type="date" id="FromDate" name="FromDate" class="form-control"
+                                   value="@Model?.FirstOrDefault()?.FromDate ?? DateTime.Today.ToString(" yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ToDate" class="form-label fw-semibold">To Date</label>
+                            <input type="date" name="FromDate" class="form-control"
+                                   value="@DateTime.Today.ToString("MM/dd/yyyy")" />
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-end">
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-eye"></i> Show
+                            </button>
+                            <button type="reset" class="btn btn-secondary px-4 ms-2">
+                                <i class="bi bi-x-circle"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                @* <h5 class="card-title mb-0">Loan List</h5> *@
+                @* <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                        data-bs-target="#addSalaryHeadModal">
+                    <i class="fas fa-plus"></i> Add New
+                </button> *@
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Empp Id</th>
+                                <th>Employee Name</th>
+                                <th>Appli Date</th>
+                                <th>Branch</th>
+                                <th>LoanId</th>
+                                <th>Remarks</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                                foreach (var item in Model)
+                                {
+                                    index++;
+                                    <tr>
+                                        <td>@index</td>
+                                        <td>@item.EmployeeId</td>
+                                        <td>@item.EmployeeName</td>
+                                        <td>@item.AppliDate</td>
+                                        <td>@item.Branch</td>
+                                        <td>@item.LoanId</td>
+                                        <td>@item.Remarks</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm"
+                                                    onclick="edit('@item.Id', '@item.EmployeeId','@item.LoanApproved','@item.interest','@item.Term')"
+                                                    data-bs-toggle="modal" data-bs-target="#addModal">
+                                                <i class="fas fa-edit"></i> Add
+                                            </button>
+                                        </td>
+                                        
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : #f9f9fb;">
+                <h5 class="modal-title" id="addModalLabel">Add Branch</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Inser" method="post">
+                    <input type="hidden" id="Id" name="Id" readonly>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="DateOfLoan" class="form-label">Date of Issue</label>
+                                <input type="date" class="form-control form-control-sm" id="DateOfLoan" name="DateOfLoan" required>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="ApplicationId" class="form-label">Application ID</label>
+                                <input type="text" class="form-control form-control-sm" id="ApplicationId" name="ApplicationId">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="LoanAmount" class="form-label">Loan Amount</label>
+                                <input type="text" class="form-control form-control-sm" id="LoanAmount" name="LoanAmount">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="interest" class="form-label">Interest %age</label>
+                                <input type="text" class="form-control form-control-sm" id="interest" name="interest">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="InterestAmount" class="form-label">Interest Amount</label>
+                                <input type="text" class="form-control form-control-sm" id="InterestAmount" name="InterestAmount">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="LoanTerm" class="form-label">Term of Loan (In Year)</label>
+                                <input type="text" class="form-control form-control-sm" id="LoanTerm" name="LoanTerm">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="EMIInterest" class="form-label">EMI (Interest)</label>
+                                <input type="text" class="form-control form-control-sm" id="EMIInterest" name="EMIInterest">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="EMIPrinciple" class="form-label">EMI (Principle)</label>
+                                <input type="text" class="form-control form-control-sm" id="EMIPrinciple" name="EMIPrinciple">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="NetEMI" class="form-label">Net EMI</label>
+                                <input type="text" class="form-control form-control-sm" id="NetEMI" name="NetEMI">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary btn-sm me-2">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+@section Scripts {
+
+    <script>
+        $(function(){
+            $('.datepicker').datepicker({
+                format: 'mm/dd/yyyy',
+                autoclose: true
+            });
+            // Set default date to today
+            $('#FromDate').datepicker('setDate', new Date());
+            $('#ToDate').datepicker('setDate', new Date());
+        });
+
+
+
+            document.querySelectorAll('.submitForm').forEach(function (form) {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This will Recommend Loan Application.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, submit it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+
+    </script>
+}
+

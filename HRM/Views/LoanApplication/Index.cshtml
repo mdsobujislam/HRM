@@ -8,7 +8,7 @@
     <div class="col-md-12">
         <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Employee List</h5>
+                <h5 class="card-title mb-0">Loan Application List</h5>
                 <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
                         data-bs-target="#addSalaryHeadModal">
                     <i class="fas fa-plus"></i> Add New
@@ -28,7 +28,7 @@
                                 <th>Department</th>
                                 <th>BasicSalary</th>
                                 <th>AmountLoan</th>
-                                <th>Duration</th>
+                                <th>Joining Duration</th>
                                 <th>RecommendedAmount</th>
                                 <th>RecommendDate</th>
                                 <th>PreviousLoan</th>
@@ -42,7 +42,6 @@
                                 <th>LoanIssued</th>
                                 <th>LoanId</th>
                                 <th>Remarks</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,17 +74,6 @@
                                         <td>@item.LoanIssued</td>
                                         <td>@item.LoanId</td>
                                         <td>@item.Remarks</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm"
-                                                    onclick="editSalaryHead('@item.Id', '@item.AmountLoan')"
-                                                    data-bs-toggle="modal" data-bs-target="#addSalaryHeadModal">
-                                                Edit
-                                            </button>
-                                            <form asp-action="Delete" method="post" class="d-inline deleteForm">
-                                                <input type="hidden" name="id" value="@item.Id" />
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
-                                        </td>
                                     </tr>
                                 }
                             }
