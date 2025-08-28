@@ -1,299 +1,270 @@
-﻿
-@{
-    ViewData["Title"] = "Dashboard";
+﻿@{
+    ViewData["Title"] = "HRM Dashboard";
 }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-<div class="row">
-    <div class="col-lg-3 col-sm-6 col-12">
-        <div class="dash-widget">
-            <div class="dash-widgetimg">
-                <span>
-                    <img src="assets/img/icons/dash1.svg" alt="img">
-                </span>
-            </div>
-            <div class="dash-widgetcontent">
-                <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
-                <h6>Total Purchase Due</h6>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12">
-        <div class="dash-widget dash1">
-            <div class="dash-widgetimg">
-                <span>
-                    <img src="assets/img/icons/dash2.svg" alt="img">
-                </span>
-            </div>
-            <div class="dash-widgetcontent">
-                <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
-                <h6>Total Sales Due</h6>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12">
-        <div class="dash-widget dash2">
-            <div class="dash-widgetimg">
-                <span>
-                    <img src="assets/img/icons/dash3.svg" alt="img">
-                </span>
-            </div>
-            <div class="dash-widgetcontent">
-                <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                <h6>Total Sale Amount</h6>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12">
-        <div class="dash-widget dash3">
-            <div class="dash-widgetimg">
-                <span>
-                    <img src="assets/img/icons/dash4.svg" alt="img">
-                </span>
-            </div>
-            <div class="dash-widgetcontent">
-                <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                <h6>Total Sale Amount</h6>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count">
-            <div class="dash-counts">
-                <h4>100</h4>
-                <h5>Customers</h5>
-            </div>
-            <div class="dash-imgs">
-                <i data-feather="user"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count das1">
-            <div class="dash-counts">
-                <h4>100</h4>
-                <h5>Suppliers</h5>
-            </div>
-            <div class="dash-imgs">
-                <i data-feather="user-check"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count das2">
-            <div class="dash-counts">
-                <h4>100</h4>
-                <h5>Purchase Invoice</h5>
-            </div>
-            <div class="dash-imgs">
-                <i data-feather="file-text"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count das3">
-            <div class="dash-counts">
-                <h4>105</h4>
-                <h5>Sales Invoice</h5>
-            </div>
-            <div class="dash-imgs">
-                <i data-feather="file"></i>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="container-fluid">
 
-<div class="row">
-    <div class="col-lg-7 col-sm-12 col-12 d-flex">
-        <div class="card flex-fill">
-            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Purchase & Sales</h5>
-                <div class="graph-sets">
-                    <ul>
-                        <li>
-                            <span>Sales</span>
-                        </li>
-                        <li>
-                            <span>Purchase</span>
-                        </li>
-                    </ul>
-                    <div class="dropdown">
-                        <button class="btn btn-white btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            2022 <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <a href="javascript:void(0);" class="dropdown-item">2022</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="dropdown-item">2021</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);" class="dropdown-item">2020</a>
-                            </li>
-                        </ul>
+    <!-- KPI Cards -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Employees -->
+        <div class="col-lg-3 col-sm-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-center mb-1">
+                        <div class="p-2 bg-primary bg-opacity-10 rounded-circle me-2">
+                            <i class="bi bi-people-fill text-primary fs-5"></i>
+                        </div>
+                        <h6 class="text-primary mb-0 small">Employees</h6>
                     </div>
+                    <h4 class="fw-bold mb-0">352</h4>
+                    <small class="text-success d-flex align-items-center justify-content-center mt-1">
+                        <i class="bi bi-arrow-up me-1"></i> 15%
+                    </small>
                 </div>
-            </div>
-            <div class="card-body">
-                <div id="sales_charts"></div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-5 col-sm-12 col-12 d-flex">
-        <div class="card flex-fill">
-            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                <h4 class="card-title mb-0">Recently Added Products</h4>
-                <div class="dropdown">
-                    <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false" class="dropset">
-                        <i class="fa fa-ellipsis-v"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li>
-                            <a href="productlist" class="dropdown-item">Product List</a>
-                        </li>
-                        <li>
-                            <a href="addproduct" class="dropdown-item">Product Add</a>
-                        </li>
-                    </ul>
+
+        <!-- Leaves -->
+        <div class="col-lg-3 col-sm-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-center mb-1">
+                        <div class="p-2 bg-danger bg-opacity-10 rounded-circle me-2">
+                            <i class="bi bi-calendar-x text-danger fs-5"></i>
+                        </div>
+                        <h6 class="text-danger mb-0 small">Leaves</h6>
+                    </div>
+                    <h4 class="fw-bold mb-0">24</h4>
+                    <small class="text-danger d-flex align-items-center justify-content-center mt-1">
+                        <i class="bi bi-arrow-down me-1"></i> 10%
+                    </small>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive dataview">
-                    <table class="table datatable ">
-                        <thead>
+        </div>
+
+        <!-- New Employees -->
+        <div class="col-lg-3 col-sm-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-center mb-1">
+                        <div class="p-2 bg-success bg-opacity-10 rounded-circle me-2">
+                            <i class="bi bi-person-plus-fill text-success fs-5"></i>
+                        </div>
+                        <h6 class="text-success mb-0 small">New Employees</h6>
+                    </div>
+                    <h4 class="fw-bold mb-0">27</h4>
+                    <small class="text-success d-flex align-items-center justify-content-center mt-1">
+                        <i class="bi bi-arrow-up me-1"></i> 12%
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Happiness Rate -->
+        <div class="col-lg-3 col-sm-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-center mb-1">
+                        <div class="p-2 bg-warning bg-opacity-10 rounded-circle me-2">
+                            <i class="bi bi-emoji-smile-fill text-warning fs-5"></i>
+                        </div>
+                        <h6 class="text-warning mb-0 small">Happiness Rate</h6>
+                    </div>
+                    <h4 class="fw-bold mb-0">80%</h4>
+                    <small class="text-success d-flex align-items-center justify-content-center mt-1">
+                        <i class="bi bi-arrow-up me-1"></i> 12%
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Charts Row -->
+    <div class="row g-3 mb-4">
+
+        <!-- Working Format Donut -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header">Working Format</div>
+                <div class="card-body">
+                    <canvas id="workingFormatChart" style="height:250px;"></canvas>
+                    <p class="text-center mt-2">Total: 328</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recruitment Progress Table -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header d-flex justify-content-between align-items-center text-white py-2"
+                     style="background-color: #8cba43; height: 40px;">
+                    <span class="fw-bold">Recruitment Progress</span>
+                    <a href="/employees" class="small text-white text-decoration-underline">View all →</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th>Sno</th>
-                                <th>Products</th>
-                                <th>Price</th>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>1</td>
-                                <td class="productimgname">
-                                    <a href="productlist" class="product-img">
-                                        <img src="assets/img/product/product22.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist">Apple Earpods</a>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/sobuj.jpg" class="rounded-circle me-2" width="40" height="40" alt="Leo">
+                                        <span class="fw-semibold">Borhanuddin</span>
+                                    </div>
                                 </td>
-                                <td>$891.2</td>
+                                <td><span class="badge bg-info">.NET Developer</span></td>
+                                <td><span class="badge bg-warning text-dark">Tech Interview</span></td>
                             </tr>
                             <tr>
-                                <td>2</td>
-                                <td class="productimgname">
-                                    <a href="productlist" class="product-img">
-                                        <img src="assets/img/product/product23.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist">iPhone 11</a>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/nuruzam.jpeg" class="rounded-circle me-2" width="40" height="40" alt="Ann">
+                                        <span class="fw-semibold">Nurujjaman</span>
+                                    </div>
                                 </td>
-                                <td>$668.51</td>
+                                <td><span class="badge bg-success">Flutter</span></td>
+                                <td><span class="badge bg-primary">Resume Review</span></td>
                             </tr>
                             <tr>
-                                <td>3</td>
-                                <td class="productimgname">
-                                    <a href="productlist" class="product-img">
-                                        <img src="assets/img/product/product24.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist">samsung</a>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/kamran.jpeg" class="rounded-circle me-2" width="40" height="40" alt="Eric">
+                                        <span class="fw-semibold">Kamran Raj</span>
+                                    </div>
                                 </td>
-                                <td>$522.29</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td class="productimgname">
-                                    <a href="productlist" class="product-img">
-                                        <img src="assets/img/product/product6.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist">Macbook Pro</a>
-                                </td>
-                                <td>$291.01</td>
+                                <td><span class="badge bg-secondary">Laravel Developer</span></td>
+                                <td><span class="badge bg-danger">Final Interview</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="card mb-0">
-    <div class="card-body">
-        <h4 class="card-title">Expired Products</h4>
-        <div class="table-responsive dataview">
-            <table class="table datatable ">
-                <thead>
-                    <tr>
-                        <th>SNo</th>
-                        <th>Product Code</th>
-                        <th>Product Name</th>
-                        <th>Brand Name</th>
-                        <th>Category Name</th>
-                        <th>Expiry Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <a href="javascript:void(0);">IT0001</a>
-                        </td>
-                        <td class="productimgname">
-                            <a class="product-img" href="productlist">
-                                <img src="assets/img/product/product2.jpg" alt="product">
-                            </a>
-                            <a href="productlist">Orange</a>
-                        </td>
-                        <td>N/D</td>
-                        <td>Fruits</td>
-                        <td>12-12-2022</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <a href="javascript:void(0);">IT0002</a>
-                        </td>
-                        <td class="productimgname">
-                            <a class="product-img" href="productlist">
-                                <img src="assets/img/product/product3.jpg" alt="product">
-                            </a>
-                            <a href="productlist">Pineapple</a>
-                        </td>
-                        <td>N/D</td>
-                        <td>Fruits</td>
-                        <td>25-11-2022</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>
-                            <a href="javascript:void(0);">IT0003</a>
-                        </td>
-                        <td class="productimgname">
-                            <a class="product-img" href="productlist">
-                                <img src="assets/img/product/product4.jpg" alt="product">
-                            </a>
-                            <a href="productlist">Stawberry</a>
-                        </td>
-                        <td>N/D</td>
-                        <td>Fruits</td>
-                        <td>19-11-2022</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>
-                            <a href="javascript:void(0);">IT0004</a>
-                        </td>
-                        <td class="productimgname">
-                            <a class="product-img" href="productlist">
-                                <img src="assets/img/product/product5.jpg" alt="product">
-                            </a>
-                            <a href="productlist">Avocat</a>
-                        </td>
-                        <td>N/D</td>
-                        <td>Fruits</td>
-                        <td>20-11-2022</td>
-                    </tr>
-                </tbody>
-            </table>
+
+
+
+        <!-- Requests List -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <!-- Header -->
+                <div class="card-header d-flex align-items-center text-white py-2"
+                     style="background-color: #8cba43; height: 40px;">
+                    <span class="fw-bold">Requests</span>
+                </div>
+                <!-- Body -->
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="d-flex justify-content-between align-items-center mb-3">
+                            <span><i class="bi bi-person-circle me-2 text-primary"></i> Profile Update</span>
+                            <span class="badge bg-primary rounded-pill">9</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center mb-3">
+                            <span><i class="bi bi-briefcase-fill me-2 text-success"></i> Business Trip</span>
+                            <span class="badge bg-success rounded-pill">2</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center mb-3">
+                            <span><i class="bi bi-sun-fill me-2 text-warning"></i> Vacation</span>
+                            <span class="badge bg-warning text-dark rounded-pill">16</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-emoji-frown-fill me-2 text-danger"></i> Sick Leave</span>
+                            <span class="badge bg-danger rounded-pill">5</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
+
     </div>
+
+    <!-- Employee Turnover & Recruitment Progress -->
+    <div class="row g-3 mb-4">
+        <!-- Employee Turnover Chart -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header">Employees Turnover</div>
+                <div class="card-body">
+                    <div id="employeeTurnoverChart" style="height:250px;"></div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
 </div>
 
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        // ===== Working Format Donut (Chart.js) =====
+        var ctx = document.getElementById('workingFormatChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Remote', 'Onsite', 'Hybrid'],
+                datasets: [{
+                    data: [120, 150, 58],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(255, 206, 86, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // ===== Daily Project Work Bar (ApexCharts) =====
+        var dailyChart = new ApexCharts(document.querySelector("#dailyProjectChart"), {
+            chart: { type: 'bar', height: 250 },
+            series: [
+                { name: 'Project', data: [200, 230, 180, 250, 150, 210, 240] },
+                { name: 'Bench', data: [100, 70, 140, 90, 120, 80, 130] }
+            ],
+            xaxis: { categories: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] },
+            colors: ['#0d6efd', '#198754'],
+            plotOptions: { bar: { columnWidth: '40%' } },
+            legend: { position: 'top' },
+            tooltip: { shared: true, intersect: false }
+        });
+        dailyChart.render();
+
+        // ===== Employee Turnover Stacked Bar (ApexCharts) =====
+        var turnoverChart = new ApexCharts(document.querySelector("#employeeTurnoverChart"), {
+            chart: { type: 'bar', height: 250, stacked: true },
+            series: [
+                { name: 'Joined', data: [12, 15, 10, 4, 6, 7, 13, 5, 14] },
+                { name: 'Left', data: [8, 5, 10, 16, 14, 13, 7, 15, 6] }
+            ],
+            xaxis: { categories: ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'] },
+            colors: ['#0d6efd', '#198754'],
+            legend: { position: 'bottom' }
+        });
+        turnoverChart.render();
+    </script>
+}

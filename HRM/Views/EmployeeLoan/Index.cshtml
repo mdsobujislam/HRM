@@ -87,15 +87,16 @@
                                         <td>
                                             <button class="btn btn-warning btn-sm"
                                                     onclick="edit('@item.Id',
-                                  '@item.LoanApproved',
-                                  '@item.interest',
-                                  '@String.Format("{0:0.00}", (item.LoanApproved * item.interest) / 100)',
-                                  '@item.Term',
-                                  '@String.Format("{0:0.00}", (item.LoanApproved * item.interest) / 100 + item.LoanApproved / (item.Term * 12))',
-                                  '@String.Format("{0:0.00}", (item.LoanApproved / item.Term))')"
+        '@item.LoanApproved',
+        '@item.interest',
+        '@String.Format("{0:0.00}", (item.LoanApproved * item.interest) / 100)',
+        '@item.Term',
+        '@String.Format("{0:0.00}", ((item.LoanApproved * item.interest) / 100) / item.Term)',
+        '@String.Format("{0:0.00}", (item.LoanApproved / item.Term))')"
                                                     data-bs-toggle="modal" data-bs-target="#addModal">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
+
                                         </td>
 
 
@@ -139,7 +140,6 @@
                                 <label for="ApplicationId" class="form-label">Application ID</label>
                             </div>
                             <div class="col-md-6">
-                                <!-- Application ID is actually Id -->
                                 <input type="text" class="form-control form-control-sm" id="ApplicationId" name="ApplicationId" readonly>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
                                 <label for="LoanAmount" class="form-label">Loan Amount</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="LoanAmount" name="LoanAmount">
+                                <input type="text" class="form-control form-control-sm" id="LoanAmount" name="LoanAmount" readonly>
                             </div>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
                                 <label for="Interest" class="form-label">Interest %age</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="Interest" name="Interest">
+                                <input type="text" class="form-control form-control-sm" id="Interest" name="Interest" readonly>
                             </div>
                         </div>
                     </div>
@@ -173,7 +173,7 @@
                                 <label for="InterestAmount" class="form-label">Interest Amount</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="InterestAmount" name="InterestAmount">
+                                <input type="text" class="form-control form-control-sm" id="InterestAmount" name="InterestAmount" readonly>
                             </div>
                         </div>
                     </div>
@@ -184,7 +184,7 @@
                                 <label for="Term" class="form-label">Term of Loan (In Year)</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="Term" name="Term">
+                                <input type="text" class="form-control form-control-sm" id="Term" name="Term" readonly>
                             </div>
                         </div>
                     </div>
@@ -192,10 +192,10 @@
                     <div class="col-md-12 mt-2">
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="PerMonthInterest" class="form-label">EMI (Interest)</label>
+                                <label for="EmiInterest" class="form-label">EMI (Interest)</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="PerMonthInterest" name="PerMonthInterest">
+                                <input type="text" class="form-control form-control-sm" id="EmiInterest" name="EmiInterest" readonly>
                             </div>
                         </div>
                     </div>
@@ -206,7 +206,7 @@
                                 <label for="EmiPrinciple" class="form-label">EMI (Principle)</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="EmiPrinciple" name="EmiPrinciple">
+                                <input type="text" class="form-control form-control-sm" id="EmiPrinciple" name="EmiPrinciple" readonly>
                             </div>
                         </div>
                     </div>
@@ -214,10 +214,10 @@
                     <div class="col-md-12 mt-2">
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="Emi" class="form-label">Net EMI</label>
+                                <label for="NetEmi" class="form-label">Net EMI</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control form-control-sm" id="Emi" name="Emi">
+                                <input type="text" class="form-control form-control-sm" id="NetEmi" name="NetEmi" readonly>
                             </div>
                         </div>
                     </div>
@@ -265,10 +265,7 @@
 
 
 
-                                function edit(id, loanAmount, interest, interestAmount, term, perMonthInterest, emiPrinciple) {
-            console.log("ID:", id);
-
-            // ApplicationId field is same as Id
+                                                        function edit(id, loanAmount, interest, interestAmount, term) {
             document.getElementById("Id").value = id;
             document.getElementById("ApplicationId").value = id;
 
@@ -276,13 +273,31 @@
             document.getElementById("Interest").value = interest;
             document.getElementById("InterestAmount").value = interestAmount;
             document.getElementById("Term").value = term;
-            document.getElementById("PerMonthInterest").value = perMonthInterest;
-            document.getElementById("EmiPrinciple").value = emiPrinciple;
-            document.getElementById("Emi").value = (parseFloat(perMonthInterest) + parseFloat(emiPrinciple)).toFixed(2);
+
+            let months = term * 12; // Term in months
+
+            // EMI Interest
+            let emiInterestRaw = (parseFloat(loanAmount) * parseFloat(interest)) / 100 / months;
+            let emiInterest = Math.floor(emiInterestRaw);
+            if (emiInterestRaw - emiInterest >= 0.56) emiInterest += 1;
+
+            // EMI Principle
+            let emiPrincipleRaw = parseFloat(loanAmount) / months;
+            let emiPrinciple = Math.floor(emiPrincipleRaw);
+            if (emiPrincipleRaw - emiPrinciple >= 0.56) emiPrinciple += 1;
+
+            // Net EMI
+            let netEmi = emiInterest + emiPrinciple;
+
+            document.getElementById("EmiInterest").value = emiInterest.toFixed(2);
+            document.getElementById("EmiPrinciple").value = emiPrinciple.toFixed(2);
+            document.getElementById("NetEmi").value = netEmi.toFixed(2);
 
             document.getElementById("addModalLabel").textContent = "Edit Loan";
             document.getElementById("modalSubmitText").textContent = "Update";
         }
+
+
 
 
 
