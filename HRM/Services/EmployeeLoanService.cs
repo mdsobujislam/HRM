@@ -98,7 +98,7 @@ namespace HRM.Services
                         return new List<LoanApproval>();
                     }
 
-                    var query = @"SELECT t1.Id, t2.EmpId AS EmployeeId, t2.EmployeeName AS EmployeeName, t1.AppliDate AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.id AS LoanId,t1.LoanApproved as LoanApproved,t1.interest as interest,t1.Term as Term  FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
+                    var query = @"SELECT t1.Id as Id, t2.EmpId AS EmployeeId, t2.EmployeeName AS EmployeeName, t1.AppliDate AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.id AS LoanId,t1.LoanApproved as LoanApproved,t1.interest as interest,t1.Term as Term  FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
 
                     var result = await connection.QueryAsync<LoanApproval>(
                         query,
