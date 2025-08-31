@@ -45,39 +45,107 @@ namespace HRM.Services
         {
             try
             {
+                var subscriptionId = _baseService.GetSubscriptionId();
+                var userId = _baseService.GetUserId();
+                var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+                var companyId = await _baseService.GetCompanyId(subscriptionId);
+
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
-                    var subscriptionId = _baseService.GetSubscriptionId();
-                    var userId = _baseService.GetUserId();
-                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
-                    var companyId = await _baseService.GetCompanyId(subscriptionId);
+                    // Insert EmployeeLoan
+                    string loanQuery = @"
+                    INSERT INTO EmployeeLoan
+                    (EmployeeId, DateOfLoan, LoanAgainst, LoanPercentage, LoanAmount, Interest, InterestAmount, Term, PerMonthInterest, EmiPrinciple, Emi, ApplicationId, BranchId, SubscriptionId, CompanyId) VALUES (@EmployeeId, @DateOfLoan, @LoanAgainst, @LoanPercentage, @LoanAmount, @Interest, @InterestAmount, @Term, @PerMonthInterest, @EmiPrinciple, @Emi, @ApplicationId, @BranchId, @SubscriptionId, @CompanyId); SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
-                    var loginid = _baseService.GetUserId();
-                    //var employeDetailsQuery = "SELECT Name FROM Employees WHERE UserId = @UserId AND SubscriptionId = @SubscriptionId";
+                    var loanParams = new DynamicParameters();
+                    loanParams.Add("EmployeeId", userId);
+                    loanParams.Add("DateOfLoan", employeeLoan.DateOfLoan);
+                    loanParams.Add("LoanAgainst", employeeLoan.LoanAgainst);
+                    loanParams.Add("LoanPercentage", employeeLoan.LoanPercentage);
+                    loanParams.Add("LoanAmount", employeeLoan.LoanAmount);
+                    loanParams.Add("Interest", employeeLoan.Interest);
+                    loanParams.Add("InterestAmount", employeeLoan.InterestAmount);
+                    loanParams.Add("Term", employeeLoan.Term);
+                    loanParams.Add("PerMonthInterest", employeeLoan.PerMonthInterest);
+                    loanParams.Add("EmiPrinciple", employeeLoan.EmiPrinciple);
+                    loanParams.Add("Emi", employeeLoan.Emi);
+                    loanParams.Add("ApplicationId", employeeLoan.ApplicationId);
+                    loanParams.Add("BranchId", branchId);
+                    loanParams.Add("SubscriptionId", subscriptionId);
+                    loanParams.Add("CompanyId", companyId);
 
-                    var queryString = "insert into EmployeeLoan (EmployeeId,DateOfLoan,LoanAgainst,LoanPercentage,LoanAmount,Interest,InterestAmount,Term,PerMonthInterest,EmiPrinciple,Emi,ApplicationId,BranchId,SubscriptionId,CompanyId) values ";
-                    queryString += "( @EmployeeId,@DateOfLoan,@LoanAgainst,@LoanPercentage,@LoanAmount,@Interest,@InterestAmount,@Term,@PerMonthInterest,@EmiPrinciple,@Emi,@ApplicationId,@BranchId,@SubscriptionId,@CompanyId)";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("EmployeeId", loginid);
-                    parameters.Add("AppliDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
-                    //parameters.Add("AmountLoan", loanApplication.AmountLoan, DbType.String);
-                    //parameters.Add("Remarks", loanApplication.Remarks, DbType.String);
-                    parameters.Add("BranchId", branchId);
-                    parameters.Add("SubscriptionId", subscriptionId);
-                    parameters.Add("CompanyId", companyId);
-                    var success = await connection.ExecuteAsync(queryString, parameters);
-                    if (success > 0)
+                    int empLoanId = await connection.ExecuteScalarAsync<int>(loanQuery, loanParams);
+
+                    // Insert uploaded files (multiple)
+                    if (employeeLoan.PdfFiles != null && employeeLoan.PdfFiles.Count > 0)
                     {
-                        return true;
+                        foreach (var file in employeeLoan.PdfFiles)
+                        {
+                            if (file.Length > 0)
+                            {
+                                byte[] fileBytes;
+                                using (var ms = new MemoryStream())
+                                {
+                                    await file.CopyToAsync(ms);
+                                    fileBytes = ms.ToArray();
+                                }
+
+                                string fileQuery = @" INSERT INTO EmployeeLoanFile (EmployeeId, ApplicationFile, ContentType, LoanId, BranchId, SubscriptionId, CompanyId) VALUES (@EmployeeId, @ApplicationFile, @ContentType, @LoanId, @BranchId, @SubscriptionId, @CompanyId);";
+
+                                var fileParams = new DynamicParameters();
+                                fileParams.Add("EmployeeId", userId);
+                                fileParams.Add("ApplicationFile", fileBytes, DbType.Binary);
+                                fileParams.Add("ContentType", file.ContentType);
+                                fileParams.Add("LoanId", empLoanId);
+                                fileParams.Add("BranchId", branchId);
+                                fileParams.Add("SubscriptionId", subscriptionId);
+                                fileParams.Add("CompanyId", companyId);
+
+                                await connection.ExecuteAsync(fileQuery, fileParams);
+                            }
+                        }
                     }
-                    return false;
+
+                    // Update LoanApproval
+                    string approvalQuery = @" UPDATE LoanApproval SET LoanIssued = @LoanIssued, LoanId = @LoanId WHERE Id = @AppId";
+
+                    var approvalParams = new DynamicParameters();
+                    approvalParams.Add("LoanIssued", "Issued");
+                    approvalParams.Add("LoanId", empLoanId);
+                    approvalParams.Add("AppId", employeeLoan.Id);
+
+                    await connection.ExecuteAsync(approvalQuery, approvalParams);
+
+                    // Insert LoanInstallments
+                    for (int i = 1; i <= employeeLoan.Term * 12; i++)
+                    {
+                        string installmentQuery = @"
+                        INSERT INTO LoanInstallment
+                        (LoanId, EmployeeId, DateOfInstallment, Installment_No, Installment_Amount, BranchId, SubscriptionId, CompanyId) VALUES (@LoanId, @EmployeeId, @DateOfInstallment, @Installment_No, @Installment_Amount, @BranchId, @SubscriptionId, @CompanyId);";
+
+                        var installmentParams = new DynamicParameters();
+                        installmentParams.Add("LoanId", empLoanId);
+                        installmentParams.Add("EmployeeId", userId);
+                        DateTime loanDate = DateTime.Parse(employeeLoan.DateOfLoan);
+                        installmentParams.Add("DateOfInstallment", loanDate.AddMonths(i).ToString("yyyy-MM-dd"), DbType.String);
+                        installmentParams.Add("Installment_No", i);
+                        installmentParams.Add("Installment_Amount", employeeLoan.Emi);
+                        installmentParams.Add("BranchId", branchId);
+                        installmentParams.Add("SubscriptionId", subscriptionId);
+                        installmentParams.Add("CompanyId", companyId);
+
+                        await connection.ExecuteAsync(installmentQuery, installmentParams);
+                    }
+
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                // log exception
+                return false;
             }
         }
 

@@ -86,16 +86,23 @@
                                         <td>
                                         <td>
                                             <button class="btn btn-warning btn-sm"
-                                                    onclick="edit('@item.Id',
+                                                    onclick="edit(
+        '@item.Id',
+        '@item.ApplicationId',
+        '@item.DateOfLoan.ToString("yyyy-MM-dd")',
         '@item.LoanApproved',
         '@item.interest',
         '@String.Format("{0:0.00}", (item.LoanApproved * item.interest) / 100)',
         '@item.Term',
         '@String.Format("{0:0.00}", ((item.LoanApproved * item.interest) / 100) / item.Term)',
-        '@String.Format("{0:0.00}", (item.LoanApproved / item.Term))')"
+        '@String.Format("{0:0.00}", (item.LoanApproved / item.Term))',
+        '@item.PdfPath',
+        '@item.EmployeeId'
+        )"
                                                     data-bs-toggle="modal" data-bs-target="#addModal">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
+
 
                                         </td>
 
@@ -120,10 +127,35 @@
                 <h5 class="modal-title" id="addModalLabel">Loan Issue List</h5>
             </div>
             <div class="modal-body">
-                <form asp-action="Inser" method="post">
+                <form asp-action="CreateOrUpdate" method="post">
                     <input type="hidden" id="Id" name="Id" readonly>
 
+
+
                     <div class="col-md-12">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Upload Files</label>
+                            </div>
+                            <div class="col-md-6" id="fileInputs">
+                                <div class="input-group mb-2">
+                                    <input type="file" name="PdfFiles" multiple class="form-control form-control-sm" accept=".pdf,.doc,.docx,.jpg,.png">
+
+                                    <span class="input-group-text" style="cursor:pointer;" onclick="removeFile(this)">
+                                        <i class="fa fa-times text-danger"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 text-end">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addMoreFile()">+ Add More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mt-2">
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="DateOfLoan" class="form-label">Date of Issue</label>
@@ -192,7 +224,7 @@
                     <div class="col-md-12 mt-2">
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="EmiInterest" class="form-label">EMI (Interest)</label>
+                                <label for="EmiInterest" class="form-label">EMI (Interest Per Month)</label>
                             </div>
                             <div class="col-md-6">
                                 <input type="text" class="form-control form-control-sm" id="EmiInterest" name="EmiInterest" readonly>
@@ -265,37 +297,36 @@
 
 
 
-                                                        function edit(id, loanAmount, interest, interestAmount, term) {
+                                                                function edit(id, applicationId, dateOfLoan, loanAmount, interest, interestAmount, term, emiInterest, emiPrinciple, pdfPath, employeeId) {
             document.getElementById("Id").value = id;
-            document.getElementById("ApplicationId").value = id;
-
+            document.getElementById("ApplicationId").value = applicationId;
+            document.getElementById("DateOfLoan").value = dateOfLoan;
             document.getElementById("LoanAmount").value = loanAmount;
             document.getElementById("Interest").value = interest;
             document.getElementById("InterestAmount").value = interestAmount;
             document.getElementById("Term").value = term;
 
-            let months = term * 12; // Term in months
-
-            // EMI Interest
-            let emiInterestRaw = (parseFloat(loanAmount) * parseFloat(interest)) / 100 / months;
-            let emiInterest = Math.floor(emiInterestRaw);
-            if (emiInterestRaw - emiInterest >= 0.56) emiInterest += 1;
+            // EMI Interest (calculated OR passed)
+            document.getElementById("EmiInterest").value = parseFloat(emiInterest).toFixed(2);
 
             // EMI Principle
-            let emiPrincipleRaw = parseFloat(loanAmount) / months;
-            let emiPrinciple = Math.floor(emiPrincipleRaw);
-            if (emiPrincipleRaw - emiPrinciple >= 0.56) emiPrinciple += 1;
+            document.getElementById("EmiPrinciple").value = parseFloat(emiPrinciple).toFixed(2);
 
             // Net EMI
-            let netEmi = emiInterest + emiPrinciple;
-
-            document.getElementById("EmiInterest").value = emiInterest.toFixed(2);
-            document.getElementById("EmiPrinciple").value = emiPrinciple.toFixed(2);
+            let netEmi = parseFloat(emiInterest) + parseFloat(emiPrinciple);
             document.getElementById("NetEmi").value = netEmi.toFixed(2);
+
+            // File Path (for showing uploaded file if exists)
+            if (pdfPath && pdfPath !== "") {
+                document.getElementById("PdfPreview").innerText = pdfPath;
+            }
+
+            document.getElementById("EmployeeId").value = employeeId;
 
             document.getElementById("addModalLabel").textContent = "Edit Loan";
             document.getElementById("modalSubmitText").textContent = "Update";
         }
+
 
 
 
@@ -322,6 +353,35 @@
                         });
                     });
                 });
+
+
+                            function addMoreFile() {
+            let fileDiv = document.getElementById("fileInputs");
+
+            let wrapper = document.createElement("div");
+            wrapper.className = "input-group mb-2";
+
+            let input = document.createElement("input");
+            input.type = "file";
+            input.name = "PdfPath"; // same name for backend array
+            input.className = "form-control form-control-sm";
+            input.accept = ".pdf,.doc,.docx,.jpg,.png";
+
+            let span = document.createElement("span");
+            span.className = "input-group-text";
+            span.style.cursor = "pointer";
+            span.innerHTML = '<i class="fa fa-times text-danger"></i>';
+            span.onclick = function() { removeFile(span); };
+
+            wrapper.appendChild(input);
+            wrapper.appendChild(span);
+
+            fileDiv.appendChild(wrapper);
+        }
+
+        function removeFile(element) {
+            element.parentElement.remove(); // remove the whole input-group
+        }
 
     </script>
 }

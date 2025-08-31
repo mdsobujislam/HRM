@@ -28,5 +28,10 @@
         public string LoanIssued { get; set; }
         public int LoanId { get; set; }
         public string Remarks { get; set; }
+
+        //====
+        public string ApplicationId { get; set; }
+        public DateTime DateOfLoan { get; set; }
+        public string PdfPath { get; set; }
     }
 }

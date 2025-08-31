@@ -26,5 +26,29 @@ namespace HRM.Controllers
 
             return View(approvalLoanApplicationList);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOrUpdate(EmployeeLoan employeeLoan)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Please check the form fields.";
+                return View(employeeLoan);
+            }
+
+            bool isInserted = await _employeeLoanService.InsertEmployeeLoanAsync(employeeLoan);
+
+            if (isInserted)
+            {
+                TempData["SuccessMessage"] = "Employee Loan created successfully.";
+                return RedirectToAction("Index"); // Redirect to loan list page
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to create Employee Loan. Please try again.";
+                return View(employeeLoan);
+            }
+        }
+
     }
 }
