@@ -13,6 +13,7 @@ namespace HRM.Controllers
         {
             _employeeLoanService = employeeLoanService;
         }
+
         public async Task<IActionResult> Index(LoanApproval loanApproval)
         {
             if (string.IsNullOrEmpty(loanApproval.FromDate))
@@ -21,22 +22,40 @@ namespace HRM.Controllers
             if (string.IsNullOrEmpty(loanApproval.ToDate))
                 loanApproval.ToDate = DateTime.Today.ToString("yyyy-MM-dd");
 
-            // Call service to fetch data
-            var approvalLoanApplicationList = await _employeeLoanService.SearchData(loanApproval);
+            var approvalLoanApplicationList = await _employeeLoanService.SearchData(loanApproval)
+                                              ?? new List<LoanApproval>();
 
             return View(approvalLoanApplicationList);
         }
+
+
+
+
+
+        //public async Task<IActionResult> Index(LoanApproval loanApproval)
+        //{
+        //    if (string.IsNullOrEmpty(loanApproval.FromDate))
+        //        loanApproval.FromDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+        //    if (string.IsNullOrEmpty(loanApproval.ToDate))
+        //        loanApproval.ToDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+        //    // Call service to fetch data
+        //    var approvalLoanApplicationList = await _employeeLoanService.SearchData(loanApproval);
+
+        //    return View(approvalLoanApplicationList);
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrUpdate(EmployeeLoan employeeLoan)
+        public async Task<IActionResult> CreateOrUpdate(LoanApproval loanApproval)
         {
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Please check the form fields.";
-                return View(employeeLoan);
+                return View(loanApproval);
             }
 
-            bool isInserted = await _employeeLoanService.InsertEmployeeLoanAsync(employeeLoan);
+            bool isInserted = await _employeeLoanService.InsertEmployeeLoanAsync(loanApproval);
 
             if (isInserted)
             {
@@ -46,7 +65,7 @@ namespace HRM.Controllers
             else
             {
                 TempData["ErrorMessage"] = "Failed to create Employee Loan. Please try again.";
-                return View(employeeLoan);
+                return View(loanApproval);
             }
         }
 

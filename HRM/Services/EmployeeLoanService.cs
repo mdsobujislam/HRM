@@ -3,6 +3,7 @@ using HRM.Interfaces;
 using HRM.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 
 namespace HRM.Services
 {
@@ -41,7 +42,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> InsertEmployeeLoanAsync(EmployeeLoan employeeLoan)
+        public async Task<bool> InsertEmployeeLoanAsync(LoanApproval employeeLoan)
         {
             try
             {
@@ -149,6 +150,7 @@ namespace HRM.Services
             }
         }
 
+
         public async Task<List<LoanApproval>> SearchData(LoanApproval loanApproval)
         {
             try
@@ -162,22 +164,18 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
                     if (string.IsNullOrEmpty(loanApproval.FromDate) || string.IsNullOrEmpty(loanApproval.ToDate))
-                    {
                         return new List<LoanApproval>();
-                    }
 
-                    var query = @"SELECT t1.Id as Id, t2.EmpId AS EmployeeId, t2.EmployeeName AS EmployeeName, t1.AppliDate AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.id AS LoanId,t1.LoanApproved as LoanApproved,t1.interest as interest,t1.Term as Term  FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
+                    var query = @" SELECT t1.Id as ApplicationId, t2.EmpId AS EmployeeId, t2.EmployeeName, CONVERT(varchar(10), t1.AppliDate, 120) AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.Id AS LoanId, t1.LoanApproved as LoanApproved, t1.interest, t1.Term FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
+
+                    var from = DateTime.ParseExact(loanApproval.FromDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    var to = DateTime.ParseExact(loanApproval.ToDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                     var result = await connection.QueryAsync<LoanApproval>(
                         query,
-                        new
-                        {
-                            SubscriptionId = subscriptionId,
-                            FromDate = Convert.ToDateTime(loanApproval.FromDate),
-                            ToDate = Convert.ToDateTime(loanApproval.ToDate)
-                        });
+                        new { SubscriptionId = subscriptionId, FromDate = from, ToDate = to });
 
-                    return result.ToList();
+                    return result?.ToList() ?? new List<LoanApproval>();
                 }
             }
             catch (Exception ex)
@@ -185,6 +183,46 @@ namespace HRM.Services
                 throw new Exception("Error fetching loan application data", ex);
             }
         }
+
+
+
+
+        //public async Task<List<LoanApproval>> SearchData(LoanApproval loanApproval)
+        //{
+        //    try
+        //    {
+        //        using (var connection = new SqlConnection(_connectionString))
+        //        {
+        //            await connection.OpenAsync();
+
+        //            var subscriptionId = _baseService.GetSubscriptionId();
+        //            var userId = _baseService.GetUserId();
+        //            var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+
+        //            if (string.IsNullOrEmpty(loanApproval.FromDate) || string.IsNullOrEmpty(loanApproval.ToDate))
+        //            {
+        //                return new List<LoanApproval>();
+        //            }
+
+        //            var query = @"SELECT t1.Id as Id, t2.EmpId AS EmployeeId, t2.EmployeeName AS EmployeeName, t1.AppliDate AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.id AS LoanId,t1.LoanApproved as LoanApproved,t1.interest as interest,t1.Term as Term  FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
+
+        //            var result = await connection.QueryAsync<LoanApproval>(
+        //                query,
+        //                new
+        //                {
+        //                    SubscriptionId = subscriptionId,
+        //                    FromDate = Convert.ToDateTime(loanApproval.FromDate),
+        //                    ToDate = Convert.ToDateTime(loanApproval.ToDate)
+        //                });
+
+        //            return result.ToList();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error fetching loan application data", ex);
+        //    }
+        //}
 
         public Task<bool> UpdateEmployeeLoanAsync(EmployeeLoan employeeLoan)
         {

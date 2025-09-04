@@ -1,15 +1,17 @@
-﻿@model IEnumerable<HRM.Models.LoanApproval>
+﻿@* @model IEnumerable<HRM.Models.LoanApproval>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+ *@
 
-@* <style>
-    .form-label,
-    .form-control {
-        font-size: 0.65rem; /* smaller font */
-    }
-</style> *@
+@model IEnumerable<HRM.Models.LoanApproval>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var list = (Model ?? Enumerable.Empty<HRM.Models.LoanApproval>()).ToList();
+}
 
 
 <div class="row justify-content-center">
@@ -56,11 +58,11 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table  datanew">
+                    <table class="table datanew">
                         <thead class="table-primary">
                             <tr>
                                 <th>SL No.</th>
-                                <th>Empp Id</th>
+                                <th>Emp Id</th>
                                 <th>Employee Name</th>
                                 <th>Appli Date</th>
                                 <th>Branch</th>
@@ -70,44 +72,53 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @{
-                                int index = 0;
-                                foreach (var item in Model)
+                            @if (!list.Any())
+                            {
+                                <tr>
+                                    <td colspan="8" class="text-center">No data found.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var pair in list.Select((x, i) => (item: x, idx: i + 1)))
                                 {
-                                    index++;
+                                    var item = pair.item;
+                                    var idx = pair.idx;
+
+                                    var appliDate = string.IsNullOrEmpty(item.AppliDate) ? "" : item.AppliDate;
+
+                                    // Derived calculations
+                                    var interestAmount = (item.LoanApproved * item.interest) / 100;
+                                    var monthlyInterest = item.Term > 0 ? (interestAmount / (item.Term * 12)) : 0;
+                                    var monthlyPrincipal = item.Term > 0 ? (item.LoanApproved / (item.Term * 12)) : 0;
+
                                     <tr>
-                                        <td>@index</td>
+                                        <td>@idx</td>
                                         <td>@item.EmployeeId</td>
                                         <td>@item.EmployeeName</td>
-                                        <td>@item.AppliDate</td>
+                                        <td>@appliDate</td>
                                         <td>@item.Branch</td>
                                         <td>@item.LoanId</td>
                                         <td>@item.Remarks</td>
                                         <td>
-                                        <td>
                                             <button class="btn btn-warning btn-sm"
                                                     onclick="edit(
-        '@item.Id',
-        '@item.ApplicationId',
-        '@item.DateOfLoan.ToString("yyyy-MM-dd")',
-        '@item.LoanApproved',
-        '@item.interest',
-        '@String.Format("{0:0.00}", (item.LoanApproved * item.interest) / 100)',
-        '@item.Term',
-        '@String.Format("{0:0.00}", ((item.LoanApproved * item.interest) / 100) / item.Term)',
-        '@String.Format("{0:0.00}", (item.LoanApproved / item.Term))',
-        '@item.PdfPath',
-        '@item.EmployeeId'
-        )"
+                                                                '@item.Id',
+                                                                '@item.ApplicationId',
+                                                                '@item.DateOfLoan',
+                                                                '@item.LoanApproved',
+                                                                '@item.interest',
+                                                                '@String.Format("{0:0.00}", interestAmount)',
+                                                                '@item.Term',
+                                                                '@String.Format("{0:0.00}", monthlyInterest)',
+                                                                '@String.Format("{0:0.00}", monthlyPrincipal)',
+                                                                '@item.PdfPath',
+                                                                '@item.EmployeeId'
+                                                            )"
                                                     data-bs-toggle="modal" data-bs-target="#addModal">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
-
-
                                         </td>
-
-
-                                        
                                     </tr>
                                 }
                             }
