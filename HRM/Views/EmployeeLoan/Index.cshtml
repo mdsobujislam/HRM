@@ -1,10 +1,4 @@
-﻿@* @model IEnumerable<HRM.Models.LoanApproval>
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
- *@
-
+﻿
 @model IEnumerable<HRM.Models.LoanApproval>
 @{
     ViewData["Title"] = "Index";
@@ -12,7 +6,6 @@
 
     var list = (Model ?? Enumerable.Empty<HRM.Models.LoanApproval>()).ToList();
 }
-
 
 <div class="row justify-content-center">
     <div class="col-lg-12">
@@ -62,12 +55,10 @@
                         <thead class="table-primary">
                             <tr>
                                 <th>SL No.</th>
-                                <th>Emp Id</th>
                                 <th>Employee Name</th>
                                 <th>Appli Date</th>
                                 <th>Branch</th>
                                 <th>LoanId</th>
-                                <th>Remarks</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -94,12 +85,10 @@
 
                                     <tr>
                                         <td>@idx</td>
-                                        <td>@item.EmployeeId</td>
                                         <td>@item.EmployeeName</td>
                                         <td>@appliDate</td>
                                         <td>@item.Branch</td>
                                         <td>@item.LoanId</td>
-                                        <td>@item.Remarks</td>
                                         <td>
                                             <button class="btn btn-warning btn-sm"
                                                     onclick="edit(
@@ -138,9 +127,19 @@
                 <h5 class="modal-title" id="addModalLabel">Loan Issue List</h5>
             </div>
             <div class="modal-body">
-                <form asp-action="CreateOrUpdate" method="post">
+                <form asp-action="CreateOrUpdate" method="post" enctype="multipart/form-data">
                     <input type="hidden" id="Id" name="Id" readonly>
 
+                    <div class="col-md-12 mt-2" style="display:none">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="EmployeeId" class="form-label">Employee Id</label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control form-control-sm" id="EmployeeId" name="EmployeeId" readonly>
+                            </div>
+                        </div>
+                    </div>
 
 
                     <div class="col-md-12">
@@ -149,14 +148,14 @@
                                 <label class="form-label">Upload Files</label>
                             </div>
                             <div class="col-md-6" id="fileInputs">
-                                <div class="input-group mb-2">
+                                <div class="input-group mb-2 file-input-row">
                                     <input type="file" name="PdfFiles" multiple class="form-control form-control-sm" accept=".pdf,.doc,.docx,.jpg,.png">
-
                                     <span class="input-group-text" style="cursor:pointer;" onclick="removeFile(this)">
                                         <i class="fa fa-times text-danger"></i>
                                     </span>
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="row">
@@ -165,6 +164,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="col-md-12 mt-2">
                         <div class="row">
@@ -308,7 +308,7 @@
 
 
 
-                                                                function edit(id, applicationId, dateOfLoan, loanAmount, interest, interestAmount, term, emiInterest, emiPrinciple, pdfPath, employeeId) {
+                                                                function edit(id, applicationId, dateOfLoan, loanAmount, interest, interestAmount, term, emiInterest, emiPrinciple, PdfPath, employeeId) {
             document.getElementById("Id").value = id;
             document.getElementById("ApplicationId").value = applicationId;
             document.getElementById("DateOfLoan").value = dateOfLoan;
@@ -328,8 +328,8 @@
             document.getElementById("NetEmi").value = netEmi.toFixed(2);
 
             // File Path (for showing uploaded file if exists)
-            if (pdfPath && pdfPath !== "") {
-                document.getElementById("PdfPreview").innerText = pdfPath;
+            if (PdfPath && PdfPath !== "") {
+                document.getElementById("PdfPreview").innerText = PdfPath;
             }
 
             document.getElementById("EmployeeId").value = employeeId;
@@ -366,19 +366,20 @@
                 });
 
 
-                            function addMoreFile() {
-            let fileDiv = document.getElementById("fileInputs");
+                                    function addMoreFile() {
+            const fileDiv = document.getElementById("fileInputs");
 
-            let wrapper = document.createElement("div");
-            wrapper.className = "input-group mb-2";
+            const wrapper = document.createElement("div");
+            wrapper.className = "input-group mb-2 file-input-row";
 
-            let input = document.createElement("input");
+            const input = document.createElement("input");
             input.type = "file";
-            input.name = "PdfPath"; // same name for backend array
+            input.name = "PdfFiles";           // IMPORTANT: same name as model property
             input.className = "form-control form-control-sm";
             input.accept = ".pdf,.doc,.docx,.jpg,.png";
+            input.multiple = true;            // optional: allow multi-select on each input
 
-            let span = document.createElement("span");
+            const span = document.createElement("span");
             span.className = "input-group-text";
             span.style.cursor = "pointer";
             span.innerHTML = '<i class="fa fa-times text-danger"></i>';
@@ -391,8 +392,11 @@
         }
 
         function removeFile(element) {
-            element.parentElement.remove(); // remove the whole input-group
+            // more robust than parentElement.remove()
+            const row = element.closest('.file-input-row');
+            if (row) row.remove();
         }
+
 
     </script>
 }

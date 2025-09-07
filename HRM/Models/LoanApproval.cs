@@ -39,8 +39,8 @@
         public double LoanAmount { get; set; }
         public double Interest { get; set; }
         public double InterestAmount { get; set; }
-        public double PerMonthInterest { get; set; }
+        public double EmiInterest { get; set; }
         public double EmiPrinciple { get; set; }
-        public double Emi { get; set; }
+        public double NetEmi { get; set; }
     }
 }

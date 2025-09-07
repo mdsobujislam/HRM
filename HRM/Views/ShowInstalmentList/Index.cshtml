@@ -1,0 +1,127 @@
+﻿@model IEnumerable<HRM.Models.EmployeeLoanDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* 
+@model IEnumerable<HRM.Models.EmployeeLoanDto> *@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Employee Loan List</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Application ID</th>
+                                <th>Loan ID</th>
+                                <th>Date of Issue</th>
+                                <th>Loan Amount</th>
+                                <th>Interest %age</th>
+                                <th>Interest Amount</th>
+                                <th>Term (Years)</th>
+                                <th>EMI (Interest)</th>
+                                <th>EMI (Principle)</th>
+                                <th>Net EMI</th>
+                                <th>Installment Details</th>
+                                <th>Document Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                index++;
+                                var collapseId = "installments_" + item.LoanId;
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@item.ApplicationId</td>
+                                    <td>@item.LoanId</td>
+                                    <td>@item.DateOfLoan.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.LoanAmount</td>
+                                    <td>@item.Interest</td>
+                                    <td>@item.InterestAmount</td>
+                                    <td>@item.Term</td>
+                                    <td>@item.PerMonthInterest</td>
+                                    <td>@item.EmiPrinciple</td>
+                                    <td>@item.Emi</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId"
+                                                aria-expanded="false"
+                                                aria-controls="@collapseId">
+                                            Show/Hide
+                                        </button>
+
+                                        <div class="collapse mt-2" id="@collapseId">
+                                            <table class="table table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Status</th>
+                                                        <th>Payment Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var inst in item.Installments)
+                                                    {
+                                                        <tr>
+                                                            <td>@inst.InstallmentNo</td>
+                                                            <td>@inst.DateOfInstallment.ToString("dd/MM/yyyy")</td>
+                                                            <td>@inst.InstallmentAmount</td>
+                                                            <td>@inst.Status</td>
+                                                            <td>@(inst.PaymentDate?.ToString("dd/MM/yyyy") ?? "-")</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                    @* <td>
+                                        @foreach (var doc in item.Documents)
+                                        {
+                                            <div>@doc</div>
+                                        }
+                                    </td> *@
+                                    <td>
+                                        @if (item.Documents != null && item.Documents.Any())
+                                        {
+                                            int docIndex = 1;
+                                            foreach (var doc in item.Documents)
+                                            {
+                                                <div>
+                                                    <a href="@Url.Action("DownloadDocument", "EmployeeLoan", new { loanId = item.LoanId, filePath = doc })"
+                                                       class="btn btn-sm btn-outline-success" target="_blank">
+                                                        Download File @docIndex
+                                                    </a>
+                                                </div>
+                                                docIndex++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No Documents</span>
+                                        }
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

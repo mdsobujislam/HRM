@@ -55,13 +55,17 @@ namespace HRM.Services
                 {
                     await connection.OpenAsync();
 
+                    var empBranchquery = "Select BranchId from Employees where EmpId='"+employeeLoan.EmployeeId+"'";
+                    int empBranchId= await connection.ExecuteScalarAsync<int>(empBranchquery);
+
+
                     // Insert EmployeeLoan
                     string loanQuery = @"
                     INSERT INTO EmployeeLoan
                     (EmployeeId, DateOfLoan, LoanAgainst, LoanPercentage, LoanAmount, Interest, InterestAmount, Term, PerMonthInterest, EmiPrinciple, Emi, ApplicationId, BranchId, SubscriptionId, CompanyId) VALUES (@EmployeeId, @DateOfLoan, @LoanAgainst, @LoanPercentage, @LoanAmount, @Interest, @InterestAmount, @Term, @PerMonthInterest, @EmiPrinciple, @Emi, @ApplicationId, @BranchId, @SubscriptionId, @CompanyId); SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                     var loanParams = new DynamicParameters();
-                    loanParams.Add("EmployeeId", userId);
+                    loanParams.Add("EmployeeId", employeeLoan.EmployeeId);
                     loanParams.Add("DateOfLoan", employeeLoan.DateOfLoan);
                     loanParams.Add("LoanAgainst", employeeLoan.LoanAgainst);
                     loanParams.Add("LoanPercentage", employeeLoan.LoanPercentage);
@@ -69,11 +73,11 @@ namespace HRM.Services
                     loanParams.Add("Interest", employeeLoan.Interest);
                     loanParams.Add("InterestAmount", employeeLoan.InterestAmount);
                     loanParams.Add("Term", employeeLoan.Term);
-                    loanParams.Add("PerMonthInterest", employeeLoan.PerMonthInterest);
+                    loanParams.Add("PerMonthInterest", employeeLoan.EmiInterest);
                     loanParams.Add("EmiPrinciple", employeeLoan.EmiPrinciple);
-                    loanParams.Add("Emi", employeeLoan.Emi);
+                    loanParams.Add("Emi", employeeLoan.NetEmi);
                     loanParams.Add("ApplicationId", employeeLoan.ApplicationId);
-                    loanParams.Add("BranchId", branchId);
+                    loanParams.Add("BranchId", empBranchId);
                     loanParams.Add("SubscriptionId", subscriptionId);
                     loanParams.Add("CompanyId", companyId);
 
@@ -82,25 +86,37 @@ namespace HRM.Services
                     // Insert uploaded files (multiple)
                     if (employeeLoan.PdfFiles != null && employeeLoan.PdfFiles.Count > 0)
                     {
+                        string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "employeeLoanFiles");
+
+                        // Ensure folder exists
+                        if (!Directory.Exists(uploadPath))
+                        {
+                            Directory.CreateDirectory(uploadPath);
+                        }
+
                         foreach (var file in employeeLoan.PdfFiles)
                         {
-                            if (file.Length > 0)
+                            if (file != null && file.Length > 0)
                             {
-                                byte[] fileBytes;
-                                using (var ms = new MemoryStream())
+                                // Create unique file name
+                                string fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                                string filePath = Path.Combine(uploadPath, fileName);
+
+                                // Save file to folder
+                                using (var stream = new FileStream(filePath, FileMode.Create))
                                 {
-                                    await file.CopyToAsync(ms);
-                                    fileBytes = ms.ToArray();
+                                    await file.CopyToAsync(stream);
                                 }
 
-                                string fileQuery = @" INSERT INTO EmployeeLoanFile (EmployeeId, ApplicationFile, ContentType, LoanId, BranchId, SubscriptionId, CompanyId) VALUES (@EmployeeId, @ApplicationFile, @ContentType, @LoanId, @BranchId, @SubscriptionId, @CompanyId);";
+                                // Insert file path into database
+                                string fileQuery = @" INSERT INTO EmployeeLoanFile (EmployeeId, ApplicationFile, ContentType, LoanId, BranchId, SubscriptionId, CompanyId) VALUES (@EmployeeId, @ApplicationFile, @ContentType, @LoanId, @BranchId, @SubscriptionId, @CompanyId)";
 
                                 var fileParams = new DynamicParameters();
-                                fileParams.Add("EmployeeId", userId);
-                                fileParams.Add("ApplicationFile", fileBytes, DbType.Binary);
+                                fileParams.Add("EmployeeId", employeeLoan.EmployeeId);
+                                fileParams.Add("ApplicationFile", "/uploads/employeeLoanFiles/" + fileName); // relative path
                                 fileParams.Add("ContentType", file.ContentType);
                                 fileParams.Add("LoanId", empLoanId);
-                                fileParams.Add("BranchId", branchId);
+                                fileParams.Add("BranchId", empBranchId);
                                 fileParams.Add("SubscriptionId", subscriptionId);
                                 fileParams.Add("CompanyId", companyId);
 
@@ -109,13 +125,15 @@ namespace HRM.Services
                         }
                     }
 
+
+
                     // Update LoanApproval
                     string approvalQuery = @" UPDATE LoanApproval SET LoanIssued = @LoanIssued, LoanId = @LoanId WHERE Id = @AppId";
 
                     var approvalParams = new DynamicParameters();
                     approvalParams.Add("LoanIssued", "Issued");
                     approvalParams.Add("LoanId", empLoanId);
-                    approvalParams.Add("AppId", employeeLoan.Id);
+                    approvalParams.Add("AppId", employeeLoan.ApplicationId);
 
                     await connection.ExecuteAsync(approvalQuery, approvalParams);
 
@@ -132,8 +150,8 @@ namespace HRM.Services
                         DateTime loanDate = DateTime.Parse(employeeLoan.DateOfLoan);
                         installmentParams.Add("DateOfInstallment", loanDate.AddMonths(i).ToString("yyyy-MM-dd"), DbType.String);
                         installmentParams.Add("Installment_No", i);
-                        installmentParams.Add("Installment_Amount", employeeLoan.Emi);
-                        installmentParams.Add("BranchId", branchId);
+                        installmentParams.Add("Installment_Amount", employeeLoan.NetEmi);
+                        installmentParams.Add("BranchId", empBranchId);
                         installmentParams.Add("SubscriptionId", subscriptionId);
                         installmentParams.Add("CompanyId", companyId);
 
@@ -166,7 +184,7 @@ namespace HRM.Services
                     if (string.IsNullOrEmpty(loanApproval.FromDate) || string.IsNullOrEmpty(loanApproval.ToDate))
                         return new List<LoanApproval>();
 
-                    var query = @" SELECT t1.Id as ApplicationId, t2.EmpId AS EmployeeId, t2.EmployeeName, CONVERT(varchar(10), t1.AppliDate, 120) AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.Id AS LoanId, t1.LoanApproved as LoanApproved, t1.interest, t1.Term FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
+                    var query = @" SELECT t1.Id as ApplicationId, t2.EmpId AS EmployeeId, t2.EmployeeName, CONVERT(varchar(10), t1.AppliDate, 120) AS AppliDate, (SELECT t5.Name FROM Branch t5 WHERE t5.Id = t2.BranchId) AS Branch, t1.Id AS LoanId, t1.LoanApproved as LoanApproved, t1.interest, t1.Term FROM LoanApproval t1 JOIN Employees t2 ON t2.EmpId = t1.EmployeeId WHERE t1.SubscriptionId = @SubscriptionId AND t1.LoanId IS NULL AND t1.AppliDate >= @FromDate AND t1.AppliDate < DATEADD(DAY, 1, @ToDate)";
 
                     var from = DateTime.ParseExact(loanApproval.FromDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                     var to = DateTime.ParseExact(loanApproval.ToDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);

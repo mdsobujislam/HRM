@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\logo\" />
+    <Folder Include="wwwroot\uploads\employeeLoanFiles\" />
   </ItemGroup>
 
 </Project>

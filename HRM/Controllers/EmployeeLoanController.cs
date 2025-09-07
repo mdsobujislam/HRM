@@ -69,5 +69,24 @@ namespace HRM.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult DownloadDocument(int loanId, string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return NotFound();
+
+            // Normalize file path (avoid double slashes from DB)
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var fullPath = Path.Combine(uploadsFolder, filePath.TrimStart('/'));
+
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound();
+
+            var fileBytes = System.IO.File.ReadAllBytes(fullPath);
+            var fileName = Path.GetFileName(fullPath);
+
+            return File(fileBytes, "application/octet-stream", fileName);
+        }
+
     }
 }
