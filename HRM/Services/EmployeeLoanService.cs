@@ -146,7 +146,7 @@ namespace HRM.Services
 
                         var installmentParams = new DynamicParameters();
                         installmentParams.Add("LoanId", empLoanId);
-                        installmentParams.Add("EmployeeId", userId);
+                        installmentParams.Add("EmployeeId", employeeLoan.EmployeeId);
                         DateTime loanDate = DateTime.Parse(employeeLoan.DateOfLoan);
                         installmentParams.Add("DateOfInstallment", loanDate.AddMonths(i).ToString("yyyy-MM-dd"), DbType.String);
                         installmentParams.Add("Installment_No", i);

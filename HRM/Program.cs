@@ -41,6 +41,7 @@ builder.Services.AddScoped<IRecommendLoanApplicationService, RecommendLoanApplic
 builder.Services.AddScoped<ILoanApprovalService,LoanApprovalService>();
 builder.Services.AddScoped<IEmployeeLoanService,EmployeeLoanService>();
 builder.Services.AddScoped<IShowInstalmentListService,ShowInstalmentListService>();
+builder.Services.AddScoped<ILoanInstallmentService,LoanInstallmentService>();
 
 
 
