@@ -486,6 +486,24 @@
                                                             </div>
                                                         </div>
 
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <!-- Empty column for layout balance -->
+                                                            </div>
+
+                                                            <div class="col-sm-6">
+                                                                <div class="row">
+                                                                    <label class="col-sm-4 col-form-label">Additional Info :</label>
+                                                                    <div class="col-sm-8 pt-1 d-flex">
+                                                                        <select id="AdditionalInfo" name="AdditionalInfoId" class="form-control form-control-sm me-2">
+                                                                            <option value="">-- Select Info --</option>
+                                                                        </select>
+                                                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addInfoModal">Add</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
 
                                                 </div>
@@ -498,7 +516,7 @@
                                 <button type="submit" id="QuotationSubmit" class="btn btn-primary btn-sm col-md-2">Submit</button>
                             </div>
 
-                           
+
                         </div>
 
                         @* end 3rd Step *@
@@ -512,6 +530,25 @@
     </main>
 
 
+</div>
+
+<!-- Modal Popup -->
+<div class="modal fade" id="addInfoModal" tabindex="-1" aria-labelledby="addInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Additional Info</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="newInfoInput" class="form-control" placeholder="Enter new info">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary btn-sm" id="saveInfoBtn">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -750,4 +787,90 @@
         }
     });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadAdditionalInfo();
+    });
+
+    async function loadAdditionalInfo() {
+        try {
+            const res = await fetch('/api/AdditionalInfo/GetAll');
+            if (!res.ok) throw new Error('Failed to load Additional Info');
+
+            const data = await res.json();
+            const select = document.getElementById("AdditionalInfo");
+
+            // clear existing (keep placeholder)
+            select.querySelectorAll('option:not([value=""])').forEach(o => o.remove());
+
+            data.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.name;
+                select.add(option);
+            });
+        } catch (err) {
+            console.error(err);
+            alert('Could not load Additional Info: ' + err.message);
+        }
+    }
+
+    document.getElementById("saveInfoBtn").addEventListener("click", async function () {
+        const newInfoInput = document.getElementById("newInfoInput");
+        const newInfo = newInfoInput.value.trim();
+        if (!newInfo) {
+            alert("Please enter a name.");
+            return;
+        }
+
+        const saveBtn = this;
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Saving...";
+
+        try {
+            const res = await fetch('/api/AdditionalInfo/Add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ AdditionalInfoName: newInfo })
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(errorText || res.statusText);
+            }
+
+            const responseData = await res.json();
+
+            // server returns { id, name }
+            const select = document.getElementById("AdditionalInfo");
+            const option = document.createElement("option");
+            option.value = responseData.id;
+            option.text = responseData.name;
+            select.add(option);
+            select.value = responseData.id; // auto-select new
+
+            newInfoInput.value = "";
+
+            // ---- FIX MODAL CLOSE ISSUE ----
+            const modalEl = document.getElementById('addInfoModal');
+            const bsModal = bootstrap.Modal.getInstance(modalEl);
+            if (bsModal) {
+                bsModal.hide();
+            }
+            // remove any leftover backdrop to avoid blurred screen
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+        } catch (err) {
+            console.error(err);
+            alert('Save failed: ' + (err.message || err));
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Save";
+        }
+    });
+</script>
+
+
+
 
