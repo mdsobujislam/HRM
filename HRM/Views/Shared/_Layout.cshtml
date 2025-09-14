@@ -267,7 +267,7 @@
                             </ul>
                         </li>
 
-                        <li class="submenu">
+                        <li class="submenu" style="display:none">
                             <a href="javascript:void(0);">
                                 <img src="~/assets/img/icons/settings.svg" alt="img" />
                                 <span>
@@ -342,6 +342,21 @@
                             <ul>
                                 <li>
                                     <a asp-controller="Attendance" asp-action="Index">Attendance</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="submenu">
+                            <a href="javascript:void(0);">
+                                <img src="~/assets/img/icons/settings.svg" alt="img" />
+                                <span>
+                                    Tax
+                                </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a asp-controller="TaxtSlabSetup" asp-action="Index">Taxt Slab Setup</a>
                                 </li>
                             </ul>
                         </li>

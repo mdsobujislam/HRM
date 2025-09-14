@@ -1,0 +1,172 @@
+﻿@model IEnumerable<HRM.Models.TaxtSlabSetup>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Department List</h5>
+                <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                        data-bs-target="#addTaxSlabSetupModal">
+                    <i class="fas fa-solid fa-plus"></i> Add New
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Date</th>
+                                <th>Income Slab</th>
+                                <th>TaxPer(% age)</th>
+                                <th>Additional Info</th>
+                                <th>Branch Name</th>
+                                <th>Department Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                index++;
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@item.Date</td>
+                                    <td>@item.IncomeSlab</td>
+                                    <td>@item.TaxPer</td>
+                                    <td>@item.AdditionalInfoName</td>
+                                    <td>@item.BranchName</td>
+                                    <td>@item.DepartmentName</td>
+                                    <td class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-warning btn-sm"
+                                                onclick="editBranch('@item.Id', '@item.IncomeSlab','@item.TaxPer','@item.AdditionalId','@item.BranchId','@item.DepartmentId')"
+                                                data-bs-toggle="modal" data-bs-target="#addTaxSlabSetupModal">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <form asp-action="DeleteDepartment" method="post" class="deleteForm">
+                                            <input type="hidden" name="ID" value="@item.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addTaxSlabSetupModal" tabindex="-1" aria-labelledby="addTaxSlabSetupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : #f9f9fb;">
+                <h5 class="modal-title" id="addTaxSlabSetupModalLabel">Add TaxSlab</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdateTaxSlabSetup" method="post">
+                    <input type="hidden" id="TaxSlabSetupId" name="Id">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="BranchId" class="form-label">Select Branch</label>
+                            <select id="BranchId" name="BranchId" asp-items="ViewBag.BranchList" class="form-control">
+                                <option value="">-- Select Branch --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="DepartmentId" class="form-label">Department Name</label>
+                            <select id="DepartmentId" name="DepartmentId" asp-items="ViewBag.DepartmentList" class="form-control">
+                                <option value="">-- Select Department --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="Date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="Date" name="Date" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="IncomeSlab" class="form-label">Income Slab</label>
+                            <input type="text" class="form-control" id="IncomeSlab" name="IncomeSlab" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="TaxPer" class="form-label">Tax (%age)</label>
+                            <input type="text" class="form-control" id="TaxPer" name="TaxPer" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="AdditionalId" class="form-label">Select Additional Info</label>
+                            <select id="AdditionalId" name="AdditionalId" asp-items="ViewBag.AdditionalInfoList" class="form-control">
+                                <option value="">-- Select Additional Info --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary btn-sm me-2" id="btnSave">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        function resetTaxSlabForm() {
+        document.getElementById("TaxSlabSetupId").value = "";
+        document.getElementById("BranchId").value = "";
+        document.getElementById("DepartmentId").value = "";
+        document.getElementById("Date").value = "";
+        document.getElementById("IncomeSlab").value = "";
+        document.getElementById("TaxPer").value = "";
+        document.getElementById("AdditionalId").value = "";
+
+        document.getElementById("addTaxSlabModalLabel").textContent = "Add Tax Slab Setup";
+        document.getElementById("modalSubmitText").textContent = "Submit";
+    }
+
+        function editTaxSlabSetup(id, branchId, departmentId, date, incomeSlab, taxPer, additionalId) {
+        debugger;
+        console.log("editTaxSlabSetup");
+
+        document.getElementById("TaxSlabSetupId").value = id;
+        document.getElementById("BranchId").value = branchId.toString();
+        document.getElementById("DepartmentId").value = departmentId.toString();
+        document.getElementById("Date").value = date; // format must be yyyy-MM-dd
+        document.getElementById("IncomeSlab").value = incomeSlab;
+        document.getElementById("TaxPer").value = taxPer;
+        document.getElementById("AdditionalId").value = additionalId.toString();
+
+        // Change modal title & button text
+        document.getElementById("addTaxSlabModalLabel").textContent = "Edit Tax Slab Setup";
+        document.getElementById("modalSubmitText").textContent = "Update";
+    }
+
+
+</script>
+
+
