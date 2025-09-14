@@ -69,6 +69,40 @@ namespace HRM.Services
             }
         }
 
+        public async Task<Employee> GetEmployeeById(int empId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    var subscriptionId = _baseService.GetSubscriptionId();
+
+                    var query = @"SELECT t1.EmpId, t1.EmployeeName, t1.FatherName, t1.MotherName, t1.SpouseName, 
+                                t1.DOB, t1.Gender, t1.BloodGroup, t1.MaritalStatus, t1.TinNo, t1.NationalID, 
+                                t1.Telephone, t1.MobileNo, t1.MailID, t1.PermanentAddress, t1.PresentAddress, 
+                                t1.DateOfAppointment, t1.Religion, t1.Nationality, t1.Shift, t1.Version, 
+                                t1.JobType, t1.UploadPhoto, 
+                                t2.Name as Branch, t3.DepartmentName as Department, t4.DesignationName as Designation,
+                                t2.Id as BranchId, t3.Id as DepartmentId, t4.Id as DesignationId,
+                                t1.CompanyId, t1.SubscriptionId, t1.CreatedAt, t1.UpdatedAt
+                         FROM Employees t1
+                         JOIN Branch t2 on t1.BranchId = t2.Id
+                         JOIN Department t3 on t1.DepartmentId = t3.Id
+                         JOIN Designation t4 on t1.DesignationId = t4.Id
+                         WHERE t1.SubscriptionId = @subscriptionId AND t1.EmpId = @empId";
+
+                    var result = await connection.QueryFirstOrDefaultAsync<Employee>(query, new { subscriptionId, empId });
+                    return result ?? new Employee();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
         public async Task<bool> InsertEmployee(Employee employee, IFormFile PhotoFile)
         {
             try
@@ -115,7 +149,7 @@ namespace HRM.Services
                     parameters.Add("BloodGroup", employee.BloodGroup, DbType.String);
                     parameters.Add("MaritalStatus", employee.MaritalStatus, DbType.String);
                     parameters.Add("TinNo", employee.TinNo, DbType.String);
-                    parameters.Add("NationalID", employee.Nationality, DbType.String);
+                    parameters.Add("NationalID", employee.NationalID, DbType.String);
                     parameters.Add("Telephone", employee.Telephone, DbType.String);
                     parameters.Add("MobileNo", employee.MobileNo, DbType.String);
                     parameters.Add("MailID", employee.MailID, DbType.String);

@@ -123,7 +123,7 @@
 
                     </div>
                     <form asp-action="CreateOrUpdate" method="post" enctype="multipart/form-data">
-                        <input type="hidden" id="empId" name="empId">
+                        <input type="hidden" asp-for="EmpId" />
                         <div class="panel panel-primary setup-content" id="QutationStep-1">
                             <div class="tab-pane active " role="tabpanel" id="step1">
                                 <input name="Applicant_Id" hidden class="Applicant_Input" />
@@ -134,7 +134,8 @@
                                                 <label class="col-sm-3 col-form-label">Employee Name:</label>
                                                 <div class="col-sm-9 pt-1">
                                                     <div class="form-group">
-                                                        <input id="EmployeeNAME" name="EmployeeNAME" class="form-control form-control-sm w-100 " type="text" placeholder=" Enter the Employee NAME" tabIndex="2" />
+                                                        @* <input id="EmployeeNAME" name="EmployeeNAME" class="form-control form-control-sm w-100 " type="text" placeholder=" Enter the Employee NAME" tabIndex="2" /> *@
+                                                        <input asp-for="EmployeeName" class="form-control form-control-sm w-100" type="text" placeholder="Enter the Employee NAME" tabIndex="2" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -142,7 +143,7 @@
                                                 <label class="col-sm-3 col-form-label">Father Name:</label>
                                                 <div class="col-sm-9 pt-1">
                                                     <div class="form-group">
-                                                        <input id="FatherNAME" name="FatherNAME" class="form-control form-control-sm w-100 " type="text" placeholder=" Enter the Father NAME" tabIndex="2" />
+                                                        <input asp-for="FatherName" class="form-control form-control-sm w-100" type="text" placeholder="Enter the Father NAME" tabIndex="2" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -150,7 +151,7 @@
                                                 <label class="col-sm-3 col-form-label">Mother Name:</label>
                                                 <div class="col-sm-9 pt-1">
                                                     <div class="form-group">
-                                                        <input id="MotherNAME" name="MotherNAME" class="form-control form-control-sm w-100 " type="text" placeholder=" Enter the Mother NAME" tabIndex="2" />
+                                                        <input asp-for="MotherName" class="form-control form-control-sm w-100" type="text" placeholder="Enter the Mother NAME" tabIndex="2" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -158,7 +159,7 @@
                                                 <label class="col-sm-3 col-form-label">Spouse Name:</label>
                                                 <div class="col-sm-9 pt-1">
                                                     <div class="form-group">
-                                                        <input id="SpouseNAME" name="SpouseNAME" class="form-control form-control-sm w-100 " type="text" placeholder=" Enter the Spouse Name" tabIndex="2" />
+                                                        <input asp-for="SpouseName" class="form-control form-control-sm w-100" type="text" placeholder="Enter the Spouse Name" tabIndex="2" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -168,7 +169,7 @@
                                                         <label class="col-sm-6 col-form-label">Date Of Birth:</label>
                                                         <div class="col-sm-6 pt-1">
                                                             <div class="form-group">
-                                                                <input id="DOB" name="DOB" type="date" class="dtpicker form-control form-control-sm" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask="data-mask" tabIndex="3" spellcheck="false" />
+                                                                <input asp-for="DOB" type="date" class="dtpicker form-control form-control-sm" tabIndex="3" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -177,7 +178,7 @@
                                                     <div class="row">
                                                         <label class="col-sm-4 col-form-label">Gender:</label>
                                                         <div class="form-group col-sm-6 pt-1">
-                                                            <select name="Gender" class="form-control form-control-sm" id="gender" tabIndex="6">
+                                                            <select asp-for="Gender" class="form-control form-control-sm" tabIndex="6">
                                                                 <option value="">--Select--</option>
                                                                 <option value="Male">Male</option>
                                                                 <option value="Female">Female</option>
@@ -192,7 +193,7 @@
                                                         <label class="col-sm-6 col-form-label">Blood Group:</label>
                                                         <div class="col-sm-6 pt-1">
                                                             <div class="form-group">
-                                                                <input name="BloodGroup" id="bloodGroup" type="text" class="form-control form-control-sm" placeholder=" Blood Group" tabIndex="4">
+                                                                <input asp-for="BloodGroup" type="text" class="form-control form-control-sm" placeholder="Blood Group" tabIndex="4">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -201,7 +202,7 @@
                                                     <div class="row">
                                                         <label class="col-sm-4 col-form-label">Marital Status:</label>
                                                         <div class="form-group col-sm-6 pt-1">
-                                                            <select name="MaritalStatus" class="form-control form-control-sm" id="MaritalStatus" tabIndex="6">
+                                                            <select asp-for="MaritalStatus" class="form-control form-control-sm" tabIndex="6">
                                                                 <option value="">--Select--</option>
                                                                 <option value="Married">Married</option>
                                                                 <option value="Single">Single</option>
@@ -239,7 +240,7 @@
                                                                     <label class="col-sm-4 col-form-label">Tin No :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="TinNo" id="TinNo" type="text" class="form-control form-control-sm" placeholder="Please Enter Tin No" tabIndex="4">
+                                                                            <input asp-for="TinNo" type="text" class="form-control form-control-sm" placeholder="Please Enter Tin No" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -249,7 +250,7 @@
                                                                     <label class="col-sm-4 col-form-label">National ID :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="NationalID" id="NationalID" type="text" class="form-control form-control-sm" placeholder="Please Enter National ID" tabIndex="4">
+                                                                            <input asp-for="NationalID" type="text" class="form-control form-control-sm" placeholder="Please Enter National ID" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -262,7 +263,7 @@
                                                                     <label class="col-sm-4 col-form-label">Telephone (Resi) :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="Telephone" id="Telephone" type="text" class="form-control form-control-sm" placeholder="Please Enter Telephone" tabIndex="4">
+                                                                            <input asp-for="Telephone" type="text" class="form-control form-control-sm" placeholder="Please Enter Telephone" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -272,7 +273,7 @@
                                                                     <label class="col-sm-4 col-form-label">Mobile No :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="MobileNo" id="MobileNo" type="text" class="form-control form-control-sm" placeholder="Please Enter Mobile No" tabIndex="4">
+                                                                            <input asp-for="MobileNo" type="text" class="form-control form-control-sm" placeholder="Please Enter Mobile No" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -285,7 +286,7 @@
                                                                     <label class="col-sm-4 col-form-label"> Mail ID :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="MailID" id="MailID" type="text" class="form-control form-control-sm" placeholder="Please Enter   Mail ID" tabIndex="4">
+                                                                            <input asp-for="MailID" type="text" class="form-control form-control-sm" placeholder="Please Enter Mail ID" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -298,7 +299,7 @@
                                                                     <label class="col-sm-4 col-form-label">Permanent Address :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <textarea name="PermanentAddress" id="PermanentAddress" class="form-control form-control-sm" placeholder="Please Enter Permanent Address" tabindex="4" rows="4"></textarea>
+                                                                        <textarea asp-for="PermanentAddress" class="form-control form-control-sm" placeholder="Please Enter Permanent Address" rows="4" tabindex="4"></textarea>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -308,7 +309,7 @@
                                                                     <label class="col-sm-4 col-form-label">Present Address : <button type="button" class="btn btn-sm btn-primary mt-1" onclick="copyAddress()">Copy</button> </label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <textarea name="PresentAddress" id="PresentAddress" class="form-control form-control-sm" placeholder="Please Enter Present Address" tabindex="5" rows="4"></textarea>
+                                                                            <textarea asp-for="PresentAddress" class="form-control form-control-sm" placeholder="Please Enter Present Address" rows="4" tabindex="5"></textarea>
 
                                                                         </div>
                                                                     </div>
@@ -361,7 +362,7 @@
                                                                     <label class="col-sm-4 col-form-label">Department :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <select asp-for="DepartmentId" class="form-control form-control-sm " asp-items="ViewBag.DepartmentList" required>
+                                                                            <select asp-for="DepartmentId" class="form-control form-control-sm" asp-items="ViewBag.DepartmentList" required>
                                                                                 <option value="">-- Select Department --</option>
                                                                             </select>
                                                                         </div>
@@ -376,12 +377,11 @@
                                                                     <label class="col-sm-4 col-form-label">Designation :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <div class="form-group">
-                                                                                <select asp-for="DesignationId" class="form-control form-control-sm" asp-items="ViewBag.DesignationList" required>
-                                                                                    <option value="">-- Select Branch --</option>
-                                                                                </select>
-                                                                            </div>
+                                                                            <select asp-for="DesignationId" class="form-control form-control-sm" asp-items="ViewBag.DesignationList" required>
+                                                                                <option value="">-- Select Designation --</option>
+                                                                            </select>
                                                                         </div>
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -390,7 +390,7 @@
                                                                     <label class="col-sm-4 col-form-label">Date of Appointment :</label>
                                                                     <div class="col-sm-6 pt-1">
                                                                         <div class="form-group">
-                                                                            <input id="DateofAppointment" name="DateofAppointment" type="date" class="dtpicker form-control form-control-sm" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask="data-mask" tabIndex="3" spellcheck="false" />
+                                                                            <input asp-for="DateOfAppointment" type="date" class="dtpicker form-control form-control-sm" tabIndex="3" spellcheck="false" />
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -405,7 +405,7 @@
                                                                     <label class="col-sm-4 col-form-label">Religion :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="Religion" id="Religion" type="text" class="form-control form-control-sm" placeholder="Please Enter Religion" tabIndex="4">
+                                                                            <input asp-for="Religion" type="text" class="form-control form-control-sm" placeholder="Please Enter Religion" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -415,7 +415,7 @@
                                                                     <label class="col-sm-4 col-form-label">Nationality : </label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="Nationality" id="Nationality" type="text" class="form-control form-control-sm" placeholder="Please Enter Nationality" tabIndex="4">
+                                                                            <input asp-for="Nationality" type="text" class="form-control form-control-sm" placeholder="Please Enter Nationality" tabIndex="4">
 
                                                                         </div>
                                                                     </div>
@@ -430,7 +430,7 @@
                                                                     <label class="col-sm-4 col-form-label">Shift :</label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="Shift" id="Shift" type="text" class="form-control form-control-sm" placeholder="Please Enter Shift" tabIndex="4">
+                                                                            <input asp-for="Shift" type="text" class="form-control form-control-sm" placeholder="Please Enter Shift" tabIndex="4">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -440,7 +440,7 @@
                                                                     <label class="col-sm-4 col-form-label">Version : </label>
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
-                                                                            <input name="Version" id="Version" type="text" class="form-control form-control-sm" placeholder="Please Enter Version" tabIndex="4">
+                                                                            <input asp-for="Version" type="text" class="form-control form-control-sm" placeholder="Please Enter Version" tabIndex="4">
 
                                                                         </div>
                                                                     </div>
@@ -455,7 +455,7 @@
                                                                         <label class="col-sm-6 col-form-label">Upload Your Photo :</label>
                                                                         <div class="col-sm-6 pt-1">
                                                                             <div class="form-group">
-                                                                                <input name="PhotoFile" id="UploadPhoto" type="file" class="form-control form-control-sm" placeholder="Please Enter Upload Photo" tabIndex="4" accept="image/*">
+                                                                                <input name="PhotoFile" type="file" class="form-control form-control-sm" tabIndex="4" accept="image/*">
                                                                                 <img id="photoPreview" src="" alt="Employee Photo" style="max-height: 100px; margin-top: 10px; display:none;" />
                                                                             </div>
                                                                         </div>
@@ -468,15 +468,15 @@
                                                                     <div class="col-sm-8 pt-1">
                                                                         <div class="form-group">
                                                                             <div class="form-check form-check-inline">
-                                                                                <input class="form-check-input" type="radio" id="fullTime" name="JobType" value="Full Time">
+                                                                                <input class="form-check-input" type="radio" id="fullTime" asp-for="JobType" value="Full Time">
                                                                                 <label class="form-check-label" for="fullTime">Full Time</label>
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <input class="form-check-input" type="radio" id="partTime" name="JobType" value="Part Time">
+                                                                                <input class="form-check-input" type="radio" id="partTime" asp-for="JobType" value="Part Time">
                                                                                 <label class="form-check-label" for="partTime">Part Time</label>
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <input class="form-check-input" type="radio" id="contract" name="JobType" value="Contract">
+                                                                                <input class="form-check-input" type="radio" id="contract" asp-for="JobType" value="Contract">
                                                                                 <label class="form-check-label" for="contract">Contract</label>
                                                                             </div>
                                                                         </div>
@@ -495,7 +495,7 @@
                                 </div>
                             </div>
                             <div class="panel-body d-flex justify-content-center align-items-center mt-4">
-                                <button type="submit" id="QuotationSubmit" class="btn btn-primary btn-sm col-md-2">Submit</button>
+                                <button type="submit" id="QuotationSubmit" class="btn btn-primary btn-sm col-md-2">  @(Model?.EmpId == 0 ? "Create" : "Update")</button>
                             </div>
 
                            
@@ -584,36 +584,11 @@
 <script>
 
     function resetBranch() {
-    document.getElementById("empId").value = "";
-    document.getElementById("EmployeeNAME").value = "";
-    document.getElementById("FatherNAME").value = "";
-    document.getElementById("MotherNAME").value = "";
-    document.getElementById("SpouseNAME").value = "";
-    document.getElementById("DOB").value = "";
-    document.getElementById("Gender").value = "";
-    document.getElementById("BloodGroup").value = "";
-    document.getElementById("MaritalStatus").value = "";
-    document.getElementById("Telephone").value = "";
-    document.getElementById("TinNo").value = "";
-    document.getElementById("NationalID").value = "";
-    document.getElementById("MobileNo").value = "";
-    document.getElementById("MailID").value = "";
-    document.getElementById("PermanentAddress").value = "";
-    document.getElementById("PresentAddress").value = "";
-    document.getElementById("MobileNo").value = "";
-    document.getElementById("Department").value = "";
-    document.getElementById("Designation").value = "";
-    document.getElementById("DateofAppointment").value = "";
-    document.getElementById("Religion").value = "";
-    document.getElementById("Nationality").value = "";
-    document.getElementById("Shift").value = "";
-    document.getElementById("Version").value = "";
-    document.getElementById("UploadPhoto").value = "";
-    const jobTypes = document.getElementsByName("JobType");
-    jobTypes.forEach(radio => radio.checked = false);
-
-    document.getElementById("QuotationSubmit").textContent = "Submit";
-            }
+        document.querySelector('form').reset();
+        document.getElementById("empId").value = "";
+        document.getElementById("photoPreview").style.display = "none";
+        document.getElementById("QuotationSubmit").textContent = "Submit";
+    }
 
 
 
@@ -628,39 +603,46 @@
 
 
 
-    function editBranch(empId, employeeNAME, fatherNAME, motherNAME, spouseNAME,dOB,gender,bloodGroup,maritalStatus,telephone,tinNo,nationalID,mobileNo,mailID,permanentAddress,presentAddress,mobileNo,department,designation,dateofAppointment,religion,nationality,shift,version,uploadPhoto,jobType) {
-            document.getElementById("empId").value = empId;
-    document.getElementById("EmployeeNAME").value = employeeNAME;
-    document.getElementById("FatherNAME").value = fatherNAME;
-    document.getElementById("MotherNAME").value = motherNAME;
-    document.getElementById("SpouseNAME").value = spouseNAME;
-    document.getElementById("DOB").value = dOB;
-    document.getElementById("Gender").value = gender;
-    document.getElementById("BloodGroup").value = bloodGroup;
-    document.getElementById("MaritalStatus").value = maritalStatus;
-    document.getElementById("Telephone").value = telephone;
-    document.getElementById("TinNo").value =tinNo;
-    document.getElementById("NationalID").value = nationalID;
-    document.getElementById("MobileNo").value = mobileNo;
-    document.getElementById("MailID").value = mailID;
-    document.getElementById("PermanentAddress").value = permanentAddress;
-    document.getElementById("PresentAddress").value = presentAddress;
-    document.getElementById("MobileNo").value = mobileNo;
-    document.getElementById("Department").value = department;
-    document.getElementById("Designation").value = designation;
-    document.getElementById("DateofAppointment").value = dateofAppointment;
-    document.getElementById("Religion").value = religion;
-    document.getElementById("Nationality").value = nationality;
-    document.getElementById("Shift").value = shift;
-    document.getElementById("Version").value = version;
-    document.getElementById("UploadPhoto").value = uploadPhoto;
-    const jobTypes = document.getElementsByName("JobType");
-    jobTypes.forEach(radio => radio.checked = false);
+    function editBranch(empId, employeeName, fatherName, motherName, spouseName, dob, gender, bloodGroup, maritalStatus, telephone, tinNo, nationalID, mobileNo, mailID, permanentAddress, presentAddress, branchId, departmentId, designationId, dateOfAppointment, religion, nationality, shift, version, uploadPhoto, jobType) {
+        document.getElementById("EmpId").value = empId;
+        document.getElementById("EmployeeName").value = employeeName;
+        document.getElementById("FatherName").value = fatherName;
+        document.getElementById("MotherName").value = motherName;
+        document.getElementById("SpouseName").value = spouseName;
+        document.getElementById("DOB").value = dob?.split("T")[0];
+        document.getElementById("Gender").value = gender;
+        document.getElementById("BloodGroup").value = bloodGroup;
+        document.getElementById("MaritalStatus").value = maritalStatus;
+        document.getElementById("Telephone").value = telephone;
+        document.getElementById("TinNo").value = tinNo;
+        document.getElementById("NationalID").value = nationalID;
+        document.getElementById("MobileNo").value = mobileNo;
+        document.getElementById("MailID").value = mailID;
+        document.getElementById("PermanentAddress").value = permanentAddress;
+        document.getElementById("PresentAddress").value = presentAddress;
+        document.getElementById("BranchId").value = branchId;
+        document.getElementById("DepartmentId").value = departmentId;
+        document.getElementById("DesignationId").value = designationId;
+        document.getElementById("DateOfAppointment").value = dateOfAppointment?.split("T")[0];
+        document.getElementById("Religion").value = religion;
+        document.getElementById("Nationality").value = nationality;
+        document.getElementById("Shift").value = shift;
+        document.getElementById("Version").value = version;
 
-
-    document.getElementById("EditSubmit").textContent = "Edit";
+        // Photo preview
+        if (uploadPhoto) {
+            document.getElementById("photoPreview").src = "/profile/" + uploadPhoto;
+            document.getElementById("photoPreview").style.display = "block";
         }
 
+        // JobType radio
+        const jobTypes = document.getElementsByName("JobType");
+        jobTypes.forEach(radio => {
+            radio.checked = (radio.value === jobType);
+        });
+
+        document.getElementById("QuotationSubmit").textContent = "Update";
+    }
 
 
 </script>
@@ -676,7 +658,7 @@
             return;
         }
 
-        fetch('/Employees/GetEmployeeById?empId=' + empId)
+        fetch('/Employee/GetEmployeeById?empId=' + empId)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Employee not found");
@@ -684,35 +666,27 @@
                 return response.json();
             })
             .then(data => {
-                document.getElementById("empId").value = data.empId;
-                document.getElementById("EmployeeNAME").value = data.employeeName;
-                document.getElementById("FatherNAME").value = data.fatherName;
-                document.getElementById("MotherNAME").value = data.motherName;
-                document.getElementById("SpouseNAME").value = data.spouseName;
+                // Populate all fields with correct IDs
+                document.getElementById("EmpId").value = data.empId;
+                document.getElementById("EmployeeName").value = data.employeeName;
+                document.getElementById("FatherName").value = data.fatherName;
+                document.getElementById("MotherName").value = data.motherName;
+                document.getElementById("SpouseName").value = data.spouseName;
                 document.getElementById("DOB").value = data.dob?.split("T")[0];
-                document.getElementById("bloodGroup").value = data.bloodGroup;
-
-                // Gender & MaritalStatus
-                document.getElementById("gender").value = data.gender;
+                document.getElementById("Gender").value = data.gender;
+                document.getElementById("BloodGroup").value = data.bloodGroup;
                 document.getElementById("MaritalStatus").value = data.maritalStatus;
-
-                // Contact Info
-                document.getElementById("Telephone").value = data.telephoneNo;
-                document.getElementById("TinNo").value = data.tinno;
-                document.getElementById("NationalID").value = data.nationalId;
+                document.getElementById("Telephone").value = data.telephone;
+                document.getElementById("TinNo").value = data.tinNo;
+                document.getElementById("NationalID").value = data.nationalID;
                 document.getElementById("MobileNo").value = data.mobileNo;
-                document.getElementById("MailID").value = data.mailId;
-
-                // Address
+                document.getElementById("MailID").value = data.mailID;
                 document.getElementById("PermanentAddress").value = data.permanentAddress;
                 document.getElementById("PresentAddress").value = data.presentAddress;
-
-                // Use jQuery for select2 dropdowns
-                $('#BranchId').val(data.branchId).trigger('change');
-                $('#DepartmentId').val(data.departmentId).trigger('change');
-                $('#DesignationId').val(data.designationId).trigger('change');
-
-                document.getElementById("DateofAppointment").value = data.dateofAppoinment;
+                document.getElementById("BranchId").value = data.branchId;
+                document.getElementById("DepartmentId").value = data.departmentId;
+                document.getElementById("DesignationId").value = data.designationId;
+                document.getElementById("DateOfAppointment").value = data.dateOfAppointment?.split("T")[0];
                 document.getElementById("Religion").value = data.religion;
                 document.getElementById("Nationality").value = data.nationality;
                 document.getElementById("Shift").value = data.shift;
@@ -720,34 +694,19 @@
 
                 if (data.uploadPhoto) {
                     document.getElementById("photoPreview").src = "/profile/" + data.uploadPhoto;
+                    document.getElementById("photoPreview").style.display = "block";
                 }
 
-                const jobtype = document.getElementsByName("JobType");
-                jobtype.forEach(radio => {
-                    radio.checked = (radio.value === data.jobtype);
+                const jobTypes = document.getElementsByName("JobType");
+                jobTypes.forEach(radio => {
+                    radio.checked = (radio.value === data.jobType);
                 });
+
+                document.getElementById("QuotationSubmit").textContent = "Update";
             })
             .catch(error => {
                 alert("Error: " + error.message);
             });
     }
-    document.getElementById('UploadPhoto').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        const preview = document.getElementById('photoPreview');
-
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            };
-
-            reader.readAsDataURL(file);
-        } else {
-            preview.src = '';
-            preview.style.display = 'none';
-        }
-    });
 </script>
 

@@ -84,7 +84,7 @@
                                     <td>@item.Branch</td>
                                     <td>@item.Department</td>
                                     <td>@item.Designation</td>
-                                    <td>@item.DateOfAppointment</td>
+                                    <td>@item.DateOfAppointment.ToString("dd-MM-yyyy")</td>
                                     <td>@item.Religion</td>
                                     <td>@item.Nationality</td>
                                     <td>@item.Shift</td>
@@ -92,18 +92,10 @@
                                     <td>@item.JobType</td>
                                     <td class="text-center align-middle">
                                         <div class="d-flex justify-content-center align-items-center gap-2">
-                                            <button class="btn btn-warning btn-sm"
-                                                    onclick="edit(
-            '@item.EmpId', '@item.EmployeeName', '@item.FatherName','@item.MotherName',
-            '@item.SpouseName','@item.DOB','@item.Gender','@item.BloodGroup',
-            '@item.MaritalStatus','@item.TinNo','@item.NationalID','@item.Telephone',
-            '@item.MobileNo','@item.MailID','@item.PresentAddress','@item.PermanentAddress',
-            '@item.BranchId','@item.DepartmentId','@item.DesignationId','@item.DateOfAppointment',
-            '@item.Religion','@item.Nationality','@item.Shift','@item.Version',
-            '@item.UploadPhoto','@item.JobType')"
-                                                    data-bs-toggle="modal" data-bs-target="#addModal">
+                                            <a asp-action="Index" asp-route-empId="@item.EmpId" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i> Edit
-                                            </button>
+                                            </a>
+
 
 
                                             <form asp-action="DeleteEmployee" method="post" class="deleteForm mb-0">
@@ -128,128 +120,14 @@
     </div>
 </div>
 <!-- Modal -->
-<form method="post" asp-action="UpdateEmployee" enctype="multipart/form-data">
-    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
 
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Edit Employee</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <input type="hidden" name="EmpId" id="EmpId" />
-
-                    <div class="row">
-                        <div class="col-md-4"><label>Employee Name</label><input type="text" name="EmployeeName" id="EmployeeName" class="form-control" /></div>
-                        <div class="col-md-4"><label>Father Name</label><input type="text" name="FatherName" id="FatherName" class="form-control" /></div>
-                        <div class="col-md-4"><label>Mother Name</label><input type="text" name="MotherName" id="MotherName" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Spouse Name</label><input type="text" name="SpouseName" id="SpouseName" class="form-control" /></div>
-                        <div class="col-md-4"><label>Date of Birth</label><input type="text" name="DOB" id="DOB" class="form-control" /></div>
-                        <div class="col-md-4"><label>Gender</label><input type="text" name="Gender" id="Gender" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Blood Group</label><input type="text" name="BloodGroup" id="BloodGroup" class="form-control" /></div>
-                        <div class="col-md-4"><label>Marital Status</label><input type="text" name="MaritalStatus" id="MaritalStatus" class="form-control" /></div>
-                        <div class="col-md-4"><label>TIN No</label><input type="text" name="TinNo" id="TinNo" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>National ID</label><input type="text" name="NationalID" id="NationalID" class="form-control" /></div>
-                        <div class="col-md-4"><label>Telephone</label><input type="text" name="Telephone" id="Telephone" class="form-control" /></div>
-                        <div class="col-md-4"><label>Mobile No</label><input type="text" name="MobileNo" id="MobileNo" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Mail ID</label><input type="text" name="MailID" id="MailID" class="form-control" /></div>
-                        <div class="col-md-4"><label>Permanent Address</label><input type="text" name="PermanentAddress" id="PermanentAddress" class="form-control" /></div>
-                        <div class="col-md-4"><label>Present Address</label><input type="text" name="PresentAddress" id="PresentAddress" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Branch</label><input type="text" name="BranchId" id="BranchId" class="form-control" /></div>
-                        <div class="col-md-4"><label>Department</label><input type="text" name="DepartmentId" id="DepartmentId" class="form-control" /></div>
-                        <div class="col-md-4"><label>Designation</label><input type="text" name="DesignationId" id="DesignationId" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Date of Appointment</label><input type="text" name="DateOfAppointment" id="DateOfAppointment" class="form-control" /></div>
-                        <div class="col-md-4"><label>Religion</label><input type="text" name="Religion" id="Religion" class="form-control" /></div>
-                        <div class="col-md-4"><label>Nationality</label><input type="text" name="Nationality" id="Nationality" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Shift</label><input type="text" name="Shift" id="Shift" class="form-control" /></div>
-                        <div class="col-md-4"><label>Version</label><input type="text" name="Version" id="Version" class="form-control" /></div>
-                        <div class="col-md-4"><label>Job Type</label><input type="text" name="JobType" id="JobType" class="form-control" /></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-4"><label>Upload New Photo</label><input type="file" name="PhotoFile" class="form-control" /></div>
-                        <div class="col-md-4">
-                            <label>Existing Photo</label><br />
-                            <img id="existingPhoto" src="" class="img-thumbnail mt-2" width="100" />
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</form>
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-            function edit(empId, employeeName, fatherName, motherName, spouseName, dob, gender, bloodGroup, maritalStatus,
-                  tinNo, nationalID, telephone, mobileNo, mailID, presentAddress, permanentAddress,
-                  branchId, departmentId, designationId, dateOfAppointment, religion, nationality,
-                  shift, version, uploadPhoto, jobType) {
-
-        document.getElementById("EmpId").value = empId;
-        document.getElementById("EmployeeName").value = employeeName;
-        document.getElementById("FatherName").value = fatherName;
-        document.getElementById("MotherName").value = motherName;
-        document.getElementById("SpouseName").value = spouseName;
-        document.getElementById("DOB").value = dob;
-        document.getElementById("Gender").value = gender;
-        document.getElementById("BloodGroup").value = bloodGroup;
-        document.getElementById("MaritalStatus").value = maritalStatus;
-        document.getElementById("TinNo").value = tinNo;
-        document.getElementById("NationalID").value = nationalID;
-        document.getElementById("Telephone").value = telephone;
-        document.getElementById("MobileNo").value = mobileNo;
-        document.getElementById("MailID").value = mailID;
-        document.getElementById("PermanentAddress").value = permanentAddress;
-        document.getElementById("PresentAddress").value = presentAddress;
-        document.getElementById("BranchId").value = branchId;
-        document.getElementById("DepartmentId").value = departmentId;
-        document.getElementById("DesignationId").value = designationId;
-        document.getElementById("DateOfAppointment").value = dateOfAppointment;
-        document.getElementById("Religion").value = religion;
-        document.getElementById("Nationality").value = nationality;
-        document.getElementById("Shift").value = shift;
-        document.getElementById("Version").value = version;
-        document.getElementById("JobType").value = jobType;
-
-        const existingPhoto = document.getElementById("existingPhoto");
-        if (uploadPhoto && uploadPhoto !== "null" && uploadPhoto !== "") {
-            existingPhoto.src = "/profile/" + uploadPhoto;
-        } else {
-            existingPhoto.src = "";
-        }
+               function setValue(id, value) {
+        document.getElementById(id).value = value || "";
     }
 
     document.addEventListener('DOMContentLoaded', function () {
