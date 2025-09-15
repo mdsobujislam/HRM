@@ -24,7 +24,7 @@ namespace HRM.Services
                 using (SqlConnection connection=new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var queryString = "delete from TaxtSlabSetup where id=@id";
+                    var queryString = "delete from TaxSlab where id=@id";
                     var parameters = new DynamicParameters();
                     parameters.Add("id", id.ToString(), DbType.String);
                     var success=await connection.ExecuteAsync(queryString, parameters);
@@ -52,7 +52,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"select t1.Id as Id,CONVERT(varchar(10), t1.Date, 101) as Date,t1.IncomeSlab as IncomeSlab,t1.TaxPer as TaxPer,t2.AdditionalInfoName as AdditionalInfoName,t3.Name as BranchName,t4.DepartmentName as DepartmentName from TaxSlab t1 JOIN AdditionalInfo t2 on t1.AdditionalId=t2.Id JOIN Branch t3 on t1.BranchId=t3.Id JOIN Department t4 on t1.DepartmentId=t4.Id WHERE t1.SubscriptionId = @subscriptionId";
+                    var query = @"select t1.Id as Id, CONVERT(varchar(10), t1.Date, 23) as Date, t1.IncomeSlab, t1.TaxPer, t1.BranchId, t1.DepartmentId, t1.AdditionalId, t2.AdditionalInfoName, t3.Name as BranchName, t4.DepartmentName from TaxSlab t1 JOIN AdditionalInfo t2 on t1.AdditionalId = t2.Id JOIN Branch t3 on t1.BranchId = t3.Id JOIN Department t4 on t1.DepartmentId = t4.Id WHERE t1.SubscriptionId = @subscriptionId";
 
                     var result = await connection.QueryAsync<TaxtSlabSetup>(query, new { subscriptionId });
                     return result.ToList();

@@ -46,11 +46,16 @@
                                     <td>@item.DepartmentName</td>
                                     <td class="d-flex align-items-center gap-2">
                                         <button class="btn btn-warning btn-sm"
-                                                onclick="editBranch('@item.Id', '@item.IncomeSlab','@item.TaxPer','@item.AdditionalId','@item.BranchId','@item.DepartmentId')"
-                                                data-bs-toggle="modal" data-bs-target="#addTaxSlabSetupModal">
+                                                onclick="editTaxSlabSetup('@item.Id',
+                                      '@item.BranchId',
+                                      '@item.DepartmentId',
+                                      '@item.Date',
+                                      '@item.IncomeSlab',
+                                      '@item.TaxPer',
+                                      '@item.AdditionalId')">
                                             <i class="fas fa-edit"></i> Edit
                                         </button>
-                                        <form asp-action="DeleteDepartment" method="post" class="deleteForm">
+                                        <form asp-action="DeleteTaxSlabSetup" method="post" class="deleteForm">
                                             <input type="hidden" name="ID" value="@item.Id" />
                                             <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="fas fa-trash-alt"></i> Delete
@@ -149,22 +154,45 @@
         document.getElementById("modalSubmitText").textContent = "Submit";
     }
 
-        function editTaxSlabSetup(id, branchId, departmentId, date, incomeSlab, taxPer, additionalId) {
-        debugger;
-        console.log("editTaxSlabSetup");
-
+                        function editTaxSlabSetup(id, branchId, departmentId, date, incomeSlab, taxPer, additionalId) {
         document.getElementById("TaxSlabSetupId").value = id;
-        document.getElementById("BranchId").value = branchId.toString();
-        document.getElementById("DepartmentId").value = departmentId.toString();
-        document.getElementById("Date").value = date; // format must be yyyy-MM-dd
+        document.getElementById("BranchId").value = branchId;
+        document.getElementById("DepartmentId").value = departmentId;
+        document.getElementById("Date").value = date; // yyyy-MM-dd
         document.getElementById("IncomeSlab").value = incomeSlab;
         document.getElementById("TaxPer").value = taxPer;
-        document.getElementById("AdditionalId").value = additionalId.toString();
+        document.getElementById("AdditionalId").value = additionalId;
 
-        // Change modal title & button text
-        document.getElementById("addTaxSlabModalLabel").textContent = "Edit Tax Slab Setup";
+        document.getElementById("addTaxSlabSetupModalLabel").textContent = "Edit Tax Slab Setup";
         document.getElementById("modalSubmitText").textContent = "Update";
+
+        var myModal = new bootstrap.Modal(document.getElementById('addTaxSlabSetupModal'));
+        myModal.show();
     }
+
+
+    document.querySelectorAll('.deleteForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the Department.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+
+
+
 
 
 </script>

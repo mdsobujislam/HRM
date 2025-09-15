@@ -73,5 +73,13 @@ namespace HRM.Controllers
             }
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public async Task<IActionResult> DeleteTaxSlabSetup(int id)
+        {
+            var result = await _taxtSlabSetupService.DeleteTaxtSlabSetupAsync(id);
+
+            TempData["SuccessMessage"] = "TaxSalab Setup deleted successfully.";
+            return RedirectToAction("Index");
+        }
     }
 }
