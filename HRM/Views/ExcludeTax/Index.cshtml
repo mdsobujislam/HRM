@@ -1,0 +1,447 @@
+﻿@model IEnumerable<HRM.Models.ViewModels.EmployeeTaxStatusViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📋 Exclude Income Tax From Auto Generation</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="ShowData" method="post" enctype="multipart/form-data">
+                    <div class="row g-3 my-1">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Branch</label>
+                            <select id="BranchId" name="BranchId" class="form-select select2">
+                                @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        
+
+                    </div>
+
+
+
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-end">
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-eye"></i> Show
+                            </button>
+                            <button type="reset" class="btn btn-secondary px-4 ms-2" style="display:none">
+                                 <i class="bi bi-x-circle"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<form method="post" id="excludeForm">
+    @Html.AntiForgeryToken()
+
+    <!-- hidden BranchId (so controller gets it) -->
+    <input type="hidden" id="BranchIdHidden" name="BranchId" value="@(ViewBag.SelectedBranchId ?? 0)" />
+
+    <div class="card shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <button type="submit" class="btn btn-danger btn-sm" formaction="@Url.Action("StopExcludeTax")">
+                    <i class="fas fa-solid fa-stop"></i> Stop Exclude Tax
+                </button>
+
+                <button type="submit" class="btn btn-success btn-sm" formaction="@Url.Action("StartIncludeTax")">
+                    <i class="fas fa-solid fa-play"></i> Start Include Tax
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 my-1">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Month</label>
+                    <select id="MonthIndex" name="MonthIndex" class="form-select select2">
+                        <option value="">-- Select Month --</option>
+                        @foreach (var item in (List<SelectListItem>)ViewBag.MonthList)
+                        {
+                            if (item.Selected)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Year</label>
+                    <select id="Year" name="Year" class="form-select select2">
+                        <option value="">-- Select Year --</option>
+                        @foreach (var item in (List<SelectListItem>)ViewBag.YearList)
+                        {
+                            if (item.Selected)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table datanew">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Stop</th>
+                            <th>Start</th>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
+                            <th>Posting Branch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            index++;
+                            <tr>
+                                <td>@index</td>
+
+                                <!-- Stop checkbox: named so checked ones are posted -->
+                                <td>
+                                    <input type="checkbox"
+                                           name="StopEmployeeIds"
+                                           class="stop-checkbox"
+                                           data-empid="@item.EmpId"
+                                           value="@item.EmpId"
+                                           @(item.IsStopped ? "checked" : "") />
+                                </td>
+
+                                <!-- Start checkbox (no name) -->
+                                <td>
+                                    <input type="checkbox"
+                                           name="StartEmployeeIds"
+                                           class="start-checkbox"
+                                           data-empid="@item.EmpId"
+                                           value="@item.EmpId"
+                                           @(item.IsStopped ? "" : "checked") />
+                                </td>
+
+                                <td>@item.EmpId</td>
+                                <td>@item.EmployeeName</td>
+                                <td>@item.Branch</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+
+
+
+
+@* @using Microsoft.AspNetCore.Mvc.Rendering
+
+<form method="post" id="excludeForm">
+    @Html.AntiForgeryToken()
+
+    <div class="card shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <button type="submit" class="btn btn-danger btn-sm" formaction="@Url.Action("StopExcludeTax")">
+                    <i class="fas fa-solid fa-stop"></i> Stop Exclude Tax
+                </button>
+
+                <button type="submit" class="btn btn-success btn-sm" formaction="@Url.Action("StartIncludeTax")">
+                    <i class="fas fa-solid fa-play"></i> Start Include Tax
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 my-1">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Month</label>
+                    <select id="MonthIndex" name="MonthIndex" class="form-select select2">
+                        <option value="">-- Select Month --</option>
+                        @foreach (var item in (List<SelectListItem>)ViewBag.MonthList)
+                        {
+                            if (item.Selected)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Year</label>
+                    <select id="Year" name="Year" class="form-select select2">
+                        <option value="">-- Select Year --</option>
+                        @foreach (var item in (List<SelectListItem>)ViewBag.YearList)
+                        {
+                            if (item.Selected)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table datanew">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Stop</th>
+                            <th>Start</th>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
+                            <th>Posting Branch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            index++;
+                            <tr>
+                                <td>@index</td>
+
+                                <!-- Stop checkbox: named so checked ones are posted -->
+                                <td>
+                                    <input type="checkbox"
+                                           name="StopEmployeeIds"
+                                           class="stop-checkbox"
+                                           data-empid="@item.EmpId"
+                                           value="@item.EmpId" />
+                                </td>
+
+                                <!-- Start checkbox (no name) -->
+                                <td>
+                                    <input type="checkbox"
+                                           class="start-checkbox"
+                                           data-empid="@item.EmpId"
+                                           checked />
+                                </td>
+
+                                <td>@item.EmpId</td>
+                                <td>@item.EmployeeName</td>
+                                <td>@item.Branch</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form> *@
+
+
+
+
+
+
+@* <div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <form asp-action="StopExcludeTax" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-solid fa-plus"></i> Stop Exclude Tax
+                    </button>
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-solid fa-plus"></i> Start Include Tax
+                    </button>
+                </form>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Stop</th>
+                                <th>Start</th>
+                                <th>Employee ID</th>
+                                <th>Employee Name</th>
+                                <th>Posting Branch</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                index++;
+                                <tr>
+                                    <td>@index</td>
+
+                                    <!-- Stop Checkbox -->
+                                    <td>
+                                        <input type="checkbox"
+                                               class="stop-checkbox"
+                                               data-empid="@item.EmpId" />
+                                    </td>
+
+                                    <!-- Start Checkbox (checked by default) -->
+                                    <td>
+                                        <input type="checkbox"
+                                               class="start-checkbox"
+                                               data-empid="@item.EmpId" checked />
+                                    </td>
+
+                                    <td>@item.EmpId</td>
+                                    <td>@item.EmployeeName</td>
+                                    <td>@item.Branch</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // single small handler: if Stop checked -> uncheck Start; if Start checked -> uncheck Stop
+        function togglePair(empId) {
+            const start = document.querySelector(`.start-checkbox[data-empid='${empId}']`);
+            const stop = document.querySelector(`.stop-checkbox[data-empid='${empId}']`);
+            if (!start || !stop) return;
+            if (stop.checked) start.checked = false;
+            else start.checked = true;
+        }
+
+        document.querySelectorAll(".stop-checkbox").forEach(chk => {
+            chk.addEventListener("change", function () {
+                togglePair(this.dataset.empid);
+            });
+        });
+
+        document.querySelectorAll(".start-checkbox").forEach(chk => {
+            chk.addEventListener("change", function () {
+                const empId = this.dataset.empid;
+                const stop = document.querySelector(`.stop-checkbox[data-empid='${empId}']`);
+                if (!stop) return;
+                stop.checked = !this.checked;
+            });
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // When Stop changes -> toggle Start
+        document.querySelectorAll(".stop-checkbox").forEach(stopChk => {
+            stopChk.addEventListener("change", function () {
+                const empId = this.dataset.empid;
+                const startChk = document.querySelector(`.start-checkbox[data-empid='${empId}']`);
+                if (!startChk) return;
+                if (this.checked) startChk.checked = false;
+                else startChk.checked = true;
+            });
+        });
+
+        // When Start changes -> toggle Stop
+        document.querySelectorAll(".start-checkbox").forEach(startChk => {
+            startChk.addEventListener("change", function () {
+                const empId = this.dataset.empid;
+                const stopChk = document.querySelector(`.stop-checkbox[data-empid='${empId}']`);
+                if (!stopChk) return;
+                if (this.checked) stopChk.checked = false;
+                else stopChk.checked = true;
+            });
+        });
+    });
+</script>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handle Stop checkbox
+        document.querySelectorAll(".stop-checkbox").forEach(stopChk => {
+            stopChk.addEventListener("change", function () {
+                const empId = this.dataset.empid;
+                const startChk = document.querySelector(
+                    `.start-checkbox[data-empid='${empId}']`
+                );
+
+                if (this.checked) {
+                    startChk.checked = false;
+                } else {
+                    startChk.checked = true; // default back to Start
+                }
+            });
+        });
+
+        // Handle Start checkbox
+        document.querySelectorAll(".start-checkbox").forEach(startChk => {
+            startChk.addEventListener("change", function () {
+                const empId = this.dataset.empid;
+                const stopChk = document.querySelector(
+                    `.stop-checkbox[data-empid='${empId}']`
+                );
+
+                if (this.checked) {
+                    stopChk.checked = false;
+                } else {
+                    stopChk.checked = true; // if unchecked, Stop gets checked
+                }
+            });
+        });
+    });
+
+
+
+
+
+</script>
