@@ -1,0 +1,207 @@
+﻿@model IEnumerable<HRM.Models.PfContribution>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">PF Contribution Setup List</h5>
+                <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+                        data-bs-target="#addPFSetupModal">
+                    <i class="fas fa-solid fa-plus"></i> Add New
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>SL No.</th>
+                                <th>Date</th>
+                                <th>PF Contribution (%age)</th>
+                                <th>PF Year</th>
+                                <th>Branch</th>
+                                <th>Designation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var pf in Model)
+                            {
+                                index++;
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@pf.Date.ToString()</td>
+                                    <td>@pf.PFContributionPercentage</td>
+                                    <td>@pf.PFContributionYear</td>
+                                    <td>@pf.Branch</td>
+                                    <td>@pf.Designation</td>
+                                    <td class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-warning btn-sm editPfBtn"
+                                                data-id="@pf.Id"
+                                                data-date="@pf.Date.ToString("yyyy-MM-dd")"
+                                                data-pfpercentage="@pf.PFContributionPercentage"
+                                                data-pfyear="@pf.PFContributionYear"
+                                                data-branchid="@pf.BranchId"
+                                                data-designationid="@pf.DesignationId"
+                                                data-bs-toggle="modal" data-bs-target="#addPFSetupModal">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+
+
+                                        <form asp-action="DeletePFContri" method="post" class="deleteForm">
+                                            <input type="hidden" name="ID" value="@pf.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addPFSetupModal" tabindex="-1" aria-labelledby="addPfContriModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : #f9f9fb;">
+                <h5 class="modal-title" id="addPfContriModalLabel">Add Pf Contribution Setup</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdatePFContri" method="post">
+                    <input type="hidden" id="TaxSlabSetupId" name="Id">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="BranchId" class="form-label">Select Branch</label>
+                            <select id="BranchId" name="BranchId" asp-items="ViewBag.BranchList" class="form-control">
+                                <option value="">-- Select Branch --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="DesignationId" class="form-label">Designation Name</label>
+                            <select id="DesignationId" name="DesignationId" asp-items="ViewBag.DesignationList" class="form-control">
+                                <option value="">-- Select Designation --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="Date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="Date" name="Date" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="PFContributionPercentage" class="form-label">PF Contribution (%age)</label>
+                            <input type="number" class="form-control" id="PFContributionPercentage" name="PFContributionPercentage" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="PFContributionYear" class="form-label">Year</label>
+                            <input type="number" class="form-control" id="PFContributionYear" name="PFContributionYear" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary btn-sm me-2" id="btnSave">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function setSelectValue(selectId, value) {
+        var sel = document.getElementById(selectId);
+        if (!sel) return;
+        sel.value = value ?? '';
+        // If you use select2, uncomment the next line:
+        // if (window.jQuery && $(sel).hasClass('select2-hidden-accessible')) $(sel).val(value).trigger('change');
+    }
+
+    document.querySelectorAll('.editPfBtn').forEach(function(btn) {
+        btn.addEventListener('click', function () {
+            var id = this.dataset.id;
+            var date = this.dataset.date;
+            var pfPercentage = this.dataset.pfpercentage;
+            var pfYear = this.dataset.pfyear;
+            var branchId = this.dataset.branchid;
+            var designationId = this.dataset.designationid;
+
+            document.getElementById('TaxSlabSetupId').value = id;
+            document.getElementById('Date').value = date;
+            document.getElementById('PFContributionPercentage').value = pfPercentage;
+            document.getElementById('PFContributionYear').value = pfYear;
+            setSelectValue('BranchId', branchId);
+            setSelectValue('DesignationId', designationId);
+
+            document.getElementById('modalSubmitText').innerText = 'Update';
+            document.getElementById('addPfContriModalLabel').innerText = 'Edit PF Contribution Setup';
+        });
+    });
+</script>
+
+
+<script>
+    function clearModal() {
+        document.getElementById('TaxSlabSetupId').value = '';
+        document.getElementById('Date').value = '';
+        document.getElementById('PFContributionPercentage').value = '';
+        document.getElementById('PFContributionYear').value = '';
+        document.getElementById('BranchId').value = '';
+        document.getElementById('DesignationId').value = '';
+        document.getElementById('modalSubmitText').innerText = 'Submit';
+        document.getElementById('addPfContriModalLabel').innerText = 'Add PF Contribution Setup';
+    }
+
+     
+    // reset modal on Add New
+    document.getElementById('addNewData').addEventListener('click', function () {
+        clearModal();
+    });
+
+    document.querySelectorAll('.deleteForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the Department.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+</script>
+
+
