@@ -6,25 +6,24 @@ using System.Data;
 
 namespace HRM.Services
 {
-    public class PfContributionService : IPfContributionService
+    public class PFInterestService : IPFInterestService
     {
         private readonly string _connectionString;
         private readonly BaseService _baseService;
-
-        public PfContributionService(IConfiguration configuration, BaseService baseService)
+        public PFInterestService(IConfiguration configuration, BaseService baseService)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new ArgumentNullException(nameof(_connectionString));
             _baseService = baseService;
         }
-        public async Task<bool> DeletePfContributionAsync(int id)
+        public async Task<bool> DeletePFInterestAsync(int id)
         {
             try
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var queryString = "delete from PfContribution where id=@id";
+                    var queryString = "delete from PFInterest where id=@id";
                     var parameters = new DynamicParameters();
                     parameters.Add("id", id.ToString(), DbType.String);
                     var success = await connection.ExecuteAsync(queryString, parameters);
@@ -41,7 +40,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<List<PfContribution>> GetAllPfContributionsAsync()
+        public async Task<List<PFInterest>> GetAllPFInterestsAsync()
         {
             try
             {
@@ -52,9 +51,9 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"SELECT t1.Id AS Id, t1.Date AS Date, t1.PFContributionPercentage AS PFContributionPercentage, t1.PFContributionYear AS PFContributionYear, t1.BranchId AS BranchId, t1.DesignationId AS DesignationId, t2.Name AS Branch, t3.DesignationName AS Designation FROM PfContribution t1 LEFT JOIN Branch t2 ON t1.BranchId = t2.Id LEFT JOIN Designation t3 ON t1.DesignationId = t3.Id WHERE t1.SubscriptionId = @subscriptionId";
+                    var query = @"SELECT t1.Id AS Id, t1.Year as Year,t1.Interest as Interest,t2.Name as Branch,t2.Id as BranchId FROM PFInterest t1 LEFT JOIN Branch t2 ON t1.BranchId = t2.Id WHERE t1.SubscriptionId = @subscriptionId";
 
-                    var result = await connection.QueryAsync<PfContribution>(query, new { subscriptionId });
+                    var result = await connection.QueryAsync<PFInterest>(query, new { subscriptionId });
                     return result.ToList();
                 }
             }
@@ -64,7 +63,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> InsertPfContributionasync(PfContribution pfContribution)
+        public async Task<bool> InsertPFInterestAsync(PFInterest pFInterest)
         {
             try
             {
@@ -77,14 +76,12 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into PfContribution (Date,PFContributionPercentage,PFContributionYear,BranchId,SubscriptionId,CompanyId) values ";
-                    queryString += "( @Date,@PFContributionPercentage,@PFContributionYear,@BranchId,@SubscriptionId,@CompanyId)";
+                    var queryString = "insert into PFInterest (Year,Interest,BranchId,SubscriptionId,CompanyId) values ";
+                    queryString += "( @Year,@Interest,@BranchId,@SubscriptionId,@CompanyId)";
                     var parameters = new DynamicParameters();
-                    parameters.Add("Date", pfContribution.Date, DbType.String);
-                    parameters.Add("PFContributionPercentage", pfContribution.PFContributionPercentage, DbType.Double);
-                    parameters.Add("PFContributionYear", pfContribution.PFContributionYear, DbType.Double);
-                    parameters.Add("BranchId", pfContribution.BranchId, DbType.Int64);
-                    //parameters.Add("DesignationId", pfContribution.DesignationId, DbType.Int64);
+                    parameters.Add("Year", pFInterest.Year, DbType.String);
+                    parameters.Add("Interest", pFInterest.Interest, DbType.Double);
+                    parameters.Add("BranchId", pFInterest.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     var success = await connection.ExecuteAsync(queryString, parameters);
@@ -101,7 +98,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> UpdatePfContributionAsync(PfContribution pfContribution)
+        public async Task<bool> UpdatePFInterestAsync(PFInterest pFInterest)
         {
             try
             {
@@ -114,13 +111,11 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update PfContribution set Date=@Date,PFContributionPercentage=@PFContributionPercentage,PFContributionYear=@PFContributionYear,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId where Id='" + pfContribution.Id + "' ";
+                    var queryString = "Update PFInterest set Year=@Year,Interest=@Interest,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId where Id='" + pFInterest.Id + "' ";
                     var parameters = new DynamicParameters();
-                    parameters.Add("Date", pfContribution.Date, DbType.String);
-                    parameters.Add("PFContributionPercentage", pfContribution.PFContributionPercentage, DbType.Double);
-                    parameters.Add("PFContributionYear", pfContribution.PFContributionYear, DbType.Double);
-                    parameters.Add("BranchId", pfContribution.BranchId, DbType.Int64);
-                    //parameters.Add("DesignationId", pfContribution.DesignationId, DbType.Int64);
+                    parameters.Add("Year", pFInterest.Year, DbType.String);
+                    parameters.Add("Interest", pFInterest.Interest, DbType.Double);
+                    parameters.Add("BranchId", pFInterest.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     var success = await connection.ExecuteAsync(queryString, parameters);

@@ -24,7 +24,7 @@
                                 <th>PF Contribution (%age)</th>
                                 <th>PF Year</th>
                                 <th>Branch</th>
-                                <th>Designation</th>
+                                <th style="display:none">Designation</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -41,7 +41,7 @@
                                     <td>@pf.PFContributionPercentage</td>
                                     <td>@pf.PFContributionYear</td>
                                     <td>@pf.Branch</td>
-                                    <td>@pf.Designation</td>
+                                    <td style="display:none">@pf.Designation</td>
                                     <td class="d-flex align-items-center gap-2">
                                         <button class="btn btn-warning btn-sm editPfBtn"
                                                 data-id="@pf.Id"
@@ -92,7 +92,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3" style="display:none">
                             <label for="DesignationId" class="form-label">Designation Name</label>
                             <select id="DesignationId" name="DesignationId" asp-items="ViewBag.DesignationList" class="form-control">
                                 <option value="">-- Select Designation --</option>
@@ -166,42 +166,42 @@
 
 
 <script>
-    function clearModal() {
-        document.getElementById('TaxSlabSetupId').value = '';
-        document.getElementById('Date').value = '';
-        document.getElementById('PFContributionPercentage').value = '';
-        document.getElementById('PFContributionYear').value = '';
-        document.getElementById('BranchId').value = '';
-        document.getElementById('DesignationId').value = '';
-        document.getElementById('modalSubmitText').innerText = 'Submit';
-        document.getElementById('addPfContriModalLabel').innerText = 'Add PF Contribution Setup';
+    function setSelectValue(selectId, value) {
+        var sel = document.getElementById(selectId);
+        if (!sel) return;
+        sel.value = value ?? '';
+        // If you use select2, uncomment the next line:
+        // if (window.jQuery && $(sel).hasClass('select2-hidden-accessible')) $(sel).val(value).trigger('change');
     }
 
-     
-    // reset modal on Add New
-    document.getElementById('addNewData').addEventListener('click', function () {
-        clearModal();
+    document.querySelectorAll('.editPfBtn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var id = this.dataset.id;
+            var year = this.dataset.year;
+            var interest = this.dataset.interest;
+            var branchId = this.dataset.branchid;
+
+            document.getElementById('pfInterestId').value = id;
+            document.getElementById('Year').value = year;
+            document.getElementById('Interest').value = interest;
+            setSelectValue('BranchId', branchId);
+
+            document.getElementById('modalSubmitText').innerText = 'Update';
+            document.getElementById('addPfContriModalLabel').innerText = 'Edit PF Interest Setup';
+        });
     });
 
-    document.querySelectorAll('.deleteForm').forEach(function (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "This will permanently delete the Department.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
+    // Reset modal for Add New
+    document.getElementById('addNewData').addEventListener('click', function () {
+        document.getElementById('pfInterestId').value = '';
+        document.getElementById('Year').value = '';
+        document.getElementById('Interest').value = '';
+        setSelectValue('BranchId', '');
 
+        document.getElementById('modalSubmitText').innerText = 'Submit';
+        document.getElementById('addPfContriModalLabel').innerText = 'Add PF Interest Setup';
+    });
 </script>
+
 
 
