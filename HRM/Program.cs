@@ -47,6 +47,7 @@ builder.Services.AddScoped<ITaxtSlabSetupService,TaxtSlabSetupService>();
 builder.Services.AddScoped<IExcludeTaxService,ExcludeTaxService>();
 builder.Services.AddScoped<IPfContributionService,PfContributionService>();
 builder.Services.AddScoped<IPFInterestService,PFInterestService>();
+builder.Services.AddScoped<IGratuityCalculateSetupService,GratuityCalculateSetupService>();
 
 
 
