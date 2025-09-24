@@ -4,7 +4,7 @@ namespace HRM.Interfaces
 {
     public interface IGratuityCalculateService
     {
-        Task<List<ShowGratuity>> GetAllShowGratuityAsync(int branchId,string date);
+        Task<List<ShowGratuity>> GetAllShowGratuityAsync(ShowGratuity showGratuity);
         Task<bool> InsertGratuityCalculateAsysnc(GratuityCalculate gratuityCalculate);
     }
 }

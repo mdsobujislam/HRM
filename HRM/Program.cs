@@ -48,6 +48,7 @@ builder.Services.AddScoped<IExcludeTaxService,ExcludeTaxService>();
 builder.Services.AddScoped<IPfContributionService,PfContributionService>();
 builder.Services.AddScoped<IPFInterestService,PFInterestService>();
 builder.Services.AddScoped<IGratuityCalculateSetupService,GratuityCalculateSetupService>();
+builder.Services.AddScoped<ISeparationReasonsService,SeparationReasonsService>();
 
 
 

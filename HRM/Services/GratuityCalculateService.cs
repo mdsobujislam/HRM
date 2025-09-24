@@ -17,9 +17,37 @@ namespace HRM.Services
             _baseService = baseService;
         }
 
-        public Task<List<ShowGratuity>> GetAllShowGratuityAsync(int branchId, string date)
+        public async Task<List<ShowGratuity>> GetAllShowGratuityAsync(ShowGratuity showGratuity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    var branchsId = await _baseService.GetBranchId(subscriptionId, userId);
+
+                    var query = @" SELECT t1.EmpId AS EmpId, t1.UploadPhoto AS Photo, t1.EmployeeName AS Name, t2.Name AS Branch, t3.DesignationName AS Designation, t1.DateOfAppointment AS AppoinmentDate, t4.Value AS LastBasicSalary, CAST( DATEDIFF(YEAR, t1.DateOfAppointment, GETDATE()) - CASE WHEN DATEADD(YEAR, DATEDIFF(YEAR, t1.DateOfAppointment, GETDATE()), t1.DateOfAppointment) > GETDATE() THEN 1 ELSE 0 END AS VARCHAR(10) ) + ' Years ' + CAST( DATEDIFF(MONTH, DATEADD(YEAR, DATEDIFF(YEAR, t1.DateOfAppointment, GETDATE()), t1.DateOfAppointment), GETDATE()) AS VARCHAR(10) ) + ' Months' AS NoOfYears FROM Employees t1 LEFT JOIN Branch t2 ON t1.BranchId = t2.Id LEFT JOIN Designation t3 ON t1.DesignationId = t3.Id OUTER APPLY ( SELECT TOP 1 t4.Value FROM Salary t4 WHERE t1.EmpId = t4.EmployeeId AND t4.Parameter = 'Basic Salary' ORDER BY t4.FromDate DESC ) t4 WHERE t1.SubscriptionId = @SubscriptionId ";
+
+                    if (showGratuity.BranchId != 0)
+                    {
+                        query += " AND t1.BranchId = @BranchId";
+                    }
+
+                    var result = await connection.QueryAsync<ShowGratuity>(
+                        query,
+                        new { SubscriptionId = subscriptionId, BranchId = showGratuity.BranchId }
+                    );
+
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching gratuity data", ex);
+            }
         }
 
         public async Task<bool> InsertGratuityCalculateAsysnc(GratuityCalculate gratuityCalculate)
