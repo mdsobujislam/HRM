@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\logo\" />
     <Folder Include="wwwroot\uploads\employeeLoanFiles\" />
+    <Folder Include="wwwroot\uploads\employeeSeparationFile\" />
   </ItemGroup>
 
 </Project>
