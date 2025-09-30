@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using HRM.Interfaces;
 using HRM.Models;
+using HRM.Models.Autocomplete;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -98,5 +100,36 @@ namespace HRM.Services
                 throw;
             }
         }
+
+        public async Task<IEnumerable<object>> SearchEmployees(string term)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                var query = @"
+            SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage
+            FROM Employees
+            WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term
+        ";
+
+                var result = await connection.QueryAsync<EmployeeDto>(query, new { Term = $"%{term}%" });
+
+                return result.Select(e => new
+                {
+                    id = e.EmpId,
+                    label = $"{e.EmpId} {e.EmpName}",        // shown in dropdown
+                    value = $"{e.EmpId} {e.EmpName}",        // sets in textbox
+                    image = string.IsNullOrEmpty(e.EmployeeImage)
+                            ? "/profile/default/defaultPic.jpg"        // default image
+                            : e.EmployeeImage.StartsWith("http") ? e.EmployeeImage : $"/profile/{e.EmployeeImage}"
+                }).ToList();
+            }
+        }
+
+
+
+
+
     }
 }
