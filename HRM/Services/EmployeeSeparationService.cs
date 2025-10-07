@@ -61,14 +61,16 @@ namespace HRM.Services
                     int empBranchId = await connection.ExecuteScalarAsync<int>(empBranchquery);
 
 
-                    var queryString = "insert into EmployeeSeparation (EmployeeId,SeparationReasonsId,Remarks,Sep_Date,Req_date,BranchId,SubscriptionId,CompanyId) values ";
-                    queryString += "( @EmployeeId,@SeparationReasonsId,@Remarks,@Sep_Date,@Req_date,@BranchId,@SubscriptionId,@CompanyId); SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                    var queryString = "insert into EmployeeSeparation (EmployeeId,SeparationReasonsId,Remarks,Sep_Date,Req_date,app_status,app_date,BranchId,SubscriptionId,CompanyId) values ";
+                    queryString += "( @EmployeeId,@SeparationReasonsId,@Remarks,@Sep_Date,@Req_date,@app_status,@app_date,@BranchId,@SubscriptionId,@CompanyId); SELECT CAST(SCOPE_IDENTITY() AS INT);";
                     var parameters = new DynamicParameters();
                     parameters.Add("EmployeeId", employeeSeparation.EmployeeId, DbType.String);
                     parameters.Add("SeparationReasonsId", employeeSeparation.SeparationReasonsId, DbType.String);
                     parameters.Add("Remarks", remarks, DbType.String);
                     parameters.Add("Sep_Date", employeeSeparation.SeparationDate, DbType.String);
-                    parameters.Add("Req_date", employeeSeparation.RequestDate, DbType.String);
+                    parameters.Add("Req_date", employeeSeparation.SeparationDate, DbType.String);
+                    parameters.Add("app_status", "Approve", DbType.String);
+                    parameters.Add("app_date", employeeSeparation.SeparationDate, DbType.String);
                     parameters.Add("BranchId", empBranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
