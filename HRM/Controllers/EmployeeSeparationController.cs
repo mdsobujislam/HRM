@@ -39,10 +39,10 @@ namespace HRM.Controllers
                 bool isCreated = await _employeeSeparationService.InsertEmployeeSeparationAsync(employeeSeparation);
                 if (!isCreated)
                 {
-                    TempData["ErrorMessage"] = "An Employee Separation already exists for this Employee.";
+                    TempData["SuccessMessage"] = "Employee Separation Created Successfully";
                     return RedirectToAction("Index");
                 }
-                TempData["SuccessMessage"] = "Employee Separation Created Successfully";
+                
             }
             return RedirectToAction("Index");
         }

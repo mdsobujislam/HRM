@@ -5,6 +5,7 @@ using HRM.Models.Autocomplete;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace HRM.Services
 {
@@ -31,6 +32,30 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
+                    if (!string.IsNullOrEmpty(employeeSeparation.EmployeeId))
+                    {
+                        // Example input: "1002 Rahim"
+                        var value = employeeSeparation.EmployeeId.Trim();
+                        var idOnly = value.Split(' ')[0]; // Extract "1002"
+                        employeeSeparation.EmployeeId = idOnly; // keep only the numeric ID
+                    }
+
+                    // ✅ Handle null or "<p><br></p>" or whitespace in Remarks
+                    // ✅ Clean HTML from Remarks
+                    string remarks = employeeSeparation.Remarks;
+
+                    // Handle null or HTML empty value
+                    if (string.IsNullOrWhiteSpace(remarks) || remarks.Trim() == "<p><br></p>")
+                    {
+                        remarks = "";
+                    }
+                    else
+                    {
+                        // Remove all HTML tags like <p>, <br>, etc.
+                        remarks = Regex.Replace(remarks, "<.*?>", string.Empty).Trim();
+                    }
+
+
 
                     var empBranchquery = "Select BranchId from Employees where EmpId='" + employeeSeparation.EmployeeId + "'";
                     int empBranchId = await connection.ExecuteScalarAsync<int>(empBranchquery);
@@ -41,7 +66,7 @@ namespace HRM.Services
                     var parameters = new DynamicParameters();
                     parameters.Add("EmployeeId", employeeSeparation.EmployeeId, DbType.String);
                     parameters.Add("SeparationReasonsId", employeeSeparation.SeparationReasonsId, DbType.String);
-                    parameters.Add("Remarks", employeeSeparation.Remarks, DbType.String);
+                    parameters.Add("Remarks", remarks, DbType.String);
                     parameters.Add("Sep_Date", employeeSeparation.SeparationDate, DbType.String);
                     parameters.Add("Req_date", employeeSeparation.RequestDate, DbType.String);
                     parameters.Add("BranchId", empBranchId, DbType.Int64);
@@ -49,6 +74,11 @@ namespace HRM.Services
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                     int employeeSeparationId = await connection.ExecuteScalarAsync<int>(queryString, parameters);
+
+                     queryString = "Update Employees set Status=@Status where EmpId='" + employeeSeparation.EmployeeId + "' ";
+                    parameters = new DynamicParameters();
+                    parameters.Add("Status", 0, DbType.Int64);
+                    var success = await connection.ExecuteAsync(queryString, parameters);
 
                     if (employeeSeparation.PdfFiles != null && employeeSeparation.PdfFiles.Count > 0)
                     {
@@ -105,13 +135,14 @@ namespace HRM.Services
         {
             using (var connection = new SqlConnection(_connectionString))
             {
+                var subscriptionId = _baseService.GetSubscriptionId();
+                var userId = _baseService.GetUserId();
+                var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+                var companyId = await _baseService.GetCompanyId(subscriptionId);
+
                 await connection.OpenAsync();
 
-                var query = @"
-            SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage
-            FROM Employees
-            WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term
-        ";
+                var query = @" SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage FROM Employees WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term and SubscriptionId='"+ subscriptionId + "' and Status=1";
 
                 var result = await connection.QueryAsync<EmployeeDto>(query, new { Term = $"%{term}%" });
 

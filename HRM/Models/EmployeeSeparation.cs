@@ -3,7 +3,7 @@
     public class EmployeeSeparation
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
         public int SeparationReasonsId { get; set; }
         public string SeparationReasons { get; set; }
         public string SeparationDate { get; set; }
