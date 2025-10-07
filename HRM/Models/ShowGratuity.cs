@@ -2,7 +2,8 @@
 {
     public class ShowGratuity
     {
-        public int EmpId { get; set; }
+        public int Id { get; set; }
+        public string EmployeeId { get; set; }
         public string Photo { get; set; }
         public string Name { get; set; }
         public int BranchId { get; set; }

@@ -6,5 +6,6 @@ namespace HRM.Interfaces
     {
         Task<List<ShowGratuity>> GetAllShowGratuityAsync(ShowGratuity showGratuity);
         Task<bool> InsertGratuityCalculateAsysnc(GratuityCalculate gratuityCalculate);
+        Task<IEnumerable<object>> SearchEmployees(string term);
     }
 }

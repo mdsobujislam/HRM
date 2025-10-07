@@ -1,8 +1,82 @@
-﻿@model IEnumerable<HRM.Models.ShowGratuity>
+﻿@* @model IEnumerable<HRM.Models.ShowGratuity> *@
+@model HRM.Models.ShowGratuity
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <form id="separationForm" asp-action="CreateGratuityCalculate" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmployeeId" class="form-label">Employee Name</label>
+                            <input asp-for="EmployeeId" class="form-control" id="EmployeeId" type="text" autocomplete="off" />
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div>
+
+
+
+                        <div class="col-md-6 mb-3">
+                            <label for="BranchId" class="form-label">Select Branch</label>
+                            <select id="BranchId" name="BranchId" class="form-control" required>
+                                <option value="">-- Select Branch --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+
+                    </div>
+
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary btn-sm me-2" id="btnSave">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    //Start Autocomplete Search
+            $(function () {
+            $("#EmployeeId").autocomplete({
+                source: '/GratuityCalculate/SearchEmployees',
+                minLength: 1,
+                focus: function (event, ui) {
+                    $("#EmployeeId").val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#EmployeeId").val(ui.item.value); // sets ID + Name in textbox
+                    return false;
+                }
+            })
+            .autocomplete("instance")._renderItem = function (ul, item) {
+                var $li = $("<li>");
+                var $content = $(
+                    "<div style='display:flex; align-items:center; gap:10px;'>" +
+                        "<img src='" + item.image + "' style='width:60px; height:60px; border-radius:50%; object-fit:cover;' />" +
+                        "<span>" + item.label + "</span>" +
+                    "</div>"
+                );
+                $li.append($content);
+                return $li.appendTo(ul);
+            };
+        });
+        //End Autocomplete Search
+</script>
+}
 

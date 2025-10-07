@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using HRM.Interfaces;
 using HRM.Models;
+using HRM.Models.Autocomplete;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
 
 namespace HRM.Services
@@ -63,6 +65,21 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
+                    if (!string.IsNullOrEmpty(gratuityCalculate.EmployeeId))
+                    {
+                        // Example input: "1002 Rahim"
+                        var value = gratuityCalculate.EmployeeId.Trim();
+                        var idOnly = value.Split(' ')[0]; // Extract "1002"
+                        gratuityCalculate.EmployeeId = idOnly; // keep only the numeric ID
+                    }
+
+                    var basicSalaryQuery = @"SELECT t1.BranchId AS BranchId, t4.Value AS LastBasicSalary, CAST( DATEDIFF(YEAR, t1.DateOfAppointment, GETDATE()) - CASE WHEN DATEADD(YEAR, DATEDIFF(YEAR, t1.DateOfAppointment, GETDATE()), t1.DateOfAppointment) > GETDATE() THEN 1 ELSE 0 END AS VARCHAR(10) ) + ' Years ' + CAST( DATEDIFF(MONTH, DATEADD(YEAR, DATEDIFF(YEAR, t1.DateOfAppointment, GETDATE()), t1.DateOfAppointment), GETDATE()) AS VARCHAR(10) ) + ' Months' AS EmploymentYears FROM Employees t1 LEFT JOIN Branch t2 ON t1.BranchId = t2.Id LEFT JOIN Designation t3 ON t1.DesignationId = t3.Id OUTER APPLY ( SELECT TOP 1 t4.Value FROM Salary t4 WHERE t4.Parameter = 'Basic Salary' ORDER BY t4.FromDate DESC ) t4 WHERE t1.EmpId=@EmployeeId and t1.SubscriptionId = @SubscriptionId";
+
+                    var basicSalary = await connection.QueryFirstOrDefaultAsync<GratuityCalculate>(
+                        basicSalaryQuery,
+                        new { EmployeeId = gratuityCalculate.EmployeeId, SubscriptionId = subscriptionId }
+                    );
+
                     var workingQuery = @"SELECT OffDay FROM OffDays WHERE BranchId = @BranchId AND SubscriptionId = @SubscriptionId";
 
                     var workingDays = await connection.QueryFirstOrDefaultAsync<string>(
@@ -102,6 +119,32 @@ namespace HRM.Services
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+        public async Task<IEnumerable<object>> SearchEmployees(string term)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var subscriptionId = _baseService.GetSubscriptionId();
+                var userId = _baseService.GetUserId();
+                var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+                var companyId = await _baseService.GetCompanyId(subscriptionId);
+
+                await connection.OpenAsync();
+
+                var query = @" SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage FROM Employees WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term and SubscriptionId='" + subscriptionId + "' and Status=0";
+
+                var result = await connection.QueryAsync<EmployeeDto>(query, new { Term = $"%{term}%" });
+
+                return result.Select(e => new
+                {
+                    id = e.EmpId,
+                    label = $"{e.EmpId} {e.EmpName}",        // shown in dropdown
+                    value = $"{e.EmpId} {e.EmpName}",        // sets in textbox
+                    image = string.IsNullOrEmpty(e.EmployeeImage)
+                            ? "/profile/default/defaultPic.jpg"        // default image
+                            : e.EmployeeImage.StartsWith("http") ? e.EmployeeImage : $"/profile/{e.EmployeeImage}"
+                }).ToList();
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using HRM.Interfaces;
 using HRM.Models;
+using HRM.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -23,8 +24,29 @@ namespace HRM.Controllers
                 Text = b.Name
             }).ToList();
 
-            var gratuityCalculates =await _gratuityCalculateService.GetAllShowGratuityAsync(showGratuity);
-            return View(gratuityCalculates);
+            return View();
         }
+        [HttpGet]
+        public async Task<JsonResult> SearchEmployees(string term)
+        {
+            var employees = await _gratuityCalculateService.SearchEmployees(term);
+            return Json(employees);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateGratuityCalculate(GratuityCalculate gratuityCalculate)
+        {
+            if (gratuityCalculate.Id == 0)
+            {
+                bool isCreated = await _gratuityCalculateService.InsertGratuityCalculateAsysnc(gratuityCalculate);
+                if (!isCreated)
+                {
+                    TempData["SuccessMessage"] = "Employee Separation Created Successfully";
+                    return RedirectToAction("Index");
+                }
+
+            }
+            return RedirectToAction("Index");
+        }
+
     }
 }

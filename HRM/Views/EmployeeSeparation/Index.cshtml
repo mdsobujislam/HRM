@@ -65,12 +65,6 @@
                         <button type="submit" class="btn btn-primary btn-sm me-2" id="btnSave">
                             <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
                         </button>
-                        <button type="reset" class="btn btn-secondary btn-sm me-2">
-                            <i class="bi bi-arrow-clockwise"></i> Refresh
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle"></i> Close
-                        </button>
                     </div>
                 </form>
             </div>
@@ -95,6 +89,7 @@
 
 
     <script>
+        //Start Editor
         $(document).ready(function () {
             $('#Remarks').summernote({
                 height: 250,
@@ -148,6 +143,10 @@
             });
         });
 
+        //End Editor
+
+
+
         // Dynamic file inputs
         function addMoreFile() {
             const fileDiv = document.getElementById("fileInputs");
@@ -178,7 +177,7 @@
             if (row) row.remove();
         }
 
-        //Autocomplete Search
+        //Start Autocomplete Search
                                         $(function () {
             $("#EmployeeId").autocomplete({
                 source: '/EmployeeSeparation/SearchEmployeess',
@@ -204,7 +203,7 @@
                 return $li.appendTo(ul);
             };
         });
-
+        //End Autocomplete Search
 
 
 
