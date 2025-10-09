@@ -40,11 +40,12 @@ namespace HRM.Controllers
                 bool isCreated = await _gratuityCalculateService.InsertGratuityCalculateAsysnc(gratuityCalculate);
                 if (!isCreated)
                 {
-                    TempData["SuccessMessage"] = "Employee Separation Created Successfully";
+                    TempData["SuccessMessage"] = "Employee GratuityCalculate Created Successfully";
                     return RedirectToAction("Index");
                 }
 
             }
+            TempData["SuccessMessage"] = "Employee GratuityCalculate Created Successfully";
             return RedirectToAction("Index");
         }
 

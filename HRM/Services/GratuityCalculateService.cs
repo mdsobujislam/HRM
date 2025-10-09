@@ -2,6 +2,7 @@
 using HRM.Interfaces;
 using HRM.Models;
 using HRM.Models.Autocomplete;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -79,32 +80,66 @@ namespace HRM.Services
                         basicSalaryQuery,
                         new { EmployeeId = gratuityCalculate.EmployeeId, SubscriptionId = subscriptionId }
                     );
+                    double EmploymentYears = 0;
+                    double LastBasicSalary = 0;
+                    var BranchId = 0;
+                    if (basicSalary != null)
+                    {
+                        BranchId = basicSalary.BranchId;
+                        LastBasicSalary = Convert.ToDouble(basicSalary.LastBasicSalary);
+                        string employmentYearsText = basicSalary.EmploymentYears; // e.g. "11 Years 2 Months"
+
+
+                        if (!string.IsNullOrEmpty(employmentYearsText))
+                        {
+                            // Extract numbers from text using regex
+                            var match = System.Text.RegularExpressions.Regex.Match(employmentYearsText, @"(\d+)\s*Years\s*(\d+)?");
+                            if (match.Success)
+                            {
+                                int years = int.Parse(match.Groups[1].Value);
+                                int months = 0;
+
+                                if (match.Groups[2].Success)
+                                    months = int.Parse(match.Groups[2].Value);
+
+                                // Convert months to a fraction of a year
+                                EmploymentYears = years + (months / 12.0);
+                            }
+                        }
+
+                    }
 
                     var workingQuery = @"SELECT OffDay FROM OffDays WHERE BranchId = @BranchId AND SubscriptionId = @SubscriptionId";
 
                     var workingDays = await connection.QueryFirstOrDefaultAsync<string>(
                         workingQuery,
-                        new { BranchId = gratuityCalculate.BranchId, SubscriptionId = subscriptionId }
+                        new { BranchId = BranchId, SubscriptionId = subscriptionId }
                     );
 
                     int offDayCount = 0;
 
                     if (!string.IsNullOrEmpty(workingDays))
                     {
-                        offDayCount = workingDays.Split(',').Length;
+                        int weeklyOffDays = workingDays.Split(',').Length; // e.g. "Saturday,Sunday" = 2
+                        offDayCount = weeklyOffDays * 4; // Approximate 4 weeks per month → 8 off-days
+
                     }
                     int monthDays = 30;
                     int workingDaysCount = monthDays - offDayCount;
+
+                    var tAmount = (LastBasicSalary * workingDaysCount) / monthDays;
+
+                    var totalGratuityAmount = tAmount * EmploymentYears;
 
 
                     var queryString = "insert into GratuityCalculate (EmployeeId,LastBasicSalary,EmploymentYears,TotalGratuityAmount,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
                     queryString += "( @EmployeeId,@LastBasicSalary,@EmploymentYears,@TotalGratuityAmount,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
                     var parameters = new DynamicParameters();
                     parameters.Add("EmployeeId", gratuityCalculate.EmployeeId, DbType.Int64);
-                    parameters.Add("LastBasicSalary", gratuityCalculate.LastBasicSalary, DbType.Double);
-                    parameters.Add("EmploymentYears", gratuityCalculate.EmploymentYears, DbType.Double);
-                    parameters.Add("TotalGratuityAmount", workingDaysCount, DbType.Int64);
-                    parameters.Add("BranchId", gratuityCalculate.BranchId, DbType.Int64);
+                    parameters.Add("LastBasicSalary", LastBasicSalary, DbType.Double);
+                    parameters.Add("EmploymentYears", EmploymentYears, DbType.Double);
+                    parameters.Add("TotalGratuityAmount", totalGratuityAmount, DbType.Int64);
+                    parameters.Add("BranchId", BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -121,6 +156,9 @@ namespace HRM.Services
                 throw;
             }
         }
+
+
+
         public async Task<IEnumerable<object>> SearchEmployees(string term)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -132,7 +170,8 @@ namespace HRM.Services
 
                 await connection.OpenAsync();
 
-                var query = @" SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage FROM Employees WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term and SubscriptionId='" + subscriptionId + "' and Status=0";
+                //var query = @" SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage FROM Employees WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term and SubscriptionId='" + subscriptionId + "' and Status=0";
+                var query = @" SELECT e.EmpId AS EmpId, e.EmployeeName as EmpName, e.UploadPhoto AS EmployeeImage FROM Employees e WHERE e.EmpId NOT IN ( SELECT EmployeeId FROM GratuityCalculate ) AND e.SubscriptionId = '" + subscriptionId + "' AND e.Status = 0";
 
                 var result = await connection.QueryAsync<EmployeeDto>(query, new { Term = $"%{term}%" });
 

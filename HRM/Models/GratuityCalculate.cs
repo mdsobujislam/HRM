@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string EmployeeId { get; set; }
         public double LastBasicSalary { get; set; }
-        public double EmploymentYears { get; set; }
+        public string EmploymentYears { get; set; }
         public int BranchId { get; set; }
     }
 }
