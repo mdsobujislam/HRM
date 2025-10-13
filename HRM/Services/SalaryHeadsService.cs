@@ -24,12 +24,18 @@ namespace HRM.Services
             connection.Open();
 
             var subscriptionId = _baseService.GetSubscriptionId();
+            var userId = _baseService.GetUserId();
+            //var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+
+            var empBranchquery = "Select BranchId from Employees where EmpId='" + userId + "'";
+            int empBranchId = await connection.ExecuteScalarAsync<int>(empBranchquery);
+
 
             var query = @"
 SELECT t1.Id, t1.Salaryitems, t1.BranchId, t2.Name AS Branch
 FROM SalaryHeads t1
 JOIN Branch t2 ON t1.BranchId = t2.Id
-WHERE t1.SubscriptionId = @subscriptionId";
+WHERE t1.SubscriptionId = @subscriptionId and t1.branchId='"+ empBranchId + "'";
 
             var result = await connection.QueryAsync<SalaryHeads>(query, new { subscriptionId });
             return result.GroupBy(s => s.Id).Select(g => g.First()).ToList();

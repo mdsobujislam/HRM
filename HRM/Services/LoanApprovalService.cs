@@ -61,7 +61,7 @@ namespace HRM.Services
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    var query = @"UPDATE LoanApproval SET LoanApproved=@LoanApproved,LoanAppDate=@LoanAppDate,Term=@Term,interest=@interest,AppStatus=@AppStatus,LoanIssued=@LoanIssued WHERE Id='" + loanApproval.Id + "'";
+                    var query = @"UPDATE LoanApproval SET LoanApproved=@LoanApproved,LoanAppDate=@LoanAppDate,Term=@Term,interest=@interest,AppStatus=@AppStatus,LoanIssued=@LoanIssued,LoanCompleteStatus=@LoanCompleteStatus WHERE Id='" + loanApproval.Id + "'";
                     var parameters = new DynamicParameters();
                     parameters.Add("LoanApproved", loanApproval.LoanApproved, DbType.String);
                     parameters.Add("LoanAppDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -69,6 +69,7 @@ namespace HRM.Services
                     parameters.Add("interest", loanApproval.interest, DbType.Int64);
                     parameters.Add("AppStatus", "Approved", DbType.String);
                     parameters.Add("LoanIssued", "Issued", DbType.String);
+                    parameters.Add("LoanCompleteStatus", "OnGonig", DbType.String);
                     var success = await connection.ExecuteAsync(query, parameters);
                     if (success > 0)
                     {
