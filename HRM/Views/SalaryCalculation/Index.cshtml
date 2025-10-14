@@ -1,0 +1,200 @@
+﻿@model IEnumerable<HRM.Models.SalaryHeads>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .small-form {
+        font-size: 0.85rem; /* smaller overall font */
+    }
+
+        .small-form label {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .small-form input,
+        .small-form select,
+        .small-form table {
+            font-size: 0.85rem;
+        }
+
+        .small-form .table th,
+        .small-form .table td {
+            padding: 6px 8px; /* tighter spacing */
+            vertical-align: middle;
+        }
+</style>
+
+<div class="row justify-content-center small-form">
+    <div class="col-lg-12">
+        <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
+                <h6 class="mb-0">📋 Salary Calculation</h6>
+            </div>
+
+            <div class="card-body py-3">
+                <form asp-action="Insert" method="post" class="saveForm">
+                    <div class="row g-2 mb-3">
+                        <!-- Date -->
+                        <div class="col-md-3">
+                            <label for="ApplyDate" class="form-label">Date</label>
+                            <input type="date" class="form-control form-control-sm" id="ApplyDate" name="ApplyDate" required>
+                        </div>
+
+                        <!-- Branch -->
+                        <div class="col-md-3">
+                            <label for="BranchId" class="form-label">Branch</label>
+                            <select id="BranchId" name="BranchId" class="form-select form-select-sm select2">
+                                <option value="">-- Select Branch --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="col-md-3">
+                            <label for="DepartmentId" class="form-label">Department</label>
+                            <select id="DepartmentId" name="DepartmentId" class="form-select form-select-sm select2">
+                                <option value="">-- Select Department --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.DepartmentList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Designation -->
+                        <div class="col-md-3">
+                            <label for="DesignationId" class="form-label">Designation</label>
+                            <select id="DesignationId" name="DesignationId" class="form-select form-select-sm select2" required>
+                                <option value="">-- Select Designation --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.DesignationList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="EmployeeId" class="form-label">Employee Name</label>
+                            <input for="EmployeeId" class="form-control" id="EmployeeId" type="text" autocomplete="off" />
+                            @* <span asp-validation-for="EmployeeId" class="text-danger"></span> *@
+                        </div>
+                    </div>
+
+                    <!-- Salary Head Table -->
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered table-striped align-middle table-sm">
+                            <thead class="table-primary text-center">
+                                <tr>
+                                    <th style="width:5%;">SL</th>
+                                    <th style="width:45%;">Parameters</th>
+                                    <th style="width:50%;">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    var index = 0;
+                                    foreach (var head in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@(index + 1)</td>
+                                            <td>
+                                                @head.Salaryitems
+                                                <input type="hidden" name="SalaryItems[@index].SL" value="@(index + 1)" />
+                                                <input type="hidden" name="SalaryItems[@index].Parameter" value="@head.Salaryitems" />
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="SalaryItems[@index].Value"
+                                                       class="form-control form-control-sm" placeholder="Enter value" />
+                                            </td>
+                                        </tr>
+                                        index++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">No salary heads found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <div class="text-end mt-2">
+                        <button type="submit" class="btn btn-success btn-sm px-3">💾 Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        //Start Autocomplete Search
+            $(function () {
+            $("#EmployeeId").autocomplete({
+                source: '/SalaryCalculation/SearchEmployees',
+                minLength: 1,
+                focus: function (event, ui) {
+                    $("#EmployeeId").val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#EmployeeId").val(ui.item.value); // sets ID + Name in textbox
+                    return false;
+                }
+            })
+            .autocomplete("instance")._renderItem = function (ul, item) {
+                var $li = $("<li>");
+                var $content = $(
+                    "<div style='display:flex; align-items:center; gap:10px;'>" +
+                        "<img src='" + item.image + "' style='width:60px; height:60px; border-radius:50%; object-fit:cover;' />" +
+                        "<span>" + item.label + "</span>" +
+                    "</div>"
+                );
+                $li.append($content);
+                return $li.appendTo(ul);
+            };
+        });
+        //End Autocomplete Search
+
+
+
+                document.querySelectorAll('.saveForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to save this salary calculation?",
+                    icon: 'question', // ✅ Changed from 'warning' to 'question'
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#aaa',
+                    confirmButtonText: 'Yes, save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+}
+

@@ -6,5 +6,6 @@
         public string Salaryitems { get; set; }
         public int BranchId { get; set; }
         public string Branch { get; set; }
+        public string EmployeeId { get; set; }
     }
 }
