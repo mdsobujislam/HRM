@@ -57,6 +57,18 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
+                    if (salaryCalculation.BranchId > 0)
+                    {
+                        // Use provided branch
+                    }
+                    else
+                    {
+                        // Get employee branch
+                        var empBranchQuery = "SELECT BranchId FROM Employees WHERE EmpId = @userId";
+                        salaryCalculation.BranchId = await connection.ExecuteScalarAsync<int>(empBranchQuery, new { userId });
+                    }
+
+
                     // 🔹 Step 1: Get all employees under selected Branch, Department, and Designation
                     var employeeQuery = @" SELECT EmpId FROM Employees WHERE BranchId = @BranchId AND DepartmentId = @DepartmentId AND DesignationId = @DesignationId AND SubscriptionId = @SubscriptionId AND Status = 1";  // optional if you want only active employees
 

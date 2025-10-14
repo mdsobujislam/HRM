@@ -84,7 +84,6 @@
                         <div class="col-md-3">
                             <label for="EmployeeId" class="form-label">Employee Name</label>
                             <input for="EmployeeId" class="form-control" id="EmployeeId" type="text" autocomplete="off" />
-                            @* <span asp-validation-for="EmployeeId" class="text-danger"></span> *@
                         </div>
                     </div>
 
@@ -171,6 +170,37 @@
             };
         });
         //End Autocomplete Search
+
+
+        //Start  When Employee Name is selected or typed → disable Branch, Department, and Designation.
+        //Start   When Branch is selected → disable Employee Name.
+
+
+            $(document).ready(function () {
+
+            // When Employee Name has value → disable Branch, Department, Designation
+            $("#EmployeeId").on("input", function () {
+                let empVal = $(this).val().trim();
+                if (empVal !== "") {
+                    $("#BranchId, #DepartmentId, #DesignationId").prop("disabled", true);
+                } else {
+                    $("#BranchId, #DepartmentId, #DesignationId").prop("disabled", false);
+                }
+            });
+
+            // When Branch is selected → disable Employee Name
+            $("#BranchId").on("change", function () {
+                let branchVal = $(this).val();
+                if (branchVal !== "") {
+                    $("#EmployeeId").prop("disabled", true);
+                } else {
+                    $("#EmployeeId").prop("disabled", false);
+                }
+            });
+        });
+
+        //End  When Employee Name is selected or typed → disable Branch, Department, and Designation.
+        //End   When Branch is selected → disable Employee Name.
 
 
 
