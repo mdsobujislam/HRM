@@ -51,6 +51,7 @@ builder.Services.AddScoped<ISeparationReasonsService,SeparationReasonsService>()
 builder.Services.AddScoped<IEmployeeSeparationService,EmployeeSeparationService>();
 builder.Services.AddScoped<IGratuityCalculateService,GratuityCalculateService>();
 builder.Services.AddScoped<ISalaryCalculationService, SalaryCalculationService>();
+builder.Services.AddScoped<ISalaryCreateService, SalaryCreateService>();
 
 
 

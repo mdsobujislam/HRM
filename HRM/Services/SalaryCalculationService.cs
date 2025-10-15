@@ -57,57 +57,87 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
+                    int success = 0;
+
+                    // 🔹 CASE 1: When Branch, Department, and Designation are selected
                     if (salaryCalculation.BranchId > 0)
                     {
-                        // Use provided branch
+                        var employeeQuery = @" SELECT EmpId FROM Employees WHERE BranchId = @BranchId AND DepartmentId = @DepartmentId AND DesignationId = @DesignationId AND SubscriptionId = @SubscriptionId AND Status = 1";
+
+                        var employees = await connection.QueryAsync<string>(employeeQuery, new
+                        {
+                            BranchId = salaryCalculation.BranchId,
+                            DepartmentId = salaryCalculation.DepartmentId,
+                            DesignationId = salaryCalculation.DesignationId,
+                            SubscriptionId = subscriptionId
+                        });
+
+                        if (employees == null || !employees.Any())
+                            return false;
+
+                        foreach (var empId in employees)
+                        {
+                            foreach (var item in salaryCalculation.SalaryItems)
+                            {
+                                var insertQuery = @" INSERT INTO SalaryCalculation (SL, Parameter, Value, ApplyDate, BranchId, DepartmentId, DesignationId, EmployeeId, CompanyId, SubscriptionId) VALUES (@SL, @Parameter, @Value, @ApplyDate, @BranchId, @DepartmentId, @DesignationId, @EmployeeId, @CompanyId, @SubscriptionId)";
+
+                                var parameters = new
+                                {
+                                    SL = item.SL,
+                                    Parameter = item.Parameter,
+                                    Value = item.Value,
+                                    ApplyDate = salaryCalculation.ApplyDate,
+                                    BranchId = salaryCalculation.BranchId,
+                                    DepartmentId = salaryCalculation.DepartmentId,
+                                    DesignationId = salaryCalculation.DesignationId,
+                                    EmployeeId = empId,
+                                    CompanyId = companyId,
+                                    SubscriptionId = subscriptionId
+                                };
+
+                                success += await connection.ExecuteAsync(insertQuery, parameters);
+                            }
+                        }
                     }
                     else
                     {
-                        // Get employee branch
-                        var empBranchQuery = "SELECT BranchId FROM Employees WHERE EmpId = @userId";
-                        salaryCalculation.BranchId = await connection.ExecuteScalarAsync<int>(empBranchQuery, new { userId });
-                    }
+                        // Fallback: if EmployeeId contains a space (e.g. "2008 Md Kamran Raj"), extract the leading id
+                        if (!string.IsNullOrWhiteSpace(salaryCalculation.EmployeeId))
+                        {
+                            var empVal = salaryCalculation.EmployeeId.Trim();
+                            if (empVal.Contains(' '))
+                                salaryCalculation.EmployeeId = empVal.Split(' ')[0];
+                        }
 
 
-                    // 🔹 Step 1: Get all employees under selected Branch, Department, and Designation
-                    var employeeQuery = @" SELECT EmpId FROM Employees WHERE BranchId = @BranchId AND DepartmentId = @DepartmentId AND DesignationId = @DesignationId AND SubscriptionId = @SubscriptionId AND Status = 1";  // optional if you want only active employees
 
-                    var employees = await connection.QueryAsync<string>(employeeQuery, new
-                    {
-                        BranchId = salaryCalculation.BranchId,
-                        DepartmentId = salaryCalculation.DepartmentId,
-                        DesignationId = salaryCalculation.DesignationId,
-                        SubscriptionId = subscriptionId
-                    });
+                        var employeeDetailsQuery = @" SELECT BranchId, DepartmentId, DesignationId FROM Employees WHERE EmpId = @EmployeeId AND SubscriptionId = @SubscriptionId";
 
-                    if (employees == null || !employees.Any())
-                        return false;
+                        var employeeDetails = await connection.QueryFirstOrDefaultAsync<dynamic>(
+                            employeeDetailsQuery,
+                            new { EmployeeId = salaryCalculation.EmployeeId, SubscriptionId = subscriptionId }
+                        );
 
-                    int success = 0;
+                        if (employeeDetails == null)
+                            return false;
 
-                    // 🔹 Step 2: Loop through each employee
-                    foreach (var empId in employees)
-                    {
-                        // 🔹 Step 3: Loop through each salary head item
                         foreach (var item in salaryCalculation.SalaryItems)
                         {
-                            var insertQuery = @"
-                        INSERT INTO SalaryCalculation 
-                        (SL, Parameter, Value, ApplyDate, BranchId, DepartmentId, DesignationId, EmployeeId, CompanyId, SubscriptionId)
-                        VALUES 
-                        (@SL, @Parameter, @Value, @ApplyDate, @BranchId, @DepartmentId, @DesignationId, @EmployeeId, @CompanyId, @SubscriptionId)";
+                            var insertQuery = @" INSERT INTO SalaryCalculation (SL, Parameter, Value, ApplyDate, BranchId, DepartmentId, DesignationId, EmployeeId, CompanyId, SubscriptionId) VALUES (@SL, @Parameter, @Value, @ApplyDate, @BranchId, @DepartmentId, @DesignationId, @EmployeeId, @CompanyId, @SubscriptionId)";
 
-                            var parameters = new DynamicParameters();
-                            parameters.Add("@SL", item.SL, DbType.Int32);
-                            parameters.Add("@Parameter", item.Parameter, DbType.String);
-                            parameters.Add("@Value", item.Value, DbType.Double);
-                            parameters.Add("@ApplyDate", salaryCalculation.ApplyDate, DbType.Date);
-                            parameters.Add("@BranchId", salaryCalculation.BranchId, DbType.Int64);
-                            parameters.Add("@DepartmentId", salaryCalculation.DepartmentId, DbType.Int64);
-                            parameters.Add("@DesignationId", salaryCalculation.DesignationId, DbType.Int64);
-                            parameters.Add("@EmployeeId", empId, DbType.String);
-                            parameters.Add("@CompanyId", companyId, DbType.Int64);
-                            parameters.Add("@SubscriptionId", subscriptionId, DbType.Int64);
+                            var parameters = new
+                            {
+                                SL = item.SL,
+                                Parameter = item.Parameter,
+                                Value = item.Value,
+                                ApplyDate = salaryCalculation.ApplyDate,
+                                BranchId = (long)employeeDetails.BranchId,
+                                DepartmentId = (long)employeeDetails.DepartmentId,
+                                DesignationId = (long)employeeDetails.DesignationId,
+                                EmployeeId = salaryCalculation.EmployeeId,
+                                CompanyId = companyId,
+                                SubscriptionId = subscriptionId
+                            };
 
                             success += await connection.ExecuteAsync(insertQuery, parameters);
                         }
@@ -121,6 +151,7 @@ namespace HRM.Services
                 throw new Exception("Error inserting salary calculation data", ex);
             }
         }
+
 
 
         public async Task<IEnumerable<object>> SearchEmployees(string term)

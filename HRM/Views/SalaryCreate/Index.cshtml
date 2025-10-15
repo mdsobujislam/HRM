@@ -1,0 +1,146 @@
+﻿@model IEnumerable<HRM.Models.SalaryCreate>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card shadow-sm rounded-3">
+            <div class="card-body">
+                <form method="post" asp-action="Index">
+                    <div class="container mt-3">
+                        <div class="row g-2 align-items-center mb-3">
+                            <!-- Month Selection -->
+                            <div class="col-md-3">
+                                <select id="monthSelect" name="monthSelect" class="form-select" required>
+                                    <option value="">-- Select Month --</option>
+                                    <option value="January">January</option>
+                                    <option value="February">February</option>
+                                    <option value="March">March</option>
+                                    <option value="April">April</option>
+                                    <option value="May">May</option>
+                                    <option value="June">June</option>
+                                    <option value="July">July</option>
+                                    <option value="August">August</option>
+                                    <option value="September">September</option>
+                                    <option value="October">October</option>
+                                    <option value="November">November</option>
+                                    <option value="December">December</option>
+                                </select>
+
+                            </div>
+
+                            <!-- Criteria Dropdowns -->
+                            <div class="col-md-3">
+                                <select id="BranchId" name="BranchId" class="form-control" required>
+                                    <option value="">-- Select Branch --</option>
+                                    @foreach (var item in (List<SelectListItem>)ViewBag.BranchList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <!-- Salary Items Modal Trigger -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <button id="addSalaryItemsBtn" class="btn btn-outline-primary">
+                                    Show
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Create Salary</h5>
+            </div>
+            <form asp-action="Update" method="post" class="submitForm">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <button id="addSalaryItemsBtn" class="btn btn-primary">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+
+                        <table class="table  datanew">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>SL No.</th>
+                                    <th>Employee Id</th>
+                                    <th>Employee Name</th>
+                                    <th>Branch</th>
+                                    <th>Working Days</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>BASIC SALARY</th>
+                                    <th>HOUSE RENT</th>
+                                    <th>MEDICAL ALLOW</th>
+                                    <th>Conveyance</th>
+                                    <th>ProvidentFund</th>
+                                    <th>GrossSalary</th>
+                                    <th>Tax</th>
+                                    <th>Loan Emi</th>
+                                    <th>Bonus</th>
+                                    <th>NetSalary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int index = 0;
+                                }
+                                @foreach (var item in Model)
+                                {
+                                    index++;
+                                    <tr>
+
+                                        <td>@index</td>
+                                        <td>@item.EmployeeId</td>
+                                        <td>@item.EmployeeName</td>
+                                        <td>@item.BranchName</td>
+                                        <td>@item.WorkingDays</td>
+                                        <td>@item.Present</td>
+                                        <td>@item.Absent</td>
+                                        <td>@item.BasicSalary</td>
+                                        <td>@item.HouseRent</td>
+                                        <td>@item.MedicalAllowance</td>
+                                        <td>@item.Conveyance</td>
+                                        <td>@item.ProvidentFund</td>
+                                        <td>@item.GrossSalary</td>
+                                        <td>@item.Tax</td>
+                                        <td>@item.LoanDeduction</td>
+                                        <td>@item.Bonus</td>
+                                        <td>@item.NetSalary</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

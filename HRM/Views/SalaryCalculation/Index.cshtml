@@ -82,9 +82,20 @@
                         </div>
 
                         <div class="col-md-3">
+                            <label for="EmployeeDisplay" class="form-label">Employee</label>
+
+                            <!-- Hidden input that will post the actual EmployeeId (e.g. "2008") -->
+                            <input type="hidden" id="EmployeeId" name="EmployeeId" />
+
+                            <!-- Visible autocomplete input showing "2008 Md Kamran Raj" -->
+                            <input type="text" id="EmployeeDisplay" class="form-control" autocomplete="off" placeholder="Search by ID or name" />
+                        </div>
+
+
+                        @* <div class="col-md-3">
                             <label for="EmployeeId" class="form-label">Employee Name</label>
                             <input for="EmployeeId" class="form-control" id="EmployeeId" type="text" autocomplete="off" />
-                        </div>
+                        </div> *@
                     </div>
 
                     <!-- Salary Head Table -->
@@ -144,16 +155,18 @@
     <script>
 
         //Start Autocomplete Search
-            $(function () {
-            $("#EmployeeId").autocomplete({
-                source: '/SalaryCalculation/SearchEmployees',
+                    $(function () {
+            $("#EmployeeDisplay").autocomplete({
+                source: '/SalaryCalculation/SearchEmployees', // returns [{ id: "2008", label: "2008 Md Kamran Raj", image: "/..." }, ...]
                 minLength: 1,
                 focus: function (event, ui) {
-                    $("#EmployeeId").val(ui.item.label);
+                    $("#EmployeeDisplay").val(ui.item.label);
                     return false;
                 },
                 select: function (event, ui) {
-                    $("#EmployeeId").val(ui.item.value); // sets ID + Name in textbox
+                    // Set visible label AND hidden id (posted)
+                    $("#EmployeeDisplay").val(ui.item.label); // "2008 Md Kamran Raj"
+                    $("#EmployeeId").val(ui.item.id);         // "2008"
                     return false;
                 }
             })
@@ -161,7 +174,7 @@
                 var $li = $("<li>");
                 var $content = $(
                     "<div style='display:flex; align-items:center; gap:10px;'>" +
-                        "<img src='" + item.image + "' style='width:60px; height:60px; border-radius:50%; object-fit:cover;' />" +
+                        "<img src='" + item.image + "' style='width:40px; height:40px; border-radius:50%; object-fit:cover;' />" +
                         "<span>" + item.label + "</span>" +
                     "</div>"
                 );
@@ -169,6 +182,7 @@
                 return $li.appendTo(ul);
             };
         });
+
         //End Autocomplete Search
 
 
@@ -179,7 +193,7 @@
             $(document).ready(function () {
 
             // When Employee Name has value → disable Branch, Department, Designation
-            $("#EmployeeId").on("input", function () {
+            $("#EmployeeDisplay").on("input", function () {
                 let empVal = $(this).val().trim();
                 if (empVal !== "") {
                     $("#BranchId, #DepartmentId, #DesignationId").prop("disabled", true);
@@ -192,17 +206,15 @@
             $("#BranchId").on("change", function () {
                 let branchVal = $(this).val();
                 if (branchVal !== "") {
-                    $("#EmployeeId").prop("disabled", true);
+                    $("#EmployeeDisplay").prop("disabled", true);
                 } else {
-                    $("#EmployeeId").prop("disabled", false);
+                    $("#EmployeeDisplay").prop("disabled", false);
                 }
             });
         });
 
         //End  When Employee Name is selected or typed → disable Branch, Department, and Designation.
         //End   When Branch is selected → disable Employee Name.
-
-
 
                 document.querySelectorAll('.saveForm').forEach(function (form) {
             form.addEventListener('submit', function (e) {
