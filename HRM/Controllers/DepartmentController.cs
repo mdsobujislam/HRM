@@ -1,6 +1,8 @@
 ﻿using HRM.Interfaces;
 using HRM.Models;
+using HRM.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 
 namespace HRM.Controllers
@@ -8,12 +10,21 @@ namespace HRM.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
-        public DepartmentController(IDepartmentService departmentService)
+        private readonly IBranchService _branchService;
+        public DepartmentController(IDepartmentService departmentService, IBranchService branchService)
         {
             _departmentService = departmentService ?? throw new ArgumentNullException(nameof(departmentService));
+            _branchService = branchService;
         }
         public async Task<IActionResult> Index()
         {
+            var branchList = await _branchService.GetAllBranch();
+            ViewBag.BranchList = branchList.Select(b => new SelectListItem
+            {
+                Value = b.Id.ToString(),
+                Text = b.Name
+            }).ToList();
+
             var departments =await _departmentService.GetAllDepartment();
             return View(departments);
         }

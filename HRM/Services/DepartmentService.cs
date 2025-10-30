@@ -53,9 +53,9 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"Select Id,DepartmentName from Department WHERE SubscriptionId = @subscriptionId";
+                    var query = @"Select t1.Id,t1.DepartmentName,t2.Name as BranchName,t1.BranchId as BranchId from Department t1 JOIN Branch t2 on t2.id=t1.BranchId WHERE t1.SubscriptionId = @subscriptionId and t2.Id=@branchId";
 
-                    var result = await connection.QueryAsync<Department>(query, new { subscriptionId });
+                    var result = await connection.QueryAsync<Department>(query, new { subscriptionId , branchId });
                     return result.ToList();
                 }
             }
@@ -78,10 +78,11 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into Department (DepartmentName,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @DepartmentName,@SubscriptionId,@CompanyId,@CreatedAt)";
+                    var queryString = "insert into Department (DepartmentName,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
+                    queryString += "( @DepartmentName,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
                     var parameters = new DynamicParameters();
                     parameters.Add("DepartmentName", department.DepartmentName, DbType.String);
+                    parameters.Add("BranchId", department.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -112,9 +113,10 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update Department set DepartmentName=@DepartmentName,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='"+department.Id+"' ";
+                    var queryString = "Update Department set DepartmentName=@DepartmentName,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='" + department.Id+"' ";
                     var parameters = new DynamicParameters();
                     parameters.Add("DepartmentName", department.DepartmentName, DbType.String);
+                    parameters.Add("BranchId", department.BranchId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);

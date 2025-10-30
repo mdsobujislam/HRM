@@ -6,6 +6,8 @@
         public string DesignationName { get; set; }
         public string Branch { get; set; }
         public int BranchId { get; set; }
+        public string Department { get; set; }
+        public int DepartmentId { get; set; }
         public int CompanyId { get; set; }
         public int SubscriptionId { get; set; }
     }

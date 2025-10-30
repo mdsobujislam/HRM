@@ -32,7 +32,7 @@ public class BaseService
     
     public async Task<int> GetBranchId(int subscriptionId, int userId)
     {
-        const string query = @" SELECT BranchId FROM Users WHERE Id = @UserId AND SubscriptionId = @SubscriptionId";
+        const string query = @" SELECT BranchId FROM Employees WHERE EmpId = @UserId AND SubscriptionId = @SubscriptionId";
 
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();

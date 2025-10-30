@@ -10,10 +10,12 @@ namespace HRM.Controllers
     {
         private readonly IDesignationService _designationService;
         private readonly IBranchService _branchService;
-        public DesignationController(IDesignationService designationService,IBranchService branchService)
+        private readonly IDepartmentService _departmentService;
+        public DesignationController(IDesignationService designationService,IBranchService branchService, IDepartmentService departmentService)
         {
             _designationService = designationService ?? throw new ArgumentNullException(nameof(designationService));
             _branchService = branchService;
+            _departmentService = departmentService;
         }
         [HttpGet]
         public async Task<IActionResult>  Index()
@@ -24,6 +26,14 @@ namespace HRM.Controllers
                 Value = b.Id.ToString(),
                 Text = b.Name
             }).ToList();
+
+            var departmentList = await _departmentService.GetAllDepartment();
+            ViewBag.DepartmentList = departmentList.Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.DepartmentName
+            }).ToList();
+
             var designationList = await _designationService.GetAllDesignation();
             return View(designationList);
         }

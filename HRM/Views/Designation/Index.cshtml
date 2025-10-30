@@ -22,6 +22,7 @@
                                 <th>SL No.</th>
                                 <th>Name</th>
                                 <th>Branch</th>
+                                <th>Department</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -36,9 +37,10 @@
                                     <td>@index</td>
                                     <td>@department.DesignationName</td>
                                     <td>@department.Branch</td>
+                                    <td>@department.Department</td>
                                     <td class="d-flex align-items-center gap-2">
                                         <button class="btn btn-warning btn-sm"
-                                                onclick="editBranch('@department.Id', '@department.BranchId','@department.DesignationName')"
+                                                onclick="editBranch('@department.Id', '@department.BranchId','@department.DesignationName','@department.DepartmentId')"
                                                 data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
                                             <i class="fas fa-edit"></i> Edit
                                         </button>
@@ -72,15 +74,25 @@
                     <input type="hidden" id="DesignationId" name="Id">
                     <div class="row">
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="DesignationName" class="form-label">Designation Name</label>
                             <input type="text" class="form-control" id="DesignationName" name="DesignationName" required>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="BranchId" class="form-label">Select Branch</label>
                             <select id="BranchId" name="BranchId" class="form-control" required>
                                 <option value="">-- Select Branch --</option>
                                 @foreach (var item in (ViewBag.BranchList as List<SelectListItem>) ?? new List<SelectListItem>())
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="DepartmentId" class="form-label">Select Branch</label>
+                            <select id="DepartmentId" name="DepartmentId" class="form-control" required>
+                                <option value="">-- Select Department --</option>
+                                @foreach (var item in (ViewBag.DepartmentList as List<SelectListItem>) ?? new List<SelectListItem>())
                                 {
                                     <option value="@item.Value">@item.Text</option>
                                 }
@@ -111,6 +123,7 @@
         document.getElementById("DesignationId").value = "";
             document.getElementById("DesignationName").value = "";
             document.getElementById("BranchId").value ="";
+            document.getElementById("DepartmentId").value ="";
             document.getElementById("addDepartmentModalLabel").textContent = "Add Designation";
             document.getElementById("modalSubmitText").textContent = "Submit";
         }
@@ -119,10 +132,11 @@
             resetBranch();
         });
 
-                function editBranch(id, branchId, designationName) {
+                function editBranch(id, branchId, designationName,departmentId) {
             document.getElementById("DesignationId").value = id;
             document.getElementById("DesignationName").value = designationName;
             document.getElementById("BranchId").value = branchId;
+            document.getElementById("DepartmentId").value = departmentId;
             document.getElementById("addDepartmentModalLabel").textContent = "Edit Designation";
             document.getElementById("modalSubmitText").textContent = "Update";
         }
