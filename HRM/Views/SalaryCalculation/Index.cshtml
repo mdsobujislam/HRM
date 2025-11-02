@@ -236,6 +236,69 @@
         });
 
 
+
+        // Start mapping start
+
+            // Branch change → Load Departments
+        $('#BranchId').on('change', function () {
+            var branchId = $(this).val();
+            var departmentDropdown = $('#DepartmentId');
+            var designationDropdown = $('#DesignationId');
+
+            departmentDropdown.empty().append('<option value="">Loading...</option>');
+            designationDropdown.empty().append('<option value="">-- Select Designation --</option>');
+
+            if (branchId) {
+                $.ajax({
+                    url: '/SalaryCalculation/GetDepartmentsByBranch',
+                    type: 'GET',
+                    data: { branchId: branchId },
+                    success: function (data) {
+                        departmentDropdown.empty().append('<option value="">-- Select Department --</option>');
+                        $.each(data, function (i, item) {
+                            departmentDropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    },
+                    error: function () {
+                        departmentDropdown.empty().append('<option value="">Error loading departments</option>');
+                    }
+                });
+            } else {
+                departmentDropdown.empty().append('<option value="">-- Select Department --</option>');
+            }
+        });
+
+        // Department change → Load Designations
+        $('#DepartmentId').on('change', function () {
+            var departmentId = $(this).val();
+            var designationDropdown = $('#DesignationId');
+
+            designationDropdown.empty().append('<option value="">Loading...</option>');
+
+            if (departmentId) {
+                $.ajax({
+                    url: '/SalaryCalculation/GetDesignationsByDepartment',
+                    type: 'GET',
+                    data: { departmentId: departmentId },
+                    success: function (data) {
+                        designationDropdown.empty().append('<option value="">-- Select Designation --</option>');
+                        $.each(data, function (i, item) {
+                            designationDropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    },
+                    error: function () {
+                        designationDropdown.empty().append('<option value="">Error loading designations</option>');
+                    }
+                });
+            } else {
+                designationDropdown.empty().append('<option value="">-- Select Designation --</option>');
+            }
+        });
+
+
+
+         // End mapping start
+
     </script>
 
 }

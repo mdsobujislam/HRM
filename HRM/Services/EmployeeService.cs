@@ -103,8 +103,8 @@ namespace HRM.Services
                     }
 
 
-                    var queryString = "insert into Employees (EmployeeName,FatherName,MotherName,SpouseName,DOB,Gender,BloodGroup,MaritalStatus,TinNo,NationalID,Telephone,MobileNo,MailID,PermanentAddress,PresentAddress,DateOfAppointment,Religion,Nationality,Shift,Version,JobType,UploadPhoto,BranchId,DepartmentId,DesignationId,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @EmployeeName,@FatherName,@MotherName,@SpouseName,@DOB,@Gender,@BloodGroup,@MaritalStatus,@TinNo,@NationalID,@Telephone,@MobileNo,@MailID,@PermanentAddress,@PresentAddress,@DateOfAppointment,@Religion,@Nationality,@Shift,@Version,@JobType,@UploadPhoto,@BranchId,@DepartmentId,@DesignationId,@SubscriptionId,@CompanyId,@CreatedAt)";
+                    var queryString = "insert into Employees (EmployeeName,FatherName,MotherName,SpouseName,DOB,Gender,BloodGroup,MaritalStatus,TinNo,NationalID,Telephone,MobileNo,MailID,PermanentAddress,PresentAddress,DateOfAppointment,Religion,Nationality,Shift,Version,JobType,UploadPhoto,BranchId,DepartmentId,DesignationId,SubscriptionId,CompanyId,CreatedAt,AdditionalId) values ";
+                    queryString += "( @EmployeeName,@FatherName,@MotherName,@SpouseName,@DOB,@Gender,@BloodGroup,@MaritalStatus,@TinNo,@NationalID,@Telephone,@MobileNo,@MailID,@PermanentAddress,@PresentAddress,@DateOfAppointment,@Religion,@Nationality,@Shift,@Version,@JobType,@UploadPhoto,@BranchId,@DepartmentId,@DesignationId,@SubscriptionId,@CompanyId,@CreatedAt,@AdditionalId)";
                     var parameters = new DynamicParameters();
                     parameters.Add("EmployeeName", employee.EmployeeName, DbType.String);
                     parameters.Add("FatherName", employee.FatherName, DbType.String);
@@ -134,6 +134,7 @@ namespace HRM.Services
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
+                    parameters.Add("AdditionalId", employee.AdditionalId, DbType.Int64);
                     var success = await connection.ExecuteAsync(queryString, parameters);
                     if (success > 0)
                     {

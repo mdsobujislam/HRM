@@ -8,5 +8,6 @@ namespace HRM.Interfaces
         Task<bool> InsertDesignation(Designation designation);
         Task<bool> UpdateDesignation(Designation designation);
         Task<bool> DeleteDesignation(int id);
+        Task<IEnumerable<Designation>> GetDesignationsByDepartmentId(int departmentId);
     }
 }

@@ -49,6 +49,36 @@ namespace HRM.Controllers
 
             return View(salaryHeads);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDepartmentsByBranch(int branchId)
+        {
+            var departments = await _departmentService.GetDepartmentsByBranchId(branchId);
+
+            var result = departments.Select(d => new
+            {
+                id = d.Id,
+                name = d.DepartmentName
+            });
+
+            return Json(result);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDesignationsByDepartment(int departmentId)
+        {
+            var designations = await _designationService.GetDesignationsByDepartmentId(departmentId);
+
+            var result = designations.Select(d => new
+            {
+                id = d.Id,
+                name = d.DesignationName
+            });
+
+            return Json(result);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Insert(SalaryCalculationMaster model)
         {

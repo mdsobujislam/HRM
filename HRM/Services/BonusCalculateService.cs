@@ -186,11 +186,11 @@ namespace HRM.Services
 
                             if (empData.BranchId == 0) continue;
 
-                            var bonusQuery = @"Select t1.Value from Salary t1 where t1.EmployeeId=@EmpId and Parameter='Basic Salary'";
+                            var bonusQuery = @"Select t1.Value from SalaryCalculation t1 where t1.EmployeeId=@EmpId and t1.Parameter='Basic Salary'";
                             double bonusAmountResult = await connection.QueryFirstOrDefaultAsync<double?>(bonusQuery, new { EmpId = empId }) ?? 0;
 
                             double bonusAmount = (bonusAmountResult * bonusCalculate.Percentage) / 100;
-                            double totalBonus = bonusAmount + bonusAmountResult;
+                            double totalBonus = bonusAmount;
 
                             var existEmpId = @"Select t1.EmployeeId from BonusCalculate t1 where t1.BonusDate=@BonusDate and t1.EmployeeId=@EmployeeId";
                             var existingEmpId = await connection.QueryFirstOrDefaultAsync<long?>(existEmpId, new { BonusDate = bonusCalculate.BonusDate, EmployeeId = empId });

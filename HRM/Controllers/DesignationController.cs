@@ -38,6 +38,21 @@ namespace HRM.Controllers
             return View(designationList);
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetDepartmentsByBranch(int branchId)
+        {
+            var departments = await _departmentService.GetDepartmentsByBranchId(branchId);
+
+            var departmentList = departments.Select(d => new
+            {
+                id = d.Id,
+                name = d.DepartmentName
+            });
+
+            return Json(departmentList);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateOrUpdate(Designation designation)
         {

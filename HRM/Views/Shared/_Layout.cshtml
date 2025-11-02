@@ -197,223 +197,217 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
                 <div id="sidebar-menu" class="sidebar-menu">
+                    @{
+                        // Extract current Controller and Action to determine which menus should be active/open
+                        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+                        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+                    }
                     <ul>
-                        <li>
+                        <!-- Dashboard Link -->
+                        <li class="@(currentController == "Home" && currentAction == "Dashboard" ? "active" : "")">
+                            <!-- Keeping the original image icon for Dashboard -->
                             <a asp-controller="Home" asp-action="Dashboard">
                                 <img src="~/assets/img/icons/dashboard.svg" alt="img" />
-                                <span>
-                                    Dashboard
-                                </span>
+                                <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Settings
-                                </span>
+
+                        <!-- ============================================== -->
+                        <!-- SETTINGS MENU -->
+                        @{
+                            var settingsControllers = new[] { "Companies", "Branch", "AddUser", "Department", "Designation", "Employee" };
+                            var isSettingsActive = settingsControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isSettingsActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isSettingsActive ? "subdrop" : "")">
+                                <i data-feather="settings" class="me-2"></i>
+                                <span>Settings</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="Companies" asp-action="Index">Company Settings</a>
+                            <ul style="display: @(isSettingsActive ? "block" : "none")">
+                                <li class="@(currentController == "Companies" ? "active" : "")">
+                                    <a asp-controller="Companies" asp-action="Index" style="@(currentController != "Companies" ? "color: white;" : "")">Company Settings</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="Branch" asp-action="Index">Add Branch</a>
+                                <li class="@(currentController == "Branch" ? "active" : "")">
+                                    <a asp-controller="Branch" asp-action="Index" style="@(currentController != "Branch" ? "color: white;" : "")">Add Branch</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="AddUser" asp-action="Index">Add User</a>
+                                <li class="@(currentController == "AddUser" ? "active" : "")">
+                                    <a asp-controller="AddUser" asp-action="Index" style="@(currentController != "AddUser" ? "color: white;" : "")">Add User</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="Department" asp-action="Index">Department</a>
+                                <li class="@(currentController == "Department" ? "active" : "")">
+                                    <a asp-controller="Department" asp-action="Index" style="@(currentController != "Department" ? "color: white;" : "")">Department</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="Designation" asp-action="Index">Designation</a>
+                                <li class="@(currentController == "Designation" ? "active" : "")">
+                                    <a asp-controller="Designation" asp-action="Index" style="@(currentController != "Designation" ? "color: white;" : "")">Designation</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="Employee" asp-action="Index">Employee</a>
+                                <li class="@(currentController == "Employee" && currentAction == "Index" ? "active" : "")">
+                                    <a asp-controller="Employee" asp-action="Index" style="@(!(currentController == "Employee" && currentAction == "Index") ? "color: white;" : "")">Employee</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="Employee" asp-action="GetEmployee">Employee List</a>
+                                <li class="@(currentController == "Employee" && currentAction == "GetEmployee" ? "active" : "")">
+                                    <a asp-controller="Employee" asp-action="GetEmployee" style="@(!(currentController == "Employee" && currentAction == "GetEmployee") ? "color: white;" : "")">Employee List</a>
                                 </li>
                             </ul>
                         </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Employee Separation
-                                </span>
+                        <!-- ============================================== -->
+                        <!-- ============================================== -->
+                        <!-- EMPLOYEE SEPARATION MENU -->
+                        @{
+                            var separationControllers = new[] { "SeparationReasons", "EmployeeSeparation" };
+                            var isSeparationActive = separationControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isSeparationActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isSeparationActive ? "subdrop" : "")">
+                                <i data-feather="user-x" class="me-2"></i>
+                                <span>Employee Separation</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="SeparationReasons" asp-action="Index">Separation Reason</a>
+                            <ul style="display: @(isSeparationActive ? "block" : "none")">
+                                <li class="@(currentController == "SeparationReasons" ? "active" : "")">
+                                    <a asp-controller="SeparationReasons" asp-action="Index" style="@(currentController != "SeparationReasons" ? "color: white;" : "")">Separation Reason</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="EmployeeSeparation" asp-action="Index">Separation</a>
+                                <li class="@(currentController == "EmployeeSeparation" ? "active" : "")">
+                                    <a asp-controller="EmployeeSeparation" asp-action="Index" style="@(currentController != "EmployeeSeparation" ? "color: white;" : "")">Separation</a>
                                 </li>
                             </ul>
                         </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Loan Management
-                                </span>
+                        <!-- ============================================== -->
+                        <!-- ============================================== -->
+                        <!-- LOAN MANAGEMENT MENU -->
+                        @{
+                            var loanControllers = new[] { "LoanApplication", "RecommendLoanApplication", "LoanApproval", "EmployeeLoan", "ShowInstalmentList", "LoanInstallment" };
+                            var isLoanActive = loanControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isLoanActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isLoanActive ? "subdrop" : "")">
+                                <i data-feather="dollar-sign" class="me-2"></i>
+                                <span>Loan Management</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="LoanApplication" asp-action="Index">Loan Application</a>
+                            <ul style="display: @(isLoanActive ? "block" : "none")">
+                                <li class="@(currentController == "LoanApplication" ? "active" : "")">
+                                    <a asp-controller="LoanApplication" asp-action="Index" style="@(currentController != "LoanApplication" ? "color: white;" : "")">Loan Application</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="RecommendLoanApplication" asp-action="Index">Recommend Loan Application</a>
+                                <li class="@(currentController == "RecommendLoanApplication" ? "active" : "")">
+                                    <a asp-controller="RecommendLoanApplication" asp-action="Index" style="@(currentController != "RecommendLoanApplication" ? "color: white;" : "")">Recommend Loan Application</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="LoanApproval" asp-action="Index">Loan Approval</a>
+                                <li class="@(currentController == "LoanApproval" ? "active" : "")">
+                                    <a asp-controller="LoanApproval" asp-action="Index" style="@(currentController != "LoanApproval" ? "color: white;" : "")">Loan Approval</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="EmployeeLoan" asp-action="Index">Employee Loan Issue</a>
+                                <li class="@(currentController == "EmployeeLoan" ? "active" : "")">
+                                    <a asp-controller="EmployeeLoan" asp-action="Index" style="@(currentController != "EmployeeLoan" ? "color: white;" : "")">Employee Loan Issue</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="ShowInstalmentList" asp-action="Index">Instalment List</a>
+                                <li class="@(currentController == "ShowInstalmentList" ? "active" : "")">
+                                    <a asp-controller="ShowInstalmentList" asp-action="Index" style="@(currentController != "ShowInstalmentList" ? "color: white;" : "")">Instalment List</a>
                                 </li>
-                                <li>
-                                    <a asp-controller="LoanInstallment" asp-action="Index">Loan Installment Pay</a>
+                                <li class="@(currentController == "LoanInstallment" ? "active" : "")">
+                                    <a asp-controller="LoanInstallment" asp-action="Index" style="@(currentController != "LoanInstallment" ? "color: white;" : "")">Loan Installment Pay</a>
                                 </li>
                             </ul>
                         </li>
-
+                        <!-- ============================================== -->
+                        <!-- Joining Formalities Menu (Kept hidden as per original code) -->
                         <li class="submenu" style="display:none">
                             <a href="javascript:void(0);">
                                 <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Joining Formalities
-                                </span>
+                                <span>Joining Formalities</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                                <li>
-                                    <a asp-controller="JoiningFormalities" asp-action="JoiningFormalities">Entry Joining Formalities</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="EmployeeJoiningFormalities" asp-action="Index">Joining Formalities</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Hr Policy
-                                </span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="DutySlot" asp-action="Index">Create Duty Slot</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="LeaveType" asp-action="Index">Create Leave Type</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="LeaveAllotment" asp-action="Index">Leave Calculation Logic</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="LateAttendance" asp-action="Index">Late/Early Login/Logout Punishment</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="OffDays" asp-action="Index">Weekly Off day</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="HolidayCalendar" asp-action="Index">Holiday Calendar</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="SalaryHeads" asp-action="Index">Salary Heads</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="SalaryCalculation" asp-action="Index">Salary Calculation</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="SalaryCreate" asp-action="Index">Salary Craete</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Overtime" asp-action="Index">Overtime Calculation</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="BonusCalculate" asp-action="Index">Bonus Create</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="BonusCalculate" asp-action="GetData">Bonus List</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="BonusCalculate" asp-action="ShowData">Report</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Payroll
-                                </span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="Attendance" asp-action="Index">Attendance</a>
-                                </li>
+                                <li><a asp-controller="JoiningFormalities" asp-action="JoiningFormalities">Entry Joining Formalities</a></li>
+                                <li><a asp-controller="EmployeeJoiningFormalities" asp-action="Index">Joining Formalities</a></li>
                             </ul>
                         </li>
 
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Tax
-                                </span>
+                        <!-- ============================================== -->
+                        <!-- HR POLICY MENU -->
+                        @{
+                            var hrPolicyControllers = new[] { "DutySlot", "LeaveType", "LeaveAllotment", "LateAttendance", "OffDays", "HolidayCalendar", "SalaryHeads", "SalaryCalculation", "SalaryCreate", "Overtime", "BonusCalculate" };
+                            var isHrPolicyActive = hrPolicyControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isHrPolicyActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isHrPolicyActive ? "subdrop" : "")">
+                                <i data-feather="clipboard" class="me-2"></i>
+                                <span>Hr Policy</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="TaxtSlabSetup" asp-action="Index">Taxt Slab Setup</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="ExcludeTax" asp-action="Index">Start/Stop Income Tax</a>
-                                </li>
+                            <ul style="display: @(isHrPolicyActive ? "block" : "none")">
+                                <li class="@(currentController == "DutySlot" ? "active" : "")"><a asp-controller="DutySlot" asp-action="Index" style="@(currentController != "DutySlot" ? "color: white;" : "")">Create Duty Slot</a></li>
+                                <li class="@(currentController == "LeaveType" ? "active" : "")"><a asp-controller="LeaveType" asp-action="Index" style="@(currentController != "LeaveType" ? "color: white;" : "")">Create Leave Type</a></li>
+                                <li class="@(currentController == "LeaveAllotment" ? "active" : "")"><a asp-controller="LeaveAllotment" asp-action="Index" style="@(currentController != "LeaveAllotment" ? "color: white;" : "")">Leave Calculation Logic</a></li>
+                                <li class="@(currentController == "LateAttendance" ? "active" : "")"><a asp-controller="LateAttendance" asp-action="Index" style="@(currentController != "LateAttendance" ? "color: white;" : "")">Late/Early Login/Logout Punishment</a></li>
+                                <li class="@(currentController == "OffDays" ? "active" : "")"><a asp-controller="OffDays" asp-action="Index" style="@(currentController != "OffDays" ? "color: white;" : "")">Weekly Off day</a></li>
+                                <li class="@(currentController == "HolidayCalendar" ? "active" : "")"><a asp-controller="HolidayCalendar" asp-action="Index" style="@(currentController != "HolidayCalendar" ? "color: white;" : "")">Holiday Calendar</a></li>
+                                <li class="@(currentController == "SalaryHeads" ? "active" : "")"><a asp-controller="SalaryHeads" asp-action="Index" style="@(currentController != "SalaryHeads" ? "color: white;" : "")">Salary Heads</a></li>
+                                <li class="@(currentController == "SalaryCalculation" ? "active" : "")"><a asp-controller="SalaryCalculation" asp-action="Index" style="@(currentController != "SalaryCalculation" ? "color: white;" : "")">Salary Calculation</a></li>
+                                <li class="@(currentController == "SalaryCreate" ? "active" : "")"><a asp-controller="SalaryCreate" asp-action="Index" style="@(currentController != "SalaryCreate" ? "color: white;" : "")">Salary Craete</a></li>
+                                <li class="@(currentController == "Overtime" ? "active" : "")"><a asp-controller="Overtime" asp-action="Index" style="@(currentController != "Overtime" ? "color: white;" : "")">Overtime Calculation</a></li>
+                                <li class="@(currentController == "BonusCalculate" && currentAction == "Index" ? "active" : "")"><a asp-controller="BonusCalculate" asp-action="Index" style="@(!(currentController == "BonusCalculate" && currentAction == "Index") ? "color: white;" : "")">Bonus Create</a></li>
+                                <li class="@(currentController == "BonusCalculate" && currentAction == "GetData" ? "active" : "")"><a asp-controller="BonusCalculate" asp-action="GetData" style="@(!(currentController == "BonusCalculate" && currentAction == "GetData") ? "color: white;" : "")">Bonus List</a></li>
+                                <li class="@(currentController == "BonusCalculate" && currentAction == "ShowData" ? "active" : "")"><a asp-controller="BonusCalculate" asp-action="ShowData" style="@(!(currentController == "BonusCalculate" && currentAction == "ShowData") ? "color: white;" : "")">Report</a></li>
                             </ul>
                         </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);">
-                                <img src="~/assets/img/icons/settings.svg" alt="img" />
-                                <span>
-                                    Provident Fund
-                                </span>
+                        <!-- ============================================== -->
+                        <!-- ============================================== -->
+                        <!-- PAYROLL MENU -->
+                        @{
+                            var isPayrollActive = currentController == "Attendance";
+                        }
+                        <li class="submenu @(isPayrollActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isPayrollActive ? "subdrop" : "")">
+                                <i data-feather="users" class="me-2"></i>
+                                <span>Payroll</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <ul>
-                                <li>
-                                    <a asp-controller="PfContribution" asp-action="Index">Pf Contribution Setup</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="PFInterest" asp-action="Index">Pf Interest Setup</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="GratuityCalculateSetup" asp-action="Index">Gratuity Setup</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="GratuityCalculate" asp-action="Index">Gratuity Calculate</a>
-                                </li>
+                            <ul style="display: @(isPayrollActive ? "block" : "none")">
+                                <li class="@(currentController == "Attendance" ? "active" : "")"><a asp-controller="Attendance" asp-action="Index" style="@(currentController != "Attendance" ? "color: white;" : "")">Attendance</a></li>
                             </ul>
                         </li>
-
+                        <!-- ============================================== -->
+                        <!-- ============================================== -->
+                        <!-- TAX MENU -->
+                        @{
+                            var taxControllers = new[] { "TaxtSlabSetup", "ExcludeTax" };
+                            var isTaxActive = taxControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isTaxActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isTaxActive ? "subdrop" : "")">
+                                <i data-feather="bar-chart" class="me-2"></i>
+                                <span>Tax</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul style="display: @(isTaxActive ? "block" : "none")">
+                                <li class="@(currentController == "TaxtSlabSetup" ? "active" : "")"><a asp-controller="TaxtSlabSetup" asp-action="Index" style="@(currentController != "TaxtSlabSetup" ? "color: white;" : "")">Taxt Slab Setup</a></li>
+                                <li class="@(currentController == "ExcludeTax" ? "active" : "")"><a asp-controller="ExcludeTax" asp-action="Index" style="@(currentController != "ExcludeTax" ? "color: white;" : "")">Start/Stop Income Tax</a></li>
+                            </ul>
+                        </li>
+                        <!-- ============================================== -->
+                        <!-- ============================================== -->
+                        <!-- PROVIDENT FUND MENU -->
+                        @{
+                            var pfControllers = new[] { "PfContribution", "PFInterest", "GratuityCalculateSetup", "GratuityCalculate" };
+                            var isPfActive = pfControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isPfActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isPfActive ? "subdrop" : "")">
+                                <i data-feather="archive" class="me-2"></i>
+                                <span>Provident Fund</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul style="display: @(isPfActive ? "block" : "none")">
+                                <li class="@(currentController == "PfContribution" ? "active" : "")"><a asp-controller="PfContribution" asp-action="Index" style="@(currentController != "PfContribution" ? "color: white;" : "")">Pf Contribution Setup</a></li>
+                                <li class="@(currentController == "PFInterest" ? "active" : "")"><a asp-controller="PFInterest" asp-action="Index" style="@(currentController != "PFInterest" ? "color: white;" : "")">Pf Interest Setup</a></li>
+                                <li class="@(currentController == "GratuityCalculateSetup" ? "active" : "")"><a asp-controller="GratuityCalculateSetup" asp-action="Index" style="@(currentController != "GratuityCalculateSetup" ? "color: white;" : "")">Gratuity Setup</a></li>
+                                <li class="@(currentController == "GratuityCalculate" ? "active" : "")"><a asp-controller="GratuityCalculate" asp-action="Index" style="@(currentController != "GratuityCalculate" ? "color: white;" : "")">Gratuity Calculate</a></li>
+                            </ul>
+                        </li>
+                        <!-- ============================================== -->
                     </ul>
                 </div>
             </div>
         </div>
+
+
+
         <div class="page-wrapper pagehead">
             <div class="content">
                 @RenderBody()
@@ -501,6 +495,8 @@
                     <text>toastr.error('@message');</text>
             }
         });
+
+
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

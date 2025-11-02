@@ -31,6 +31,7 @@
         public string Version { get; set; }
         public string JobType { get; set; }
         public string UploadPhoto { get; set; }
+        public int AdditionalId { get; set; }
         public int CompanyId { get; set; }
         public int SubscriptionId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

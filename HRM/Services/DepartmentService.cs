@@ -65,6 +65,29 @@ namespace HRM.Services
             }
         }
 
+        public async Task<IEnumerable<Department>> GetDepartmentsByBranchId(int branchId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    //var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+
+                    var query = @"Select t1.Id,t1.DepartmentName,t2.Name as BranchName,t1.BranchId as BranchId from Department t1 JOIN Branch t2 on t2.id=t1.BranchId WHERE t1.SubscriptionId = @subscriptionId and t2.Id=@branchId";
+
+                    var result = await connection.QueryAsync<Department>(query, new { subscriptionId, branchId });
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> InsertDepartment(Department department)
         {
             try

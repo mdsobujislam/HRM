@@ -119,6 +119,105 @@
 
 @section Scripts {
     <script>
+        function resetBranch() {
+            document.getElementById("DesignationId").value = "";
+            document.getElementById("DesignationName").value = "";
+            document.getElementById("BranchId").value = "";
+            document.getElementById("DepartmentId").innerHTML = '<option value="">-- Select Department --</option>';
+            document.getElementById("addDepartmentModalLabel").textContent = "Add Designation";
+            document.getElementById("modalSubmitText").textContent = "Submit";
+        }
+
+        document.getElementById("addNewData").addEventListener("click", function () {
+            resetBranch();
+        });
+
+        // ✅ When Branch changes → Load departments dynamically
+        document.getElementById("BranchId").addEventListener("change", function () {
+            var branchId = this.value;
+            var departmentDropdown = document.getElementById("DepartmentId");
+
+            departmentDropdown.innerHTML = '<option value="">Loading...</option>';
+
+            if (branchId) {
+                fetch(`/Designation/GetDepartmentsByBranch?branchId=${branchId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
+                        data.forEach(dept => {
+                            const option = document.createElement("option");
+                            option.value = dept.id;
+                            option.textContent = dept.name;
+                            departmentDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(err => {
+                        console.error("Error loading departments:", err);
+                        departmentDropdown.innerHTML = '<option value="">Error loading</option>';
+                    });
+            } else {
+                departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
+            }
+        });
+
+        function editBranch(id, branchId, designationName, departmentId) {
+            document.getElementById("DesignationId").value = id;
+            document.getElementById("DesignationName").value = designationName;
+            document.getElementById("BranchId").value = branchId;
+
+            // Load departments first, then select department
+            fetch(`/Designation/GetDepartmentsByBranch?branchId=${branchId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const departmentDropdown = document.getElementById("DepartmentId");
+                    departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
+                    data.forEach(dept => {
+                        const option = document.createElement("option");
+                        option.value = dept.id;
+                        option.textContent = dept.name;
+                        if (dept.id == departmentId) option.selected = true;
+                        departmentDropdown.appendChild(option);
+                    });
+                });
+
+            document.getElementById("addDepartmentModalLabel").textContent = "Edit Designation";
+            document.getElementById("modalSubmitText").textContent = "Update";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var addDepartmentModal = document.getElementById("addDepartmentModal");
+            addDepartmentModal.addEventListener("hidden.bs.modal", function () {
+                resetBranch();
+            });
+        });
+
+        document.querySelectorAll('.deleteForm').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will permanently delete the Designation.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
+
+
+
+@* @section Scripts {
+    <script>
         function resetBranch(){
         document.getElementById("DesignationId").value = "";
             document.getElementById("DesignationName").value = "";
@@ -167,6 +266,6 @@
             });
         });
     </script>
-}
+} *@
 
 

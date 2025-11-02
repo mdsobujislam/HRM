@@ -43,6 +43,7 @@ namespace HRM.Controllers
             //var employees =await _employeeService.GetAllEmployee();
             return View();
         }
+
         [HttpGet]
         public async Task<IActionResult> GetEmployee()
         {

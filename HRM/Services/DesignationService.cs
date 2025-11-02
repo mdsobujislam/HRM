@@ -64,6 +64,29 @@ namespace HRM.Services
             }
         }
 
+        public async Task<IEnumerable<Designation>> GetDesignationsByDepartmentId(int departmentId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    //var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+
+                    var query = @"Select t1.Id, t1.DesignationName,t2.Name as Branch,t2.Id as BranchId,t3.DepartmentName as Department,t1.DepartmentId as DepartmentId from Designation t1 JOIN Branch t2 on t1.BranchId=t2.Id JOIN Department t3 on t3.Id=t1.DepartmentId WHERE t1.SubscriptionId=@subscriptionId and t1.DepartmentId=@departmentId";
+
+                    var result = await connection.QueryAsync<Designation>(query, new { subscriptionId, departmentId });
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> InsertDesignation(Designation designation)
         {
             try
