@@ -1,0 +1,134 @@
+﻿@model IEnumerable<HRM.Models.LeaveApplication>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">Leave List</h5>
+    <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
+            data-bs-target="#addDepartmentModal">
+        <i class="fas fa-solid fa-plus"></i> Add New
+    </button>
+</div>
+
+<div class="col-md-12">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table  datanew">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Name</th>
+                            <th>Documents</th>
+                            <th>Branch</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            index++;
+                            <tr>
+                                <td>@index</td>
+                                <td>@item.LeaveTypeId</td>
+                                <td>@item.StartDate</td>
+                                <td>@item.EndDate</td>
+                                <td class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-warning btn-sm"
+                                            onclick="editBranch('@item.Id', '@item.LeaveType','@item.ToString','@item.EndDate')"
+                                            data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <form asp-action="DeleteDepartment" method="post" class="deleteForm">
+                                        <input type="hidden" name="ID" value="@item.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-dark" style="background : green">
+                <h5 class="modal-title" id="addDepartmentModalLabel" style="color:white">Create Leave Application</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateOrUpdate" method="post">
+                    <input type="hidden" id="Id" name="Id">
+
+
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label for="LeaveTypeId" class="form-label">Select LeaveType</label>
+                            <select id="LeaveTypeId" name="LeaveTypeId" class="form-control" required>
+                                <option value="">-- Select LeaveType --</option>
+                                @foreach (var item in (List<SelectListItem>)ViewBag.LeaveTypeList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label for="StartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="StartDate" name="StartDate">
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label for="EndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="EndDate" name="EndDate">
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label for="Reason" class="form-label">Reason</label>
+                            <textarea class="form-control" id="Reason" name="Reason" required placeholder="Enter Reason Here..." rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label for="Documents" class="form-label">Documents</label>
+                            <input type="file" class="form-control" id="Documents" name="Documents">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-success btn-sm me-2">
+                            <i class="bi bi-check-circle"></i> <span id="modalSubmitText">Submit</span>
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
