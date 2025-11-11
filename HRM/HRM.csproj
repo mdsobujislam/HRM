@@ -18,6 +18,7 @@
     <Folder Include="wwwroot\logo\" />
     <Folder Include="wwwroot\uploads\employeeLoanFiles\" />
     <Folder Include="wwwroot\uploads\employeeSeparationFile\" />
+    <Folder Include="wwwroot\uploads\leave-docs\" />
   </ItemGroup>
 
 </Project>

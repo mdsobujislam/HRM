@@ -20,10 +20,14 @@
                     <thead class="table-primary">
                         <tr>
                             <th>SL No.</th>
-                            <th>Name</th>
+                            <th>Leave Type</th>
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Days</th>
+                            <th>Details</th>
+                            <th>Status by ImmediateBoss</th>
+                            <th>Status by HR</th>
                             <th>Documents</th>
-                            <th>Branch</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,22 +39,52 @@
                             index++;
                             <tr>
                                 <td>@index</td>
-                                <td>@item.LeaveTypeId</td>
+                                <td>@item.LeaveType</td>
                                 <td>@item.StartDate</td>
                                 <td>@item.EndDate</td>
-                                <td class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-warning btn-sm"
-                                            onclick="editBranch('@item.Id', '@item.LeaveType','@item.ToString','@item.EndDate')"
-                                            data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <form asp-action="DeleteDepartment" method="post" class="deleteForm">
-                                        <input type="hidden" name="ID" value="@item.Id" />
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </button>
-                                    </form>
+                                <td>@item.NumberOfDays</td>
+                                <td>@item.Reason</td>
+                                <!-- Immediate Boss Status -->
+                                <td>
+                                    @if (item.ApprovedByImmediateBossStatus == "Approved")
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Not Approved</span>
+                                    }
                                 </td>
+
+                                <!-- HR Status -->
+                                <td>
+                                    @if (item.ApprovedByHRStatus == "Approved")
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Not Approved</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.FilePaths))
+                                    {
+                                        var files = item.FilePaths.Split(',');
+                                        foreach (var file in files)
+                                        {
+                                            var fileName = System.IO.Path.GetFileName(file);
+                                            <a href="@file" class="btn btn-sm btn-outline-primary me-1" download>
+                                                <i class="bi bi-download"></i> @fileName
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No Document</span>
+                                    }
+                                </td>
+
 
                             </tr>
                         }
@@ -69,7 +103,7 @@
                 <h5 class="modal-title" id="addDepartmentModalLabel" style="color:white">Create Leave Application</h5>
             </div>
             <div class="modal-body">
-                <form asp-action="CreateOrUpdate" method="post">
+                <form asp-action="CreateLeaveApplication" method="post" enctype="multipart/form-data">
                     <input type="hidden" id="Id" name="Id">
 
 
@@ -108,13 +142,28 @@
                             <textarea class="form-control" id="Reason" name="Reason" required placeholder="Enter Reason Here..." rows="3"></textarea>
                         </div>
                     </div>
-                    <div class="row">
 
-                        <div class="col-md-12 mb-3">
-                            <label for="Documents" class="form-label">Documents</label>
-                            <input type="file" class="form-control" id="Documents" name="Documents">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Documents</label>
+
+                        <div id="documentContainer">
+                            <div class="input-group mb-2">
+                                <input type="file" class="form-control" name="Documents" id="Documents">
+                                <button type="button" class="btn btn-danger remove-doc" style="display:none;">Remove</button>
+                            </div>
                         </div>
+
+                        <button type="button" class="btn btn-success btn-sm" id="addMoreDocuments">
+                            <i class="bi bi-plus-circle"></i> Add More
+                        </button>
                     </div>
+
+                    @* <div class="col-md-12 mb-3">
+                        <label for="Documents" class="form-label">Documents</label>
+                        <input type="file" class="form-control" id="Documents" name="Documents" multiple>
+                        <small class="text-muted">You can select multiple files</small>
+                    </div> *@
+
                     
                     <div class="d-flex">
                         <button type="submit" class="btn btn-success btn-sm me-2">
@@ -132,3 +181,29 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('addMoreDocuments').addEventListener('click', function () {
+            const container = document.getElementById('documentContainer');
+
+            // নতুন file input তৈরি
+            const newInputGroup = document.createElement('div');
+            newInputGroup.className = 'input-group mb-2';
+            newInputGroup.innerHTML = `
+                <input type="file" class="form-control" name="Documents">
+                <button type="button" class="btn btn-danger remove-doc">Remove</button>
+            `;
+
+            // container-এ যোগ করা
+            container.appendChild(newInputGroup);
+        });
+
+        // Remove button কাজ করবে
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-doc')) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+}

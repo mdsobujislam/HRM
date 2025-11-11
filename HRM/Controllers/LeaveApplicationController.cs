@@ -1,5 +1,6 @@
 ﻿using HRM.Interfaces;
 using HRM.Models;
+using HRM.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
@@ -27,5 +28,23 @@ namespace HRM.Controllers
             var leaveApplications =await  _leaveApplicationService.GetAllLeaveApplicationByAsync();
             return View(leaveApplications);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateLeaveApplication(LeaveApplication model, List<IFormFile> Documents)
+        {
+            bool isCreated = await _leaveApplicationService.InsertLeaveApplication(model, Documents);
+
+            if (!isCreated)
+            {
+                TempData["ErrorMessage"] = "A leave application already exists for this employee or period.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["SuccessMessage"] = "Leave application created successfully.";
+            return RedirectToAction("Index");
+        }
+
+
+
     }
 }
