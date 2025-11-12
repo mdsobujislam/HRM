@@ -4,13 +4,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="card-header d-flex justify-content-between align-items-center">
+<div class="card-header d-flex justify-content-between align-items-center" style="background: green; color: white;">
     <h5 class="card-title mb-0">Leave List</h5>
-    <button class="btn btn-primary btn-sm" id="addNewData" data-bs-toggle="modal"
-            data-bs-target="#addDepartmentModal">
-        <i class="fas fa-solid fa-plus"></i> Add New
-    </button>
+    <div class="d-flex gap-2">
+        <button class="btn btn-light btn-sm" id="addNewData1" data-bs-toggle="modal"
+                data-bs-target="#addDepartmentModal" style="color: green;">
+            <i class="fas fa-plus"></i> Add New
+        </button>
+
+        <button class="btn btn-light btn-sm" id="addNewData2" data-bs-toggle="modal"
+                data-bs-target="#addDepartmentModal2" style="color: green;">
+            <i class="fas fa-check"></i> Available Leave
+        </button>
+    </div>
 </div>
+
 
 <div class="col-md-12">
     <div class="card shadow">
@@ -187,7 +195,7 @@
         document.getElementById('addMoreDocuments').addEventListener('click', function () {
             const container = document.getElementById('documentContainer');
 
-            // নতুন file input তৈরি
+            // create new file input
             const newInputGroup = document.createElement('div');
             newInputGroup.className = 'input-group mb-2';
             newInputGroup.innerHTML = `
@@ -195,15 +203,32 @@
                 <button type="button" class="btn btn-danger remove-doc">Remove</button>
             `;
 
-            // container-এ যোগ করা
+            // container-add
             container.appendChild(newInputGroup);
         });
 
-        // Remove button কাজ করবে
+        // Remove button
         document.addEventListener('click', function (e) {
             if (e.target && e.target.classList.contains('remove-doc')) {
                 e.target.parentElement.remove();
             }
         });
+
+
+
+
+
+        // Get today's date in yyyy-MM-dd format
+        const today = new Date().toISOString().split('T')[0];
+
+        // Set min attribute to prevent selecting past dates
+        document.getElementById("StartDate").setAttribute("min", today);
+        document.getElementById("EndDate").setAttribute("min", today);
+
+        // Optional: Automatically adjust EndDate min when StartDate changes
+        document.getElementById("StartDate").addEventListener("change", function () {
+            document.getElementById("EndDate").setAttribute("min", this.value);
+        });
+
     </script>
 }

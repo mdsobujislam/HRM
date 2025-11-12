@@ -43,7 +43,75 @@ namespace HRM.Controllers
             TempData["SuccessMessage"] = "Leave application created successfully.";
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> InitialApproved()
+        {
+            var leaveTypes = await _leaveTypeService.GetAllTeaveType();
+            ViewBag.LeaveTypeList = leaveTypes.Select(b => new SelectListItem
+            {
+                Value = b.Id.ToString(),
+                Text = b.TypeName
+            }).ToList();
+            var leaveApplications = await _leaveApplicationService.GetAllInitialApproved();
+            return View(leaveApplications);
+        }
+        [HttpPost]
+        public async Task<IActionResult> InitialApprovedLeaveApplication(LeaveApplication model)
+        {
+            if (model == null || model.Id == 0)
+            {
+                TempData["ErrorMessage"] = "Invalid Leave Application data.";
+                return RedirectToAction("InitialApproved");
+            }
 
+            var result = await _leaveApplicationService.UpdateLeaveApplicationByImmediateBoss(model);
+
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Leave Application approved successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to approve Leave Application.";
+            }
+
+            return RedirectToAction("InitialApproved");
+        }
+
+
+        public async Task<IActionResult> Approved()
+        {
+            var leaveTypes = await _leaveTypeService.GetAllTeaveType();
+            ViewBag.LeaveTypeList = leaveTypes.Select(b => new SelectListItem
+            {
+                Value = b.Id.ToString(),
+                Text = b.TypeName
+            }).ToList();
+            var leaveApplications = await _leaveApplicationService.GetAllApproved();
+            return View(leaveApplications);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApprovedLeaveApplication(LeaveApplication model)
+        {
+            if (model == null || model.Id == 0)
+            {
+                TempData["ErrorMessage"] = "Invalid Leave Application data.";
+                return RedirectToAction("InitialApproved");
+            }
+
+            var result = await _leaveApplicationService.UpdateLeaveApplicationbyHR(model);
+
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Leave Application approved successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to approve Leave Application.";
+            }
+
+            return RedirectToAction("Approved");
+        }
 
 
     }

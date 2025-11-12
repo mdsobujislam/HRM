@@ -493,6 +493,8 @@
                             </a>
                             <ul style="display: @(isLeaveActive ? "block" : "none")">
                                 <li><a asp-controller="LeaveApplication" asp-action="Index" class="@(currentController == "LeaveApplication" ? "active-link" : "")">Leave Application</a></li>
+                                <li><a asp-controller="LeaveApplication" asp-action="InitialApproved" class="@(currentController == "LeaveApplication" ? "active-link" : "")">Initial Approved</a></li>
+                                <li><a asp-controller="LeaveApplication" asp-action="Approved" class="@(currentController == "LeaveApplication" ? "active-link" : "")">Approved</a></li>
                             </ul>
                         </li>
 

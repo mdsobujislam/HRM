@@ -17,6 +17,79 @@ namespace HRM.Services
                 ?? throw new ArgumentNullException(nameof(_connectionString));
             _baseService = baseService;
         }
+
+        public async Task<List<LeaveApplication>> GetAllApproved()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+                    var companyId = await _baseService.GetCompanyId(subscriptionId);
+
+                    var query = @"SELECT t1.id, t2.TypeName AS LeaveType, CONVERT(varchar(10), t1.StartDate, 120) AS StartDate, CONVERT(varchar(10), t1.EndDate, 120) AS EndDate, t1.NumberOfDays AS NumberOfDays, t1.Reason AS Reason, CASE WHEN t1.ApprovedByHRStatus = 0 THEN 'Not Approved' ELSE 'Approved' END AS ApprovedByHRStatus, STRING_AGG(t3.FilePath, ',') AS FilePaths FROM LeaveRecords t1 JOIN LeaveType t2 ON t1.LeaveTypeId = t2.Id LEFT JOIN LeaveAttachments t3 ON t3.LeaveRecordId = t1.Id WHERE t1.SubscriptionId = @subscriptionId and t1.ImmediateBossByUpdatedAt is not null and t1.HRByUpdatedAt is null and t1.BranchId=@branchId GROUP BY t1.id, t2.TypeName, t1.StartDate, t1.EndDate, t1.NumberOfDays, t1.Reason, t1.ApprovedByHRStatus";
+
+                    var result = await connection.QueryAsync<LeaveApplication>(query, new { branchId, subscriptionId });
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching leave applications", ex);
+            }
+        }
+
+        public async Task<List<bool>> GetAllAvailableLeave()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+                    var companyId = await _baseService.GetCompanyId(subscriptionId);
+
+                    var query = @"SELECT lt.TypeName AS [Leave Type], ISNULL(nl.NoOfLeaves, 0) AS [Allowed], ISNULL(SUM(lr.NumberOfDays), 0) AS [Taken], ISNULL(nl.NoOfLeaves, 0) - ISNULL(SUM(lr.NumberOfDays), 0) AS [Remaining] FROM LeaveType lt LEFT JOIN NoOFLeave nl ON lt.Id = nl.LeaveTypeId AND nl.BranchId = 3 AND nl.SubscriptionId = 3 LEFT JOIN LeaveRecords lr ON lr.LeaveTypeId = lt.Id AND lr.EmployeeId = 2009 AND lr.BranchId = 3 AND lr.SubscriptionId = 3 AND lr.HRByUpdatedAt IS NOT NULL WHERE nl.BranchId = 3 AND nl.SubscriptionId = 3 GROUP BY lt.TypeName, nl.NoOfLeaves ORDER BY lt.TypeName;";
+
+                    var result = await connection.QueryAsync<bool>(query, new { branchId, subscriptionId });
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching leave applications", ex);
+            }
+        }
+
+        public async Task<List<LeaveApplication>> GetAllInitialApproved()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    var subscriptionId = _baseService.GetSubscriptionId();
+                    var userId = _baseService.GetUserId();
+                    var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+                    var companyId = await _baseService.GetCompanyId(subscriptionId);
+
+                    var query = @"SELECT t1.id, t2.TypeName AS LeaveType, CONVERT(varchar(10), t1.StartDate, 120) AS StartDate, CONVERT(varchar(10), t1.EndDate, 120) AS EndDate, t1.NumberOfDays AS NumberOfDays, t1.Reason AS Reason, CASE WHEN t1.ApprovedByImmediateBossStatus = 0 THEN 'Not Approved' ELSE 'Approved' END AS ApprovedByImmediateBossStatus, STRING_AGG(t3.FilePath, ',') AS FilePaths FROM LeaveRecords t1 JOIN LeaveType t2 ON t1.LeaveTypeId = t2.Id LEFT JOIN LeaveAttachments t3 ON t3.LeaveRecordId = t1.Id WHERE t1.SubscriptionId = @subscriptionId and t1.ImmediateBossByUpdatedAt is null and t1.BranchId=@branchId GROUP BY t1.id, t2.TypeName, t1.StartDate, t1.EndDate, t1.NumberOfDays, t1.Reason, t1.ApprovedByImmediateBossStatus, t1.ApprovedByHRStatus";
+
+                    var result = await connection.QueryAsync<LeaveApplication>(query, new { branchId, subscriptionId });
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching leave applications", ex);
+            }
+        }
+
         public async Task<List<LeaveApplication>> GetAllLeaveApplicationByAsync()
         {
             try
@@ -27,7 +100,7 @@ namespace HRM.Services
                     var subscriptionId = _baseService.GetSubscriptionId();
                     var userId = _baseService.GetUserId();
 
-                    var query = @"SELECT t2.TypeName AS LeaveType, CONVERT(varchar(10), t1.StartDate, 120) AS StartDate, CONVERT(varchar(10), t1.EndDate, 120) AS EndDate, t1.NumberOfDays AS NumberOfDays, t1.Reason AS Reason, CASE WHEN t1.ImmediateBossByUpdatedAt IS NULL THEN 'Not Approved' ELSE 'Approved' END AS ApprovedByImmediateBossStatus, CASE WHEN t1.HRByUpdatedAt IS NULL THEN 'Not Approved' ELSE 'Approved' END AS ApprovedByHRStatus, STRING_AGG(t3.FilePath, ',') AS FilePaths FROM LeaveRecords t1 JOIN LeaveType t2 ON t1.LeaveTypeId = t2.Id LEFT JOIN LeaveAttachments t3 ON t3.LeaveRecordId = t1.Id WHERE t1.EmployeeId = @userId AND t1.SubscriptionId = @subscriptionId GROUP BY t2.TypeName, t1.StartDate, t1.EndDate, t1.NumberOfDays, t1.Reason, t1.ImmediateBossByUpdatedAt, t1.HRByUpdatedAt";
+                    var query = @"SELECT t2.TypeName AS LeaveType, CONVERT(varchar(10), t1.StartDate, 120) AS StartDate, CONVERT(varchar(10), t1.EndDate, 120) AS EndDate, t1.NumberOfDays AS NumberOfDays, t1.Reason AS Reason, CASE WHEN t1.ApprovedByImmediateBossStatus = 0 THEN 'Not Approved' ELSE 'Approved' END AS ApprovedByImmediateBossStatus, CASE WHEN t1.ApprovedByHRStatus = 0 THEN 'Not Approved' ELSE 'Approved' END AS ApprovedByHRStatus, STRING_AGG(t3.FilePath, ',') AS FilePaths FROM LeaveRecords t1 JOIN LeaveType t2 ON t1.LeaveTypeId = t2.Id LEFT JOIN LeaveAttachments t3 ON t3.LeaveRecordId = t1.Id WHERE t1.EmployeeId = @userId AND t1.SubscriptionId = @subscriptionId GROUP BY t2.TypeName, t1.StartDate, t1.EndDate, t1.NumberOfDays, t1.Reason, t1.ApprovedByImmediateBossStatus, t1.ApprovedByHRStatus";
 
                     var result = await connection.QueryAsync<LeaveApplication>(query, new { userId, subscriptionId });
                     return result.ToList();
@@ -123,8 +196,8 @@ namespace HRM.Services
                         {
                             // Insert into LeaveRecords
                             var queryString = @"INSERT INTO LeaveRecords 
-                (EmployeeId, LeaveTypeId, StartDate, EndDate, NumberOfDays, Reason, CreatedBy, CreatedAt, BranchId, SubscriptionId, CompanyId)
-                VALUES (@EmployeeId, @LeaveTypeId, @StartDate, @EndDate, @NumberOfDays, @Reason, @CreatedBy, @CreatedAt, @BranchId, @SubscriptionId, @CompanyId);
+                (EmployeeId, LeaveTypeId, StartDate, EndDate, NumberOfDays, Reason,ApprovedByImmediateBossStatus,ApprovedByHRStatus, CreatedBy, CreatedAt, BranchId, SubscriptionId, CompanyId)
+                VALUES (@EmployeeId, @LeaveTypeId, @StartDate, @EndDate, @NumberOfDays, @Reason,@ApprovedByImmediateBossStatus,@ApprovedByHRStatus, @CreatedBy, @CreatedAt, @BranchId, @SubscriptionId, @CompanyId);
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
                             var parameters = new DynamicParameters();
@@ -139,6 +212,8 @@ namespace HRM.Services
                             parameters.Add("EndDate", leaveApplication.EndDate, DbType.String);
                             parameters.Add("NumberOfDays", numberOfDays, DbType.Int64);
                             parameters.Add("Reason", leaveApplication.Reason, DbType.String);
+                            parameters.Add("ApprovedByImmediateBossStatus", 0);
+                            parameters.Add("ApprovedByHRStatus", 0);
                             parameters.Add("CreatedBy", userId, DbType.Int64);
                             parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                             parameters.Add("BranchId", branchId, DbType.Int64);
@@ -184,7 +259,7 @@ namespace HRM.Services
             }
         }
 
-        public async Task<bool> UpdateLeaveApplication(LeaveApplication leaveApplication)
+        public async Task<bool> UpdateLeaveApplicationbyHR(LeaveApplication leaveApplication)
         {
             try
             {
@@ -197,9 +272,10 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update LeaveRecords set ApprovedByImmediateBossStatus=@ApprovedByImmediateBossStatus where Id='" + leaveApplication.Id + "' ";
+                    var queryString = "Update LeaveRecords set ApprovedByHRStatus=@ApprovedByHRStatus,HRByUpdatedAt=@HRByUpdatedAt where Id='" + leaveApplication.Id + "' ";
                     var parameters = new DynamicParameters();
-                    parameters.Add("ApprovedByImmediateBossStatus", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
+                    parameters.Add("ApprovedByHRStatus", 1);
+                    parameters.Add("HRByUpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                     var success = await connection.ExecuteAsync(queryString, parameters);
                     if (success > 0)
                     {
@@ -213,5 +289,28 @@ namespace HRM.Services
                 throw;
             }
         }
+
+        public async Task<bool> UpdateLeaveApplicationByImmediateBoss(LeaveApplication leaveApplication)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                var query = @"
+            UPDATE LeaveRecords
+            SET ApprovedByImmediateBossStatus = @ApprovedByImmediateBossStatus,
+                ImmediateBossByUpdatedAt = @ImmediateBossByUpdatedAt
+            WHERE Id = @Id";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("ApprovedByImmediateBossStatus", 1);
+                parameters.Add("ImmediateBossByUpdatedAt", DateTime.Now);
+                parameters.Add("Id", leaveApplication.Id);
+
+                var rowsAffected = await connection.ExecuteAsync(query, parameters);
+                return rowsAffected > 0;
+            }
+        }
+
     }
 }
