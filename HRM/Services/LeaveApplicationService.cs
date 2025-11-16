@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using HRM.Interfaces;
 using HRM.Models;
+using HRM.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -42,29 +43,32 @@ namespace HRM.Services
             }
         }
 
-        public async Task<List<bool>> GetAllAvailableLeave()
+        public async Task<List<AvailableLeaveVM>> GetAllAvailableLeave()
         {
             try
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     await connection.OpenAsync();
+
                     var subscriptionId = _baseService.GetSubscriptionId();
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
-                    var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var query = @"SELECT lt.TypeName AS [Leave Type], ISNULL(nl.NoOfLeaves, 0) AS [Allowed], ISNULL(SUM(lr.NumberOfDays), 0) AS [Taken], ISNULL(nl.NoOfLeaves, 0) - ISNULL(SUM(lr.NumberOfDays), 0) AS [Remaining] FROM LeaveType lt LEFT JOIN NoOFLeave nl ON lt.Id = nl.LeaveTypeId AND nl.BranchId = 3 AND nl.SubscriptionId = 3 LEFT JOIN LeaveRecords lr ON lr.LeaveTypeId = lt.Id AND lr.EmployeeId = 2009 AND lr.BranchId = 3 AND lr.SubscriptionId = 3 AND lr.HRByUpdatedAt IS NOT NULL WHERE nl.BranchId = 3 AND nl.SubscriptionId = 3 GROUP BY lt.TypeName, nl.NoOfLeaves ORDER BY lt.TypeName;";
+                    var query = @" SELECT lt.TypeName AS LeaveType, ISNULL(nl.NoOfLeaves, 0) AS Allowed, ISNULL(SUM(lr.NumberOfDays), 0) AS Taken, ISNULL(nl.NoOfLeaves, 0) - ISNULL(SUM(lr.NumberOfDays), 0) AS Remaining FROM LeaveType lt LEFT JOIN NoOFLeave nl ON lt.Id = nl.LeaveTypeId AND nl.BranchId = @branchId AND nl.SubscriptionId = @subscriptionId LEFT JOIN LeaveRecords lr ON lr.LeaveTypeId = lt.Id AND lr.EmployeeId = @userId AND lr.BranchId =@branchId  AND lr.SubscriptionId = @subscriptionId AND lr.HRByUpdatedAt IS NOT NULL WHERE nl.BranchId = @branchId AND nl.SubscriptionId = @subscriptionId GROUP BY lt.TypeName, nl.NoOfLeaves ORDER BY lt.TypeName;";
 
-                    var result = await connection.QueryAsync<bool>(query, new { branchId, subscriptionId });
+                    var result = await connection.QueryAsync<AvailableLeaveVM>(query,
+                                            new { userId, branchId, subscriptionId });
+
                     return result.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error fetching leave applications", ex);
+                throw new Exception("Error fetching available leave", ex);
             }
         }
+
 
         public async Task<List<LeaveApplication>> GetAllInitialApproved()
         {

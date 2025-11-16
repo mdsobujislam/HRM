@@ -12,10 +12,10 @@
             <i class="fas fa-plus"></i> Add New
         </button>
 
-        <button class="btn btn-light btn-sm" id="addNewData2" data-bs-toggle="modal"
-                data-bs-target="#addDepartmentModal2" style="color: green;">
+        <button class="btn btn-light btn-sm" id="addNewData2" style="color: green;">
             <i class="fas fa-check"></i> Available Leave
         </button>
+
     </div>
 </div>
 
@@ -189,7 +189,7 @@
         </div>
     </div>
 </div>
-
+<div id="availableLeaveContainer"></div>
 @section Scripts {
     <script>
         document.getElementById('addMoreDocuments').addEventListener('click', function () {
@@ -229,6 +229,19 @@
         document.getElementById("StartDate").addEventListener("change", function () {
             document.getElementById("EndDate").setAttribute("min", this.value);
         });
+
+
+
+        // for Available Leave Modal
+
+                        $("#addNewData2").click(function () {
+            $.get("/LeaveApplication/GetAvailableLeave", function (data) {
+                $("#availableLeaveContainer").html(data);
+                $("#addDepartmentModal2").modal("show");
+            });
+        });
+
+
 
     </script>
 }

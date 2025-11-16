@@ -34,7 +34,7 @@ builder.Services.AddScoped<ISalaryHeadsService, SalaryHeadsService>();
 builder.Services.AddScoped<IOvertimeService, OvertimeService>();
 builder.Services.AddScoped<IBonusCalculateService, BonusCalculateService>();
 builder.Services.AddScoped<IBonusTypeService, BonusTypeService>();
-builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IAttendanceManualService, AttendanceManualService>();
 builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
 builder.Services.AddScoped<IRecommendLoanApplicationService, RecommendLoanApplicationService>();
 builder.Services.AddScoped<ILoanApprovalService,LoanApprovalService>();

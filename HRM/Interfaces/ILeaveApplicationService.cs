@@ -1,4 +1,5 @@
 ﻿using HRM.Models;
+using HRM.Models.ViewModels;
 
 namespace HRM.Interfaces
 {
@@ -13,7 +14,7 @@ namespace HRM.Interfaces
 
 
         //Available Leave Days
-        Task<List<bool>> GetAllAvailableLeave();
+        Task<List<AvailableLeaveVM>> GetAllAvailableLeave();
 
     }
 }

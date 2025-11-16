@@ -6,8 +6,8 @@ namespace HRM.Controllers
 {
     public class AttendanceController : Controller
     {
-        private readonly IAttendanceService _attendanceService;
-        public AttendanceController(IAttendanceService attendanceService)
+        private readonly IAttendanceManualService _attendanceService;
+        public AttendanceController(IAttendanceManualService attendanceService)
         {
             _attendanceService = attendanceService ?? throw new ArgumentNullException(nameof(attendanceService));
         }
@@ -15,7 +15,7 @@ namespace HRM.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> InsertAttendence(Attendance attendance)
+        public async Task<IActionResult> InsertAttendence(AttendanceManual attendance)
         {
             if (attendance == null)
             {

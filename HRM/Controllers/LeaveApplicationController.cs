@@ -113,6 +113,13 @@ namespace HRM.Controllers
             return RedirectToAction("Approved");
         }
 
+        public async Task<IActionResult> GetAvailableLeave()
+        {
+            var data = await _leaveApplicationService.GetAllAvailableLeave();
+            return PartialView("_AvailableLeaveModal", data);
+        }
+
+
 
     }
 }

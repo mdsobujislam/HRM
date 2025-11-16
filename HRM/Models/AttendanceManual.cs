@@ -1,6 +1,6 @@
 ﻿namespace HRM.Models
 {
-    public class Attendance
+    public class AttendanceManual
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }

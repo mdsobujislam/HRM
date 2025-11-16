@@ -1,12 +1,13 @@
-﻿using HRM.Models;
+﻿using HRM.Models.Attendance;
 
 namespace HRM.Interfaces
 {
     public interface IAttendanceService
     {
-        Task<bool> InsertAttendance(Attendance attendance);
-        Task<bool> UpdateAttendance(Attendance attendance);
-        Task<bool> DeleteAttendance(int id);
-        Task<List<Attendance>> GetAllAttendance();
+        Task<bool> SaveAttendanceAsync(AttendanceBatchDto dto);
+        Task<List<AttendanceData>> GetAllData(int userId, bool isAdmin);
+        Task<List<AttendanceData>> GetAttendanceByFilter(int userId, DateTime fromDate, DateTime toDate, bool isAdmin);
+        Task<List<AttendanceReport>> GetAttendanceReport(int userId, DateTime fromDate, DateTime toDate, bool isAdmin);
+        Task<bool> AddManualAttendanceAsync(ManualAttendanceDto dto, int adminId);
     }
 }
