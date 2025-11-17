@@ -1,21 +1,18 @@
-﻿using Dapper;
-using HRM.Interfaces;
-using HRM.Models.Attendance;
+﻿using Attendance.API.Interfaces;
+using Attendance.API.Models.Attendance;
+using Dapper;
 using Microsoft.Data.SqlClient;
-using SkiaSharp;
 
-namespace HRM.Services
+namespace Attendance.API.Services
 {
-    public class AttendanceService : IAttendanceService
+    public class AttendanceService: IAttendanceService
     {
         private readonly string _connectionString;
-        private readonly BaseService _baseService;
 
-        public AttendanceService(IConfiguration configuration, BaseService baseService)
+        public AttendanceService(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new ArgumentNullException(nameof(_connectionString));
-            _baseService = baseService;
         }
         public Task<bool> AddManualAttendanceAsync(ManualAttendanceDto dto, int adminId)
         {

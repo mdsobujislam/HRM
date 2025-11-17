@@ -1,6 +1,6 @@
-﻿using HRM.Models.Attendance;
+﻿using Attendance.API.Models.Attendance;
 
-namespace HRM.Interfaces
+namespace Attendance.API.Interfaces
 {
     public interface IAttendanceService
     {

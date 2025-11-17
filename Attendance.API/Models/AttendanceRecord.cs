@@ -1,4 +1,4 @@
-﻿namespace HRM.Models
+﻿namespace Attendance.API.Models
 {
     public class AttendanceRecord
     {
@@ -13,7 +13,7 @@
         public DateTime Timestamp { get; set; }
         public int WorkCode { get; set; }
         public string RecordKey { get; set; }
-        public int? UserId { get; set; }
-        public User User { get; set; }
+        //public int? UserId { get; set; }
+        //public User User { get; set; }
     }
 }

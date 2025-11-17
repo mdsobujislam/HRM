@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRM", "HRM\HRM.csproj", "{0E82B44D-AAA3-4D77-A0A4-0D059B8DB767}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Attendance.API", "Attendance.API\Attendance.API.csproj", "{EEABA476-153F-45AB-ADFE-75773E7D0F77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0E82B44D-AAA3-4D77-A0A4-0D059B8DB767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E82B44D-AAA3-4D77-A0A4-0D059B8DB767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E82B44D-AAA3-4D77-A0A4-0D059B8DB767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEABA476-153F-45AB-ADFE-75773E7D0F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEABA476-153F-45AB-ADFE-75773E7D0F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEABA476-153F-45AB-ADFE-75773E7D0F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEABA476-153F-45AB-ADFE-75773E7D0F77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

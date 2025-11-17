@@ -1,7 +1,7 @@
-﻿using HRM.Helpers;
+﻿using Attendance.API.Helpers;
 using System.Text.Json.Serialization;
 
-namespace HRM.Models.Attendance
+namespace Attendance.API.Models.Attendance
 {
     public class AttendanceBatchDto
     {

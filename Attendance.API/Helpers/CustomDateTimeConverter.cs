@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace HRM.Helpers
+namespace Attendance.API.Helpers
 {
     public class CustomDateTimeConverter: JsonConverter<DateTime>
     {

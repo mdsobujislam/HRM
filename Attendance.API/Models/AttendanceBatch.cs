@@ -1,4 +1,4 @@
-﻿namespace HRM.Models
+﻿namespace Attendance.API.Models
 {
     public class AttendanceBatch
     {

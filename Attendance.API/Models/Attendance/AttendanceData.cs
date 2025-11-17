@@ -1,4 +1,4 @@
-﻿namespace HRM.Models.Attendance
+﻿namespace Attendance.API.Models.Attendance
 {
     public class AttendanceData
     {
