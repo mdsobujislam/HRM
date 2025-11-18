@@ -19,21 +19,22 @@ namespace Attendance.API.Controllers
             _jwtService = jwtService;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(Login model)
-        {
-            var user = await _userRepo.GetLoginUserAsync(model.Email, model.Password);
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login(Login model)
+        //{
+        //    var user = await _userRepo.GetLoginUserAsync(model.Email, model.Password);
 
-            if (user == null)
-                return Unauthorized(new { message = "Invalid email or password" });
+        //    if (user == null)
+        //        return Unauthorized(new { message = "Invalid email or password" });
 
-            var token = _jwtService.GenerateToken(user);
+        //    var token = _jwtService.GenerateToken(user);
 
-            return Ok(new
-            {
-                token = token,
-                user = user
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        token = token,
+        //        user = user
+        //    });
+        //}
+
     }
 }

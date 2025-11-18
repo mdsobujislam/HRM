@@ -46,11 +46,7 @@ namespace Attendance.API.Services
                     {
                         try
                         {
-                            // Insert AttendanceBatch and get inserted ID
-                            var insertBatchQuery = @"
-                        INSERT INTO AttendanceBatch (BatchId, DeviceIp, MachineNumber, SentAt, CreatedAt)
-                        VALUES (@BatchId, @DeviceIp, @MachineNumber, @SentAt, @CreatedAt);
-                        SELECT CAST(SCOPE_IDENTITY() as bigint);";
+                            var insertBatchQuery = @" INSERT INTO AttendanceBatches (BatchId, DeviceIp, MachineNumber, SentAt, CreatedAt) VALUES (@BatchId, @DeviceIp, @MachineNumber, @SentAt, @CreatedAt); SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
                             var attendanceBatchId = await connection.ExecuteScalarAsync<long>(
                                 insertBatchQuery,
@@ -64,12 +60,7 @@ namespace Attendance.API.Services
                                 },
                                 transaction);
 
-                            // Insert AttendanceRecords in batch
-                            var insertRecordsQuery = @"
-                        INSERT INTO AttendanceRecord 
-                        (AttendanceBatchId, EnrollId, UserIdFromDevice, VerifyMode, InOutMode, DeviceTimestamp, Timestamp, WorkCode, RecordKey) 
-                        VALUES 
-                        (@AttendanceBatchId, @EnrollId, @UserIdFromDevice, @VerifyMode, @InOutMode, @DeviceTimestamp, @Timestamp, @WorkCode, @RecordKey);";
+                            var insertRecordsQuery = @" INSERT INTO AttendanceRecords (AttendanceBatchId, EnrollId, UserIdFromDevice, VerifyMode, InOutMode, DeviceTimestamp, Timestamp, WorkCode, RecordKey) VALUES (@AttendanceBatchId, @EnrollId, @UserIdFromDevice, @VerifyMode, @InOutMode, @DeviceTimestamp, @Timestamp, @WorkCode, @RecordKey);";
 
                             var recordsParams = dto.Records.Select(r => new
                             {
@@ -86,34 +77,22 @@ namespace Attendance.API.Services
 
                             await connection.ExecuteAsync(insertRecordsQuery, recordsParams, transaction);
 
-                            // Commit transaction if all succeeded
                             transaction.Commit();
-
                             return true;
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            // Rollback if any error happens during inserts
                             transaction.Rollback();
-
-                            Console.WriteLine($"Transaction error: {ex.Message}");
-                            if (ex.InnerException != null)
-                            {
-                                Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                            }
-
                             return false;
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                // Error opening connection or other errors
-                Console.WriteLine($"Connection error: {ex.Message}");
                 return false;
             }
-
         }
+
     }
 }
