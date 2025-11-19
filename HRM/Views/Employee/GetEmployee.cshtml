@@ -16,6 +16,7 @@
                         <thead class="table-primary">
                             <tr>
                                 <th>SL No.</th>
+                                <th>Emp ID</th>
                                 <th>Photo</th>
                                 <th>Emp Name</th>
                                 <th>Father Name</th>
@@ -53,6 +54,7 @@
                                 index++;
                                 <tr>
                                     <td>@index</td>
+                                    <td>@item.EmpId</td>
                                     <td>
                                         @{
                                             var photoPath = string.IsNullOrEmpty(item.UploadPhoto)
@@ -107,7 +109,7 @@
 
 
                                             <form asp-action="DeleteEmployee" method="post" class="deleteForm mb-0">
-                                                <input type="hidden" name="ID" value="@item.EmpId" />
+                                                <input type="hidden" name="ID" value="@item.Id" />
                                                 <button type="submit" class="btn btn-danger btn-sm">
                                                     <i class="fas fa-trash-alt"></i> Delete
                                                 </button>
@@ -213,11 +215,12 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-            function edit(empId, employeeName, fatherName, motherName, spouseName, dob, gender, bloodGroup, maritalStatus,
+            function edit(Id,empId, employeeName, fatherName, motherName, spouseName, dob, gender, bloodGroup, maritalStatus,
                   tinNo, nationalID, telephone, mobileNo, mailID, presentAddress, permanentAddress,
                   branchId, departmentId, designationId, dateOfAppointment, religion, nationality,
                   shift, version, uploadPhoto, jobType) {
 
+        document.getElementById("Id").value = Id;
         document.getElementById("EmpId").value = empId;
         document.getElementById("EmployeeName").value = employeeName;
         document.getElementById("FatherName").value = fatherName;

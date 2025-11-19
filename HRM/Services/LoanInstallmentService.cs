@@ -18,7 +18,7 @@ namespace HRM.Services
             _baseService = baseService;
         }
 
-        public async Task<List<LoanInstallment>> GetLoanInstallmentsAsync(int empId)
+        public async Task<List<LoanInstallment>> GetLoanInstallmentsAsync(string empId)
         {
             try
             {

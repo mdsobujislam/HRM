@@ -94,7 +94,7 @@ namespace HRM.Services
                     {
                         query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t5.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
                     }
-                    if (bonusCalculate.EmployeeId != 0)
+                    if (bonusCalculate.EmployeeId != "")
                     {
                         query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t3.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
                     }
@@ -128,24 +128,13 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    //var bonusDateQuery = @" SELECT TOP 1 t1.BonusDate FROM BonusCalculate t1 WHERE MONTH(t1.BonusDate) = MONTH(@BonusDate) AND YEAR(t1.BonusDate)  = YEAR(@BonusDate)";
+                    List<string> resultEmpId = new List<string>();
 
-                    //var existingBonusDate = await connection.QueryFirstOrDefaultAsync<DateTime?>( bonusDateQuery, new { bonusCalculate.BonusDate } );
-
-                    //if (existingBonusDate.HasValue)
-                    //{
-                    //    // Bonus for this month and year already exists
-                    //    return false;
-                    //}
-                    //else
-                    //{
-                        var resultEmpId = new List<int>();
-
-                        if (bonusCalculate.BranchId != 0)
+                    if (bonusCalculate.BranchId != 0)
                         {
                             var queryBranch = @"SELECT t1.EmpId as EmployeeId FROM Employees t1 WHERE t1.BranchId = @BranchId";
 
-                            var empIds = await connection.QueryAsync<int>(queryBranch, new { bonusCalculate.BranchId }
+                            var empIds = await connection.QueryAsync<string>(queryBranch, new { bonusCalculate.BranchId }
                             );
 
                             // Assign to list
@@ -156,20 +145,20 @@ namespace HRM.Services
                         {
                             var queryDepartment = @"Select t1.EmpId as EmployeeId from Employees t1 where t1.DepartmentId=@DesignationId";
 
-                            var resultDepId = await connection.QueryAsync<int>(queryDepartment, new { bonusCalculate.DesignationId });
+                            var resultDepId = await connection.QueryAsync<string>(queryDepartment, new { bonusCalculate.DesignationId });
                             resultEmpId = resultDepId.ToList();
                         }
                         else if (bonusCalculate.DepartmentId != 0)
                         {
                             var queryDesignation = @"Select t1.EmpId as EmployeeId from Employees t1 where t1.DepartmentId=@DepartmentId";
 
-                            var resultDesi = await connection.QueryAsync<int>(queryDesignation, new { bonusCalculate.DepartmentId });
+                            var resultDesi = await connection.QueryAsync<string>(queryDesignation, new { bonusCalculate.DepartmentId });
                             resultEmpId = resultDesi.ToList();
                         }
-                        else if (bonusCalculate.EmployeeId != 0)
+                        else if (bonusCalculate.EmployeeId != "")
                         {
                             var queryEmployee = @"Select t1.EmpId as EmployeeId from Employees t1 where t1.EmpId=@EmployeeId";
-                            var resultEmp = await connection.QueryAsync<int>(queryEmployee, new { bonusCalculate.EmployeeId });
+                            var resultEmp = await connection.QueryAsync<string>(queryEmployee, new { bonusCalculate.EmployeeId });
                             resultEmpId = resultEmp.ToList();
                         }
 
@@ -209,7 +198,7 @@ namespace HRM.Services
                                 parameters.Add("BonusDate", bonusCalculate.BonusDate, DbType.String);
                                 parameters.Add("Percentage", bonusCalculate.Percentage, DbType.Double);
                                 parameters.Add("BonusAmount", totalBonus, DbType.Double);
-                                parameters.Add("EmployeeId", empId, DbType.Int64);
+                                parameters.Add("EmployeeId", empId, DbType.String);
                                 parameters.Add("BranchId", empData.BranchId, DbType.Int64);
                                 parameters.Add("DesignationId", empData.DesignationId, DbType.Int64);
                                 parameters.Add("DepartmentId", empData.DepartmentId, DbType.Int64);

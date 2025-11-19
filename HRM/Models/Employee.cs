@@ -2,7 +2,8 @@
 {
     public class Employee
     {
-        public int EmpId { get; set; }
+        public int Id { get; set; }
+        public string EmpId { get; set; }
         public string EmployeeName { get; set; }
         public string FatherName { get; set; }
         public string MotherName { get; set; }

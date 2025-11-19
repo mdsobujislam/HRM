@@ -133,6 +133,7 @@ namespace HRM.Services
             }
         }
 
+
         public async Task<IEnumerable<object>> SearchEmployees(string term)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -144,21 +145,67 @@ namespace HRM.Services
 
                 await connection.OpenAsync();
 
-                var query = @" SELECT EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage FROM Employees WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term and SubscriptionId='"+ subscriptionId + "' and Status=1";
+                var query = @"
+            SELECT Id, EmpId, EmployeeName AS EmpName, UploadPhoto AS EmployeeImage 
+            FROM Employees 
+            WHERE 
+                SubscriptionId = @SubscriptionId 
+                AND Status = 1
+                AND (EmployeeName LIKE @Term OR EmpId LIKE @Term)
+        ";
 
-                var result = await connection.QueryAsync<EmployeeDto>(query, new { Term = $"%{term}%" });
+                var result = await connection.QueryAsync<EmployeeDto>(query, new
+                {
+                    SubscriptionId = subscriptionId,
+                    Term = $"%{term}%"
+                });
 
                 return result.Select(e => new
                 {
-                    id = e.EmpId,
-                    label = $"{e.EmpId} {e.EmpName}",        // shown in dropdown
-                    value = $"{e.EmpId} {e.EmpName}",        // sets in textbox
+                    id = e.Id,
+                    empId = e.EmpId,
+                    empName = e.EmpName,
+                    label = $"{e.EmpId} – {e.EmpName}", // show both
                     image = string.IsNullOrEmpty(e.EmployeeImage)
-                            ? "/profile/default/defaultPic.jpg"        // default image
-                            : e.EmployeeImage.StartsWith("http") ? e.EmployeeImage : $"/profile/{e.EmployeeImage}"
+            ? "/profile/default/defaultPic.jpg"
+            : e.EmployeeImage.StartsWith("http")
+                ? e.EmployeeImage
+                : $"/profile/{e.EmployeeImage}"
                 }).ToList();
+
+
             }
         }
+
+
+
+
+        //public async Task<IEnumerable<object>> SearchEmployees(string term)
+        //{
+        //    using (var connection = new SqlConnection(_connectionString))
+        //    {
+        //        var subscriptionId = _baseService.GetSubscriptionId();
+        //        var userId = _baseService.GetUserId();
+        //        var branchId = await _baseService.GetBranchId(subscriptionId, userId);
+        //        var companyId = await _baseService.GetCompanyId(subscriptionId);
+
+        //        await connection.OpenAsync();
+
+        //        var query = @" SELECT Id,EmpId as EmpId, EmployeeName AS EmpName, UploadPhoto as EmployeeImage FROM Employees WHERE EmployeeName LIKE @Term OR CAST(EmpId AS NVARCHAR) LIKE @Term and SubscriptionId='" + subscriptionId + "' and Status=1";
+
+        //        var result = await connection.QueryAsync<EmployeeDto>(query, new { Term = $"%{term}%" });
+
+        //        return result.Select(e => new
+        //        {
+        //            id = e.Id,
+        //            label = $"{e.EmpId} {e.EmpName}",        // shown in dropdown
+        //            value = $"{e.EmpId} {e.EmpName}",        // sets in textbox
+        //            image = string.IsNullOrEmpty(e.EmployeeImage)
+        //                    ? "/profile/default/defaultPic.jpg"        // default image
+        //                    : e.EmployeeImage.StartsWith("http") ? e.EmployeeImage : $"/profile/{e.EmployeeImage}"
+        //        }).ToList();
+        //    }
+        //}
 
 
 

@@ -53,7 +53,7 @@ namespace HRM.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrUpdate(Employee employee, IFormFile PhotoFile)
         {
-            if (employee.EmpId == 0)
+            if (employee.Id == 0)
             {
                 bool isCreated = await _employeeService.InsertEmployee(employee, PhotoFile);
                 if (!isCreated)

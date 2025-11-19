@@ -123,13 +123,21 @@
 
                     </div>
                     <form asp-action="CreateOrUpdate" method="post" enctype="multipart/form-data">
-                        <input type="hidden" id="empId" name="empId">
+                        <input type="hidden" id="Id" name="Id">
                         <div class="panel panel-primary setup-content" id="QutationStep-1">
                             <div class="tab-pane active " role="tabpanel" id="step1">
                                 <input name="Applicant_Id" hidden class="Applicant_Input" />
                                 <div class="card shadow mt-1" style="width: 100%;">
                                     <div class="card-body ">
                                         <div class="row">
+                                            <div class="row">
+                                                <label class="col-sm-3 col-form-label">Employee Id:</label>
+                                                <div class="col-sm-9 pt-1">
+                                                    <div class="form-group">
+                                                        <input id="EmpId" name="EmpId" class="form-control form-control-sm w-100 " type="text" placeholder=" Enter the Employee Id" tabIndex="2" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <label class="col-sm-3 col-form-label">Employee Name:</label>
                                                 <div class="col-sm-9 pt-1">
@@ -495,9 +503,13 @@
                                                                 <div class="row">
                                                                     <label class="col-sm-4 col-form-label">Additional Info :</label>
                                                                     <div class="col-sm-8 pt-1 d-flex">
-                                                                        <select id="AdditionalInfo" name="AdditionalInfoId" class="form-control form-control-sm me-2">
+                                                                        @* <select id="AdditionalInfo" name="AdditionalInfoId" class="form-control form-control-sm me-2">
+                                                                            <option value="">-- Select Info --</option>
+                                                                        </select> *@
+                                                                        <select id="AdditionalInfo" name="AdditionalId" class="form-control form-control-sm me-2">
                                                                             <option value="">-- Select Info --</option>
                                                                         </select>
+
                                                                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addInfoModal">Add</button>
                                                                     </div>
                                                                 </div>
@@ -621,6 +633,7 @@
 <script>
 
     function resetBranch() {
+    document.getElementById("Id").value = "";
     document.getElementById("empId").value = "";
     document.getElementById("EmployeeNAME").value = "";
     document.getElementById("FatherNAME").value = "";

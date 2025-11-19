@@ -7,6 +7,6 @@
         public double netAmount { get; set; }
         public string dateOfPayment { get; set; }
         public int LoanId { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
     }
 }

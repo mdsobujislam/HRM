@@ -10,7 +10,7 @@
         public string ToDate { get; set; }
         public double BonusAmount { get; set; }
         public double Percentage { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
         public string Employee { get; set; }
         public int BranchId { get; set; }
         public string Branch { get; set; }

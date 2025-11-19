@@ -15,11 +15,24 @@
                     <input type="hidden" asp-for="Id" />
 
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        @* <div class="col-md-4 mb-3">
                             <label asp-for="EmployeeId" class="form-label">Employee Name</label>
                             <input asp-for="EmployeeId" class="form-control" id="EmployeeId" type="text" autocomplete="off" />
                             <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div> *@
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Employee</label>
+
+                            <!-- Search box -->
+                            <input id="EmployeeSearch" class="form-control" type="text" autocomplete="off" />
+
+                            <!-- Hidden EmpId -->
+                            <input asp-for="EmployeeId" id="EmployeeId" type="hidden" />
+
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
                         </div>
+
+
 
 
 
@@ -178,31 +191,35 @@
         }
 
         //Start Autocomplete Search
-                                        $(function () {
-            $("#EmployeeId").autocomplete({
+                   $(function () {
+            $("#EmployeeSearch").autocomplete({
                 source: '/EmployeeSeparation/SearchEmployeess',
                 minLength: 1,
+
                 focus: function (event, ui) {
-                    $("#EmployeeId").val(ui.item.label);
+                    $("#EmployeeSearch").val(ui.item.label);
                     return false;
                 },
+
                 select: function (event, ui) {
-                    $("#EmployeeId").val(ui.item.value); // sets ID + Name in textbox
+                    $("#EmployeeSearch").val(ui.item.label); // show ID + Name
+                    $("#EmployeeId").val(ui.item.empId);      // store ONLY ID
                     return false;
                 }
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
-                var $li = $("<li>");
-                var $content = $(
-                    "<div style='display:flex; align-items:center; gap:10px;'>" +
-                        "<img src='" + item.image + "' style='width:60px; height:60px; border-radius:50%; object-fit:cover;' />" +
-                        "<span>" + item.label + "</span>" +
-                    "</div>"
-                );
-                $li.append($content);
-                return $li.appendTo(ul);
+                return $("<li>")
+                    .append(`
+                        <div style='display:flex; align-items:center; gap:10px;'>
+                            <img src='${item.image}' style='width:50px; height:50px; border-radius:50%; object-fit:cover;' />
+                            <span>${item.label}</span>
+                        </div>
+                    `)
+                    .appendTo(ul);
             };
         });
+
+
         //End Autocomplete Search
 
 

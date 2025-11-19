@@ -24,13 +24,16 @@ public class BaseService
         return int.TryParse(subscriptionIdClaim, out var subscriptionId) ? subscriptionId : 0;
     }
 
-    public int GetUserId()
+    public string GetUserId()
     {
-        var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-        return int.TryParse(userId, out var EmployeeId) ? EmployeeId : 0;
+        var userId = _httpContextAccessor.HttpContext!
+            .User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        return userId ?? "0";
     }
-    
-    public async Task<int> GetBranchId(int subscriptionId, int userId)
+
+
+    public async Task<int> GetBranchId(int subscriptionId, string userId)
     {
         const string query = @" SELECT BranchId FROM Employees WHERE EmpId = @UserId AND SubscriptionId = @SubscriptionId";
 

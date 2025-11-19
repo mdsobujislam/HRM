@@ -3,7 +3,7 @@
     public class LoanApplication
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
         public string EmployeeName { get; set; }
         public string AppliDate { get; set; }
         public string Branch { get; set; }

@@ -19,7 +19,7 @@ namespace HRM.Controllers
         //    return View(loanInstallments);
         //}
 
-        public async Task<IActionResult> Index(int empId)
+        public async Task<IActionResult> Index(string empId)
         {
             var loanInstallments = await _loanInstallmentService.GetLoanInstallmentsAsync(empId);
 

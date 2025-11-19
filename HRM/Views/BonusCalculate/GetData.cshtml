@@ -116,7 +116,6 @@
                             <th>Branch</th>
                             <th>Designation</th>
                             <th>Department</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,19 +137,7 @@
                                 <td>@item.Branch</td>
                                 <td>@item.Designation</td>
                                 <td>@item.Department</td>
-                                <td class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-warning btn-sm"
-                                            onclick="editBranch('@item.Id', '@item.BranchId')"
-                                            data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <form asp-action="DeleteDepartment" method="post" class="deleteForm">
-                                        <input type="hidden" name="ID" value="@item.Id" />
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
+                                
 
                             </tr>
                         }

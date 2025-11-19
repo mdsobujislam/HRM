@@ -3,7 +3,7 @@
     public class LoanApproval
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
         public string EmployeeName { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }

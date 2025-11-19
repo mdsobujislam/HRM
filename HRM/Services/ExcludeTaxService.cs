@@ -38,7 +38,7 @@ namespace HRM.Services
                     new { subscriptionId, branchId })).ToList();
 
                 // ExcludeTax এ যাদের আছে (branch filter optional)
-                var excluded = (await connection.QueryAsync<int>(
+                var excluded = (await connection.QueryAsync<string>(
                     @"SELECT EmployeeId FROM ExcludeTax
               WHERE MonthIndex = @monthIndex AND Year = @year AND (@branchId = 0 OR BranchId = @branchId)",
                     new { monthIndex, year, branchId })).ToHashSet();

@@ -15,18 +15,6 @@ namespace HRM.Controllers
             _addUser = addUser ?? throw new ArgumentNullException(nameof(addUser));
             _branchService = branchService;
         }
-        //public async Task<IActionResult> Index()
-        //{
-        //    var branches = await _branchService.GetAllBranch();
-        //    ViewBag.BranchList = branches.Select(b => new SelectListItem
-        //    {
-        //        Value = b.Id.ToString(),
-        //        Text = b.Name
-        //    }).ToList();
-
-        //    var users = await _addUser.GetAllAddUser();
-        //    return View(new AddUser());
-        //}
 
         public async Task<IActionResult> Index()
         {

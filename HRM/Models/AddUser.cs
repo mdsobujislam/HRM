@@ -9,6 +9,7 @@
         public string Email { get; set; }
         public string Password { get; set; }
         public int BranchId { get; set; }
+        public string BranchName { get; set; }
         public bool Status { get; set; }
     }
 }

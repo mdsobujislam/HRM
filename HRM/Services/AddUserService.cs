@@ -53,7 +53,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"Select t1.Id,t1.Name,t1.MobileNo,t1.Email,t1.Password,t2.Name from Users t1 JOIN Branch t2 on t1.BranchId=t2.Id WHERE t1.SubscriptionId=@subscriptionId";
+                    var query = @"Select t1.Id,t1.Name as Name,t1.MobileNo,t1.Email as Email,t1.Password,t2.Name as BranchName from Users t1 JOIN Branch t2 on t1.BranchId=t2.Id WHERE t1.SubscriptionId=@subscriptionId";
 
                     var result = await connection.QueryAsync<AddUser>(query, new { subscriptionId });
                     return result.ToList();
@@ -78,16 +78,17 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into Users (Name,MobileNo,Email,Password,SubscriptionId,BranchId,CreatedAt) values ";
-                    queryString += "( @Name,@MobileNo,@Email,@Password,@SubscriptionId,@BranchId,@CreatedAt)";
+                    var queryString = "insert into Users (Name,MobileNo,Email,Password,SubscriptionId,BranchId,CreatedAt,Status) values ";
+                    queryString += "( @Name,@MobileNo,@Email,@Password,@SubscriptionId,@BranchId,@CreatedAt,@Status)";
                     var parameters = new DynamicParameters();
                     parameters.Add("Name", addUser.Name, DbType.String);
                     parameters.Add("MobileNo", addUser.MobileNo, DbType.String);
                     parameters.Add("Email", addUser.Email, DbType.String);
                     parameters.Add("Password", addUser.Password, DbType.String);
                     parameters.Add("SubscriptionId", subscriptionId);
-                    parameters.Add("BranchId", addUser.BranchId);
+                    parameters.Add("BranchId", branchId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
+                    parameters.Add("Status", 1);
                     var success = await connection.ExecuteAsync(queryString, parameters);
                     if (success > 0)
                     {

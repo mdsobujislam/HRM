@@ -378,7 +378,7 @@
                         </li>
 
                         <!-- Joining Formalities MENU -->
-                        @{
+                        @* @{
                             var joiningFormalitiesControllers = new[] { "JoiningFormalities", "EmployeeJoiningFormalities" };
                             var isjoiningFormalitiesActive = joiningFormalitiesControllers.Contains(currentController);
                         }
@@ -393,7 +393,7 @@
                                 <li><a asp-controller="EmployeeJoiningFormalities" asp-action="Index" class="@(currentController == "EmployeeJoiningFormalities" ? "active-link" : "")">Create Leave Type</a></li>
 
                             </ul>
-                        </li>
+                        </li> *@
 
                         <!-- HR POLICY MENU -->
                         @{
@@ -412,11 +412,11 @@
                                 <li><a asp-controller="LeaveAllotment" asp-action="Index" class="@(currentController == "LeaveAllotment" ? "active-link" : "")">Leave Calculation Logic</a></li>
                                 <li><a asp-controller="LateAttendance" asp-action="Index" class="@(currentController == "LateAttendance" ? "active-link" : "")">Late/Early Login/Logout Punishment</a></li>
                                 <li><a asp-controller="OffDays" asp-action="Index" class="@(currentController == "OffDays" ? "active-link" : "")">Weekly Off day</a></li>
-                                <li><a asp-controller="HolidayCalendar" asp-action="Index" class="@(currentController == "HolidayCalendar" ? "active-link" : "")">Holiday Calendar</a></li>
+                                @* <li><a asp-controller="HolidayCalendar" asp-action="Index" class="@(currentController == "HolidayCalendar" ? "active-link" : "")">Holiday Calendar</a></li> *@
                                 <li><a asp-controller="SalaryHeads" asp-action="Index" class="@(currentController == "SalaryHeads" ? "active-link" : "")">Salary Heads</a></li>
                                 <li><a asp-controller="SalaryCalculation" asp-action="Index" class="@(currentController == "SalaryCalculation" ? "active-link" : "")">Salary Calculation</a></li>
                                 <li><a asp-controller="SalaryCreate" asp-action="Index" class="@(currentController == "SalaryCreate" ? "active-link" : "")">Salary Create</a></li>
-                                <li><a asp-controller="Overtime" asp-action="Index" class="@(currentController == "Overtime" ? "active-link" : "")">Overtime Calculation</a></li>
+                                @* <li><a asp-controller="Overtime" asp-action="Index" class="@(currentController == "Overtime" ? "active-link" : "")">Overtime Calculation</a></li> *@
                                 <li><a asp-controller="BonusCalculate" asp-action="Index" class="@(currentController == "BonusCalculate" && currentAction == "Index" ? "active-link" : "")">Bonus Create</a></li>
                                 <li><a asp-controller="BonusCalculate" asp-action="GetData" class="@(currentController == "BonusCalculate" && currentAction == "GetData" ? "active-link" : "")">Bonus List</a></li>
                                 <li><a asp-controller="BonusCalculate" asp-action="ShowData" class="@(currentController == "BonusCalculate" && currentAction == "ShowData" ? "active-link" : "")">Report</a></li>
