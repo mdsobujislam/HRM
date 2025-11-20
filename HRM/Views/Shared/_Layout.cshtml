@@ -304,13 +304,13 @@
 
                         <!-- SETTINGS MENU -->
                         @{
-                            var settingsControllers = new[] { "Companies", "Branch", "AddUser", "Department", "Designation", "Employee" };
+                            var settingsControllers = new[] { "Companies", "Branch", "AddUser", "Department", "Designation" };
                             var isSettingsActive = settingsControllers.Contains(currentController);
                         }
                         <li class="submenu @(isSettingsActive ? "active" : "")">
                             <a href="javascript:void(0);" class="@(isSettingsActive ? "subdrop" : "")">
-                                <i data-feather="settings" class="me-2"></i>
-                                <span>Settings</span>
+                                <i data-feather="home" class="me-2"></i>
+                                <span>Organization</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul style="display: @(isSettingsActive ? "block" : "none")">
@@ -319,22 +319,22 @@
                                 <li><a asp-controller="AddUser" asp-action="Index" class="@(currentController == "AddUser" ? "active-link" : "")">Add User</a></li>
                                 <li><a asp-controller="Department" asp-action="Index" class="@(currentController == "Department" ? "active-link" : "")">Department</a></li>
                                 <li><a asp-controller="Designation" asp-action="Index" class="@(currentController == "Designation" ? "active-link" : "")">Designation</a></li>
-                                <li><a asp-controller="Employee" asp-action="Index" class="@(currentController == "Employee" && currentAction == "Index" ? "active-link" : "")">Employee</a></li>
-                                <li><a asp-controller="Employee" asp-action="GetEmployee" class="@(currentController == "Employee" && currentAction == "GetEmployee" ? "active-link" : "")">Employee List</a></li>
                             </ul>
                         </li>
-                        <!-- Employee Separation MENU -->
+                        <!-- Employee MENU -->
                         @{
-                            var separationControllers = new[] { "SeparationReasons", "EmployeeSeparation" };
+                            var separationControllers = new[] { "Employee", "SeparationReasons", "EmployeeSeparation" };
                             var isSeparationActive = separationControllers.Contains(currentController);
                         }
                         <li class="submenu @(isSeparationActive ? "active" : "")">
                             <a href="javascript:void(0);" class="@(isSeparationActive ? "subdrop" : "")">
-                                <i data-feather="user-x" class="me-2"></i>
-                                <span>Employee Separation</span>
+                                <i data-feather="user" class="me-2"></i>
+                                <span>Employee</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul style="display: @(isSeparationActive ? "block" : "none")">
+                                <li><a asp-controller="Employee" asp-action="Index" class="@(currentController == "Employee" && currentAction == "Index" ? "active-link" : "")">Employee</a></li>
+                                <li><a asp-controller="Employee" asp-action="GetEmployee" class="@(currentController == "Employee" && currentAction == "GetEmployee" ? "active-link" : "")">Employee List</a></li>
                                 <li class="@(currentController == "SeparationReasons" ? "active" : "")">
                                     <a asp-controller="SeparationReasons" asp-action="Index" style="@(currentController != "SeparationReasons" ? "active-link" : "")">Separation Reason</a>
                                 </li>
@@ -397,7 +397,7 @@
 
                         <!-- HR POLICY MENU -->
                         @{
-                            var hrPolicyControllers = new[] { "DutySlot", "LeaveType", "LeaveAllotment", "LateAttendance", "OffDays", "HolidayCalendar", "SalaryHeads", "SalaryCalculation", "SalaryCreate", "Overtime", "BonusCalculate" };
+                            var hrPolicyControllers = new[] { "DutySlot", "LeaveType", "LeaveAllotment", "LateAttendance", "OffDays", "HolidayCalendar", "Overtime" };
                             var isHrPolicyActive = hrPolicyControllers.Contains(currentController);
                         }
                         <li class="submenu @(isHrPolicyActive ? "active" : "")">
@@ -413,18 +413,53 @@
                                 <li><a asp-controller="LateAttendance" asp-action="Index" class="@(currentController == "LateAttendance" ? "active-link" : "")">Late/Early Login/Logout Punishment</a></li>
                                 <li><a asp-controller="OffDays" asp-action="Index" class="@(currentController == "OffDays" ? "active-link" : "")">Weekly Off day</a></li>
                                 @* <li><a asp-controller="HolidayCalendar" asp-action="Index" class="@(currentController == "HolidayCalendar" ? "active-link" : "")">Holiday Calendar</a></li> *@
-                                <li><a asp-controller="SalaryHeads" asp-action="Index" class="@(currentController == "SalaryHeads" ? "active-link" : "")">Salary Heads</a></li>
-                                <li><a asp-controller="SalaryCalculation" asp-action="Index" class="@(currentController == "SalaryCalculation" ? "active-link" : "")">Salary Calculation</a></li>
-                                <li><a asp-controller="SalaryCreate" asp-action="Index" class="@(currentController == "SalaryCreate" ? "active-link" : "")">Salary Create</a></li>
+                                
                                 @* <li><a asp-controller="Overtime" asp-action="Index" class="@(currentController == "Overtime" ? "active-link" : "")">Overtime Calculation</a></li> *@
+                                
+                            </ul>
+                        </li>
+
+                        <!-- Bonus MENU -->
+                        @{
+                            var BonusControllers = new[] { "BonusCalculate" };
+                            var isBonusActive = BonusControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isBonusActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isBonusActive ? "subdrop" : "")">
+                                <i data-feather="award" class="me-2"></i>
+                                <span>Bonus</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul style="display: @(isBonusActive ? "block" : "none")">
                                 <li><a asp-controller="BonusCalculate" asp-action="Index" class="@(currentController == "BonusCalculate" && currentAction == "Index" ? "active-link" : "")">Bonus Create</a></li>
                                 <li><a asp-controller="BonusCalculate" asp-action="GetData" class="@(currentController == "BonusCalculate" && currentAction == "GetData" ? "active-link" : "")">Bonus List</a></li>
                                 <li><a asp-controller="BonusCalculate" asp-action="ShowData" class="@(currentController == "BonusCalculate" && currentAction == "ShowData" ? "active-link" : "")">Report</a></li>
                             </ul>
                         </li>
 
-                        <!-- Payroll MENU -->
+                        <!-- Salary MENU -->
                         @{
+                            var salaryControllers = new[] { "SalaryHeads", "SalaryCalculation", "SalaryCreate" };
+                            var isSalaryyActive = salaryControllers.Contains(currentController);
+                        }
+                        <li class="submenu @(isSalaryyActive ? "active" : "")">
+                            <a href="javascript:void(0);" class="@(isSalaryyActive ? "subdrop" : "")">
+                                <i data-feather="dollar-sign" class="me-2"></i>
+                                <span>Salary</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul style="display: @(isSalaryyActive ? "block" : "none")">
+                                
+                                <li><a asp-controller="SalaryHeads" asp-action="Index" class="@(currentController == "SalaryHeads" ? "active-link" : "")">Salary Heads</a></li>
+                                <li><a asp-controller="SalaryCalculation" asp-action="Index" class="@(currentController == "SalaryCalculation" ? "active-link" : "")">Salary Calculation</a></li>
+                                <li><a asp-controller="SalaryCreate" asp-action="Index" class="@(currentController == "SalaryCreate" ? "active-link" : "")">Salary Create</a></li>
+                                @* <li><a asp-controller="SalaryCreate" asp-action="SalaryReport" class="@(currentController == "SalaryCreate" ? "active-link" : "")">Salary Report</a></li> *@
+                                
+                            </ul>
+                        </li>
+
+                        <!-- Payroll MENU -->
+                        @* @{
                             var payrollControllers = new[] { "Attendance" };
                             var isPayrollActive = payrollControllers.Contains(currentController);
                         }
@@ -441,7 +476,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> *@
 
 
                         <!-- TAx MENU -->
@@ -487,7 +522,7 @@
                         }
                         <li class="submenu @(isLeaveActive ? "active" : "")">
                             <a href="javascript:void(0);" class="@(isLeaveActive ? "subdrop" : "")">
-                                <i data-feather="archive" class="me-2"></i>
+                                <i data-feather="calendar" class="me-2"></i>
                                 <span>Leave Application</span>
                                 <span class="menu-arrow"></span>
                             </a>

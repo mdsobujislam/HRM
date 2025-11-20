@@ -52,7 +52,7 @@ namespace HRM.Services
                     var userId = _baseService.GetUserId();
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
 
-                    var query = @"select t1.Id as Id, CONVERT(varchar(10), t1.Date, 23) as Date, t1.IncomeSlab, t1.TaxPer, t1.BranchId, t1.DepartmentId, t1.AdditionalId, t2.AdditionalInfoName, t3.Name as BranchName, t4.DepartmentName from TaxSlab t1 JOIN AdditionalInfo t2 on t1.AdditionalId = t2.Id JOIN Branch t3 on t1.BranchId = t3.Id JOIN Department t4 on t1.DepartmentId = t4.Id WHERE t1.SubscriptionId = @subscriptionId";
+                    var query = @"select t1.Id as Id, CONVERT(varchar(10), t1.Date, 23) as Date, t1.IncomeSlab, t1.TaxPer, t1.BranchId, t1.DepartmentId, t1.AdditionalId, t2.AdditionalInfoName, t3.Name as BranchName from TaxSlab t1 JOIN AdditionalInfo t2 on t1.AdditionalId = t2.Id JOIN Branch t3 on t1.BranchId = t3.Id  WHERE t1.SubscriptionId = @subscriptionId";
 
                     var result = await connection.QueryAsync<TaxtSlabSetup>(query, new { subscriptionId });
                     return result.ToList();
@@ -77,15 +77,14 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "insert into TaxSlab (Date,IncomeSlab,TaxPer,AdditionalId,BranchId,DepartmentId,SubscriptionId,CompanyId,CreatedAt) values ";
-                    queryString += "( @Date,@IncomeSlab,@TaxPer,@AdditionalId,@BranchId,@DepartmentId,@SubscriptionId,@CompanyId,@CreatedAt)";
+                    var queryString = "insert into TaxSlab (Date,IncomeSlab,TaxPer,AdditionalId,BranchId,SubscriptionId,CompanyId,CreatedAt) values ";
+                    queryString += "( @Date,@IncomeSlab,@TaxPer,@AdditionalId,@BranchId,@SubscriptionId,@CompanyId,@CreatedAt)";
                     var parameters = new DynamicParameters();
                     parameters.Add("Date", taxtSlabSetup.Date, DbType.String);
                     parameters.Add("IncomeSlab", taxtSlabSetup.IncomeSlab, DbType.Double);
                     parameters.Add("TaxPer", taxtSlabSetup.TaxPer, DbType.Double);
                     parameters.Add("AdditionalId", taxtSlabSetup.AdditionalId, DbType.Int64);
                     parameters.Add("BranchId", taxtSlabSetup.BranchId, DbType.Int64);
-                    parameters.Add("DepartmentId", taxtSlabSetup.DepartmentId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
@@ -116,14 +115,13 @@ namespace HRM.Services
                     var branchId = await _baseService.GetBranchId(subscriptionId, userId);
                     var companyId = await _baseService.GetCompanyId(subscriptionId);
 
-                    var queryString = "Update TaxSlab set Date=@Date,IncomeSlab=@IncomeSlab,TaxPer=@TaxPer,AdditionalId=@AdditionalId,BranchId=@BranchId,DepartmentId=@DepartmentId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='" + taxtSlabSetup.Id + "' ";
+                    var queryString = "Update TaxSlab set Date=@Date,IncomeSlab=@IncomeSlab,TaxPer=@TaxPer,AdditionalId=@AdditionalId,BranchId=@BranchId,SubscriptionId=@SubscriptionId,CompanyId=@CompanyId,UpdatedAt=@UpdatedAt where Id='" + taxtSlabSetup.Id + "' ";
                     var parameters = new DynamicParameters();
                     parameters.Add("Date", taxtSlabSetup.Date, DbType.String);
                     parameters.Add("IncomeSlab", taxtSlabSetup.IncomeSlab, DbType.Double);
                     parameters.Add("TaxPer", taxtSlabSetup.TaxPer, DbType.Double);
                     parameters.Add("AdditionalId", taxtSlabSetup.AdditionalId, DbType.Int64);
                     parameters.Add("BranchId", taxtSlabSetup.BranchId, DbType.Int64);
-                    parameters.Add("DepartmentId", taxtSlabSetup.DepartmentId, DbType.Int64);
                     parameters.Add("SubscriptionId", subscriptionId);
                     parameters.Add("CompanyId", companyId);
                     parameters.Add("UpdatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);

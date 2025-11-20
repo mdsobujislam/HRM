@@ -200,12 +200,12 @@ namespace HRM.Services
                         {
                             // Insert into LeaveRecords
                             var queryString = @"INSERT INTO LeaveRecords 
-                (EmployeeId, LeaveTypeId, StartDate, EndDate, NumberOfDays, Reason,ApprovedByImmediateBossStatus,ApprovedByHRStatus, CreatedBy, CreatedAt, BranchId, SubscriptionId, CompanyId)
-                VALUES (@EmployeeId, @LeaveTypeId, @StartDate, @EndDate, @NumberOfDays, @Reason,@ApprovedByImmediateBossStatus,@ApprovedByHRStatus, @CreatedBy, @CreatedAt, @BranchId, @SubscriptionId, @CompanyId);
+                (EmployeeId, LeaveTypeId, StartDate, EndDate, NumberOfDays, Reason,ApprovedByImmediateBossStatus,ApprovedByHRStatus, CreatedAt, BranchId, SubscriptionId, CompanyId)
+                VALUES (@EmployeeId, @LeaveTypeId, @StartDate, @EndDate, @NumberOfDays, @Reason,@ApprovedByImmediateBossStatus,@ApprovedByHRStatus, @CreatedAt, @BranchId, @SubscriptionId, @CompanyId);
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
                             var parameters = new DynamicParameters();
-                            parameters.Add("EmployeeId", userId, DbType.Int64);
+                            parameters.Add("EmployeeId", userId, DbType.String);
                             parameters.Add("LeaveTypeId", leaveApplication.LeaveTypeId, DbType.Int64);
 
                             var startDate = Convert.ToDateTime(leaveApplication.StartDate);
@@ -218,7 +218,6 @@ namespace HRM.Services
                             parameters.Add("Reason", leaveApplication.Reason, DbType.String);
                             parameters.Add("ApprovedByImmediateBossStatus", 0);
                             parameters.Add("ApprovedByHRStatus", 0);
-                            parameters.Add("CreatedBy", userId, DbType.Int64);
                             parameters.Add("CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DbType.String);
                             parameters.Add("BranchId", branchId, DbType.Int64);
                             parameters.Add("SubscriptionId", subscriptionId);

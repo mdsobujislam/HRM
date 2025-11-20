@@ -86,18 +86,18 @@ namespace HRM.Services
                     {
                         query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t4.Id = '"+bonusCalculate.BranchId+"' AND t1.BonusDate BETWEEN '"+bonusCalculate.FromDate+ "' AND '"+bonusCalculate.ToDate+"' ";
                     }
-                    if (bonusCalculate.DepartmentId != 0)
-                    {
-                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t6.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
-                    }
-                    if (bonusCalculate.DesignationId != 0)
-                    {
-                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t5.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
-                    }
-                    if (bonusCalculate.EmployeeId != "")
-                    {
-                        query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t3.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
-                    }
+                    //if (bonusCalculate.DepartmentId != 0)
+                    //{
+                    //    query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t6.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
+                    //}
+                    //if (bonusCalculate.DesignationId != 0)
+                    //{
+                    //    query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t5.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
+                    //}
+                    //if (bonusCalculate.EmployeeId != "")
+                    //{
+                    //    query = @"SELECT t2.BonusTypesName AS BonusType, CONVERT(varchar(10), t1.BonusDate, 103) AS BonusDate, t3.EmployeeName AS Employee, t4.Name AS Branch, t5.DesignationName AS Designation, t6.DepartmentName AS Department, t1.Percentage, t1.BonusAmount FROM BonusCalculate t1 JOIN BonusType t2 ON t2.Id = t1.BonusTypeId JOIN Employees t3 ON t3.EmpId = t1.EmployeeId JOIN Branch t4 ON t4.Id = t1.BranchId JOIN Designation t5 ON t5.Id = t1.DesignationId JOIN Department t6 ON t6.Id = t1.DepartmentId WHERE t1.SubscriptionId = '" + subscriptionId + "' AND t3.Id = '" + bonusCalculate.DepartmentId + "' AND t1.BonusDate BETWEEN '" + bonusCalculate.FromDate + "' AND '" + bonusCalculate.ToDate + "' ";
+                    //}
 
                     if (string.IsNullOrEmpty(bonusCalculate.FromDate) || string.IsNullOrEmpty(bonusCalculate.ToDate))
                     {

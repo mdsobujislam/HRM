@@ -1,21 +1,14 @@
 ﻿@model IEnumerable<HRM.Models.SalaryCreate>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "SalaryReport";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-@* @if (TempData["Error"] != null)
-{
-    <div class="alert alert-warning">
-        @TempData["Error"]
-    </div>
-} *@
 
 <div class="row justify-content-center">
     <div class="col-lg-12">
         <div class="card shadow-sm rounded-3">
             <div class="card-body">
-                <form method="post" asp-action="Index">
+                <form method="post" asp-action="SalaryReport">
                     <div class="container mt-3">
                         <div class="row g-2 align-items-center mb-3">
                             <!-- Month Selection -->
@@ -77,16 +70,9 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Create Salary</h5>
             </div>
-            <form asp-action="CreateSalary" method="post" class="submitForm">
+            <form asp-action="" method="post" class="submitForm">
                 @Html.AntiForgeryToken()
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <button id="saveSalaryBtn" type="submit" class="btn btn-primary">
-                                Save
-                            </button>
-                        </div>
-                    </div>
 
                     <div class="table-responsive">
                         <table class="table datanew">
@@ -208,3 +194,5 @@
         </div>
     </div>
 </div>
+
+

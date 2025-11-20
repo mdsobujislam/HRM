@@ -25,7 +25,6 @@
                                 <th>TaxPer(% age)</th>
                                 <th>Additional Info</th>
                                 <th>Branch Name</th>
-                                <th>Department Name</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -43,7 +42,6 @@
                                     <td>@item.TaxPer</td>
                                     <td>@item.AdditionalInfoName</td>
                                     <td>@item.BranchName</td>
-                                    <td>@item.DepartmentName</td>
                                     <td class="d-flex align-items-center gap-2">
                                         <button class="btn btn-warning btn-sm"
                                                 onclick="editTaxSlabSetup('@item.Id',
@@ -92,7 +90,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3" style="display:none">
                             <label for="DepartmentId" class="form-label">Department Name</label>
                             <select id="DepartmentId" name="DepartmentId" asp-items="ViewBag.DepartmentList" class="form-control">
                                 <option value="">-- Select Department --</option>

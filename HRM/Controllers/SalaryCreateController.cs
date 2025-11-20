@@ -2,6 +2,7 @@
 using HRM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace HRM.Controllers
 {
@@ -22,7 +23,7 @@ namespace HRM.Controllers
             _designationService = designationService;
             _employeeService = employeeService;
         }
-        
+
         public async Task<IActionResult> Index(int branchId, string monthSelect)
         {
             try
@@ -34,11 +35,13 @@ namespace HRM.Controllers
                     Text = b.Name
                 }).ToList();
 
-                // 👇 Pass both branch and month
                 var salaryCreates = await _salaryCreateService.GetAllSalaryCreateAsync(branchId, monthSelect);
 
-                if (salaryCreates == null || !salaryCreates.Any())
+                if (salaryCreates != null && !salaryCreates.Any())
+                {
+                    TempData["Error"] = $"Salary for the month of {monthSelect} has already been created.";
                     return View(new List<SalaryCreate>());
+                }
 
                 return View(salaryCreates);
             }
@@ -49,20 +52,58 @@ namespace HRM.Controllers
             }
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> CreateSalary(SalaryCreate salaryCreate)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateSalary(List<SalaryCreate> SalaryList)
         {
+            if (SalaryList == null || !SalaryList.Any())
+            {
+                TempData["Error"] = "No salary data to save.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
-                var result = await _salaryCreateService.InsertSalaryCreateAsync(salaryCreate);
-                // Logic to create salary entries
-                TempData["Success"] = "Salary entries created successfully.";
+                var ok = await _salaryCreateService.InsertSalaryListAsync(SalaryList);
+                if (ok) TempData["Success"] = "Salary entries created successfully.";
+                else TempData["Error"] = "Salary heads not found for this subscription.";
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 TempData["Error"] = "Error creating salary entries: " + ex.Message;
             }
+
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> SalaryReport(int branchId, string monthSelect)
+        {
+            try
+            {
+                var branchList = await _branchService.GetAllBranch();
+                ViewBag.BranchList = branchList.Select(b => new SelectListItem
+                {
+                    Value = b.Id.ToString(),
+                    Text = b.Name
+                }).ToList();
+
+                var salaryCreates = await _salaryCreateService.GetSalaryReportCreateAsync(branchId, monthSelect);
+
+                if (salaryCreates != null && !salaryCreates.Any())
+                {
+                    TempData["Error"] = $"Salary for the month of {monthSelect} has already been created.";
+                    return View(new List<SalaryCreate>());
+                }
+
+                return View(salaryCreates);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error loading salary page: " + ex.Message;
+                return View();
+            }
+        }
+
     }
 }
