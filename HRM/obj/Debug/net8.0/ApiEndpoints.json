@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "HRM.Controllers.AdditionalInfoController",
+    "Method": "Add",
+    "RelativePath": "api/AdditionalInfo/Add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "HRM.Models.AdditionalInfo",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HRM.Controllers.AdditionalInfoController",
+    "Method": "GetAll",
+    "RelativePath": "api/AdditionalInfo/GetAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
